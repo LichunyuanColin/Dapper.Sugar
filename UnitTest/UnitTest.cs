@@ -88,8 +88,8 @@ namespace UnitTest
                 /*Id = 7,*/
                 Account = "qinming",
                 Name = "秦明",
-                Age = 38,
-                Status = 20
+                sq_Age = "38",
+                sq_Status = "20"
             }, SugarCommandType.AddTableDirect);
 
             Assert.AreEqual(result, 1, "新增-表名-单个匿名对象");
@@ -106,7 +106,8 @@ namespace UnitTest
                 Account = t.Account,
                 Name = t.Name,
                 Age = t.Age,
-                Status = t.Status
+                ig_Status = t.Status,
+                sq_Status = "@ig_Status"
             }).ToList(), SugarCommandType.AddTableDirect);
 
             Assert.AreEqual(result, 2, "增-表名-多个匿名对象");
@@ -158,14 +159,18 @@ namespace UnitTest
 
                 Assert.AreEqual(result, 1, "修改-表名-匿名对象");
 
-                var info2 = DbHelp.DbProvider.QuerySingle<EmployeeModel>(conn, "employee", new
+                var info2 = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new
                 {
-                    sq_Id = "Id = 1"
+                    Id_gt = 0,
+                    sq_1 = "(Id = 1",
+                    sq_2 = "or Id = 2",
+                    sq_3 = ")",
+                    Status = 20
                 }, SugarCommandType.QueryTableDirect);
 
-                Assert.IsNotNull(info2, "查询单个对象");
+                Assert.AreEqual(info2.Count, 2, "查询多个对象");
 
-                Assert.AreEqual(info2.Age, info.Age + 2, "修改-表名-匿名对象");
+                Assert.AreEqual(info2[0].Age, info.Age + 2, "修改-表名-匿名对象");
             }
         }
 

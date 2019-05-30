@@ -7,6 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dapper.Sugar", "Dapper.Suga
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{44476A28-9F10-4EF3-9502-425872CCFA23}"
 	ProjectSection(SolutionItems) = preProject
+		DbHelp.txt = DbHelp.txt
 		README.md = README.md
 	EndProjectSection
 EndProject

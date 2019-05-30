@@ -60,6 +60,10 @@ namespace Dapper.Sugar
         /// </summary>
         ParamIn,
         /// <summary>
+        /// not in
+        /// </summary>
+        ParamNotIn,
+        /// <summary>
         /// 不等于
         /// </summary>
         ParamUnEqual
@@ -216,29 +220,21 @@ namespace Dapper.Sugar
                 switch (type)
                 {
                     case FormateTypeCalculate.ParamEqual://等于
-                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix}={ParamSign}{paramName}";
-                    //return string.Format("{5}.{0}{3}{1}={2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName.Substring(2), paramName, aliasName);
+                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} = {ParamSign}{paramName}";
                     case FormateTypeCalculate.ParamLess://小于
-                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix}<{ParamSign}{paramName}";
-                    //return string.Format("{5}.{0}{3}{1}<{2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName.Substring(2), paramName, aliasName);
+                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} < {ParamSign}{paramName}";
                     case FormateTypeCalculate.ParamLessEqual://小于等于
-                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix}<={ParamSign}{paramName}";
-                    //return string.Format("{5}.{0}{3}{1}<={2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName.Substring(2), paramName, aliasName);
+                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} <= {ParamSign}{paramName}";
                     case FormateTypeCalculate.ParamMore://大于
-                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix}>{ParamSign}{paramName}";
-                    //return string.Format("{5}.{0}{3}{1}>{2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName.Substring(2), paramName, aliasName);
+                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} > {ParamSign}{paramName}";
                     case FormateTypeCalculate.ParamMoreEqual://大于等于
-                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix}>={ParamSign}{paramName}";
-                    //return string.Format("{5}.{0}{3}{1}>={2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName.Substring(2), paramName, aliasName);
+                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} >= {ParamSign}{paramName}";
                     case FormateTypeCalculate.ParamLike://模糊查询
                         return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} like {ParamSign}{paramName}";
-                    //return string.Format("{5}.{0}{3}{1} like {2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName.Substring(2), paramName, aliasName);
                     case FormateTypeCalculate.ParamIn://In
                         return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} in {ParamSign}{paramName}";
-                    //return string.Format("{5}.{0}{3}{1} in {2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName.Substring(2), paramName, aliasName);
                     case FormateTypeCalculate.ParamUnEqual://不等于
-                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix}!={ParamSign}{paramName}";
-                    //return string.Format("{5}.{0}{3}{1}!={2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName.Substring(2), paramName, aliasName);
+                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} <> {ParamSign}{paramName}";
                     default: throw new ArgumentOutOfRangeException(nameof(type));
                 }
             }
@@ -248,29 +244,21 @@ namespace Dapper.Sugar
                 switch (type)
                 {
                     case FormateTypeCalculate.ParamEqual://等于
-                        return $"{SqlPrefix}{fieldName}{SqlSuffix}={ParamSign}{paramName}";
-                    //return string.Format("{0}{3}{1}={2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName, paramName);
+                        return $"{SqlPrefix}{fieldName}{SqlSuffix} = {ParamSign}{paramName}";
                     case FormateTypeCalculate.ParamLess://小于
-                        return $"{SqlPrefix}{fieldName}{SqlSuffix}<{ParamSign}{paramName}";
-                    //return string.Format("{0}{3}{1}<{2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName, paramName);
+                        return $"{SqlPrefix}{fieldName}{SqlSuffix} < {ParamSign}{paramName}";
                     case FormateTypeCalculate.ParamLessEqual://小于等于
-                        return $"{SqlPrefix}{fieldName}{SqlSuffix}<={ParamSign}{paramName}";
-                    //return string.Format("{0}{3}{1}<={2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName, paramName);
+                        return $"{SqlPrefix}{fieldName}{SqlSuffix} <= {ParamSign}{paramName}";
                     case FormateTypeCalculate.ParamMore://大于
-                        return $"{SqlPrefix}{fieldName}{SqlSuffix}>{ParamSign}{paramName}";
-                    //return string.Format("{0}{3}{1}>{2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName, paramName);
+                        return $"{SqlPrefix}{fieldName}{SqlSuffix} > {ParamSign}{paramName}";
                     case FormateTypeCalculate.ParamMoreEqual://大于等于
-                        return $"{SqlPrefix}{fieldName}{SqlSuffix}>={ParamSign}{paramName}";
-                    //return string.Format("{0}{3}{1}>={2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName, paramName);
+                        return $"{SqlPrefix}{fieldName}{SqlSuffix} >= {ParamSign}{paramName}";
                     case FormateTypeCalculate.ParamLike://模糊查询
                         return $"{SqlPrefix}{fieldName}{SqlSuffix} like {ParamSign}{paramName}";
-                    //return string.Format("{0}{3}{1} like {2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName, paramName);
                     case FormateTypeCalculate.ParamIn://In
                         return $"{SqlPrefix}{fieldName}{SqlSuffix} in {ParamSign}{paramName}";
-                    //return string.Format("{0}{3}{1} in {2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName, paramName);
                     case FormateTypeCalculate.ParamUnEqual://不等于
-                        return $"{SqlPrefix}{fieldName}{SqlSuffix}!={ParamSign}{paramName}";
-                    //return string.Format("{0}{3}{1}!={2}{4}", SQL_PREFIX, SQL_SUFFIX, PARAM_SIGN, fieldName, paramName);
+                        return $"{SqlPrefix}{fieldName}{SqlSuffix} <> {ParamSign}{paramName}";
                     default: throw new ArgumentOutOfRangeException(nameof(type));
                 }
             }
@@ -304,13 +292,13 @@ namespace Dapper.Sugar
                 throw new ArgumentNullException(nameof(sql));
 
             //已包含and语句、已包含where语句
-            if (sql.IndexOf("AND", sql.Length - 4, StringComparison.OrdinalIgnoreCase) > -1 || sql.IndexOf("WHERE", sql.Length - 6, StringComparison.OrdinalIgnoreCase) > -1)
+            sql = sql.Trim();
+            if (sql.IndexOf("AND", sql.Length - 3, StringComparison.OrdinalIgnoreCase) > -1 || sql.IndexOf("WHERE", sql.Length - 5, StringComparison.OrdinalIgnoreCase) > -1)
             {
                 return $"{sql} {GetConditionSqlByParam(param)} {additionalSql}";
             }
             else
                 return $"{sql} WHERE {GetConditionSqlByParam(param)} {additionalSql}";
-
         }
 
         /// <summary>
@@ -335,92 +323,102 @@ namespace Dapper.Sugar
                     continue;
 
                 var value = item.GetValue(param, null);
+                if (value == null)
+                    continue;
 
-                if (value != null)
+                if (item.Name.StartsWith("sq_"))
                 {
-                    if (item.Name.StartsWith("sq_"))
+                    if (!(value is string))
+                        throw new ArgumentException($"{item.Name}只能为string类型");
+
+                    string ss = (value as string).Trim();
+                    if (sql.Length > 0 && ss.Length > 2
+                        && ss.IndexOf("AND", 0, 3, StringComparison.OrdinalIgnoreCase) < 0
+                        && ss.IndexOf("OR", 0, 2, StringComparison.OrdinalIgnoreCase) < 0)
                     {
-                        string s = value as string;
-
-                        if (s.Length > 4 && value.ToString().IndexOf("AND", 0, 4, StringComparison.OrdinalIgnoreCase) > -1)
-                            sql.Append(" AND ");
-                        else if (s[0] != ' ')
-                            sql.Append(" ");
-                        sql.Append(value);
-
-                        if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
-                            item.SetValue(param, null);
-
-                        continue;
+                        sql.Append(" AND ");
                     }
 
-                    TypeCode typeCode = Type.GetTypeCode(item.PropertyType);
+                    sql.Append(' ');
+                    sql.Append(ss);
 
-                    if (item.PropertyType.IsValueType || Type.GetTypeCode(item.PropertyType) == TypeCode.String)//字符串或数字
-                    {
-                        string filterName = item.Name.Substring(0, item.Name.Length - 3);
+                    if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
+                        item.SetValue(param, null);
 
-                        //string prefix;
-                        if (item.Name.Length > 3 && item.Name[item.Name.Length - 3] == '_')
-                        {
-                            if (item.Name[item.Name.Length - 2] == 'l')
-                            {
-                                if (sql.Length > 0)
-                                    sql.Append(" AND ");
-
-                                int index = item.Name.Length - 1;
-
-                                if (item.Name[index] == 't')
-                                {
-                                    sql.Append(GetParamSql(FormateTypeCalculate.ParamLess, filterName, item.Name));
-                                }
-                                else if (item.Name[index] == 'e')
-                                {
-                                    sql.Append(GetParamSql(FormateTypeCalculate.ParamLessEqual, filterName, item.Name));
-                                }
-                                else if (item.Name[index] == 'k')
-                                {
-                                    sql.Append(GetParamSql(FormateTypeCalculate.ParamLike, filterName, item.Name));
-                                }
-                                else
-                                    throw new ArgumentException("暂不支持此前缀 " + item.Name.Substring(item.Name.Length - 2, 2));
-                            }
-                            else if (item.Name.EndsWith("_gt", StringComparison.Ordinal))
-                            {
-                                if (sql.Length > 0)
-                                    sql.Append(" AND ");
-                                sql.Append(GetParamSql(FormateTypeCalculate.ParamMore, filterName, item.Name));
-                            }
-                            else if (item.Name.EndsWith("_ge", StringComparison.Ordinal))
-                            {
-                                if (sql.Length > 0)
-                                    sql.Append(" AND ");
-                                sql.Append(GetParamSql(FormateTypeCalculate.ParamMoreEqual, filterName, item.Name));
-                            }
-                            else if (item.Name.EndsWith("_ue", StringComparison.Ordinal))
-                            {
-                                if (sql.Length > 0)
-                                    sql.Append(" AND ");
-                                sql.Append(GetParamSql(FormateTypeCalculate.ParamUnEqual, filterName, item.Name));
-                            }
-                            else if (item.Name.EndsWith("_ig", StringComparison.Ordinal))
-                                continue;
-                            else
-                                throw new ArgumentException("暂不支持此前缀 " + item.Name.Substring(0, 2));
-
-                        }
-                    }
-                    //判断是否数组或List<T>,IsGenericType有bug，class<T>也返回true
-                    else if (item.PropertyType.IsArray || item.PropertyType.Name.StartsWith("List`") || item.PropertyType.Name.StartsWith("IEnumerable`"))
-                    {
-                        if (sql.Length > 0)
-                            sql.Append(" AND ");
-
-                        sql.Append(GetParamSql(FormateTypeCalculate.ParamIn, item.Name));
-                    }
-                    else
-                        throw new ArgumentException("参数类型不能识别！");
+                    continue;
                 }
+
+                TypeCode typeCode = Type.GetTypeCode(item.PropertyType);
+
+                if (item.PropertyType.IsValueType || Type.GetTypeCode(item.PropertyType) == TypeCode.String)//字符串或数字
+                {
+                    string filterName = item.Name.Substring(0, item.Name.Length - 3);
+
+                    //string prefix;
+                    if (item.Name.Length > 3 && item.Name[item.Name.Length - 3] == '_')
+                    {
+                        if (item.Name[item.Name.Length - 2] == 'l')
+                        {
+                            if (sql.Length > 0)
+                                sql.Append(" AND ");
+
+                            int index = item.Name.Length - 1;
+
+                            if (item.Name[index] == 't')
+                            {
+                                sql.Append(GetParamSql(FormateTypeCalculate.ParamLess, filterName, item.Name));
+                            }
+                            else if (item.Name[index] == 'e')
+                            {
+                                sql.Append(GetParamSql(FormateTypeCalculate.ParamLessEqual, filterName, item.Name));
+                            }
+                            else if (item.Name[index] == 'k')
+                            {
+                                sql.Append(GetParamSql(FormateTypeCalculate.ParamLike, filterName, item.Name));
+                            }
+                            else
+                                throw new ArgumentException("暂不支持此前缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                        }
+                        else if (item.Name.EndsWith("_gt", StringComparison.Ordinal))
+                        {
+                            if (sql.Length > 0)
+                                sql.Append(" AND ");
+                            sql.Append(GetParamSql(FormateTypeCalculate.ParamMore, filterName, item.Name));
+                        }
+                        else if (item.Name.EndsWith("_ge", StringComparison.Ordinal))
+                        {
+                            if (sql.Length > 0)
+                                sql.Append(" AND ");
+                            sql.Append(GetParamSql(FormateTypeCalculate.ParamMoreEqual, filterName, item.Name));
+                        }
+                        else if (item.Name.EndsWith("_ue", StringComparison.Ordinal))
+                        {
+                            if (sql.Length > 0)
+                                sql.Append(" AND ");
+                            sql.Append(GetParamSql(FormateTypeCalculate.ParamUnEqual, filterName, item.Name));
+                        }
+                        //else if (item.Name.EndsWith("_nn", StringComparison.Ordinal))
+                        //{
+                        //    if (sql.Length > 0)
+                        //        sql.Append(" AND ");
+                        //    sql.Append(GetParamSql(FormateTypeCalculate.ParamNotIn, filterName, item.Name));
+                        //}
+                        else if (item.Name.EndsWith("_ig", StringComparison.Ordinal))
+                            continue;
+                        else
+                            throw new ArgumentException("暂不支持此前缀 " + item.Name.Substring(0, 2));
+                    }
+                }
+                //判断是否数组或List<T>,IsGenericType有bug，class<T>也返回true
+                else if (item.PropertyType.IsArray || item.PropertyType.Name.StartsWith("List`") || item.PropertyType.Name.StartsWith("IEnumerable`"))
+                {
+                    if (sql.Length > 0)
+                        sql.Append(" AND ");
+
+                    sql.Append(GetParamSql(FormateTypeCalculate.ParamIn, item.Name));
+                }
+                else
+                    throw new ArgumentException("参数类型不能识别！");
             }
 
             //如果参数为0，返回默认sql
@@ -465,13 +463,15 @@ namespace Dapper.Sugar
 
                 if (item.Name.StartsWith("sq_"))
                 {
-                    var value = item.GetValue(param, null) as string;
-                    if (!string.IsNullOrEmpty(value))
+                    var v = item.GetValue(param, null);
+                    if (!(v is string))
+                        throw new ArgumentException($"{item.Name}只能为string类型");
+                    if (v != null)
                     {
                         sqlField.Append(GetFieldName(item.Name.Substring(3)));
                         sqlField.Append(",");
 
-                        sqlValue.Append(value);
+                        sqlValue.Append(v);
                         sqlValue.Append(",");
 
                         if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
@@ -529,12 +529,12 @@ namespace Dapper.Sugar
                 if (item.Name.StartsWith("ig_"))
                     continue;
 
-                var value = item.GetValue(param, null);
-
                 if (item.Name.StartsWith("sq_"))
                 {
-                    string v = value as string;
-                    if (!string.IsNullOrEmpty(v))
+                    var v = item.GetValue(param, null);
+                    if (!(v is string))
+                        throw new ArgumentException($"{item.Name}只能为string类型");
+                    if (v != null)
                     {
                         sqlField.Append(GetFieldName(item.Name.Substring(3)));
                         sqlField.Append("=");
