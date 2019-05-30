@@ -1,0 +1,1203 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Dapper.Sugar</name>
+    </assembly>
+    <members>
+        <member name="T:Dapper.Sugar.IPagingList`1">
+            <summary>
+            分页数据类型接口
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="P:Dapper.Sugar.IPagingList`1.Total">
+            <summary>
+            总个数
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.IPagingList`1.List">
+            <summary>
+            数据（数组）
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.PagingList`1">
+            <summary>
+            分页数据类型
+            </summary>
+            <typeparam name="T">List类型</typeparam>
+        </member>
+        <member name="M:Dapper.Sugar.PagingList`1.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="M:Dapper.Sugar.PagingList`1.#ctor(System.Collections.Generic.List{`0},System.Int32)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="list">数据（数组）</param>
+            <param name="total">总个数</param>
+        </member>
+        <member name="P:Dapper.Sugar.PagingList`1.Total">
+            <summary>
+            总个数
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.PagingList`1.List">
+            <summary>
+            数据（数组）
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.PagingListExtendData`2">
+            <summary>
+            分页数据类型（带扩展数据，实体）
+            </summary>
+            <typeparam name="T">List类型</typeparam>
+            <typeparam name="ExtendT">Extend类型</typeparam>
+        </member>
+        <member name="M:Dapper.Sugar.PagingListExtendData`2.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="M:Dapper.Sugar.PagingListExtendData`2.#ctor(Dapper.Sugar.IPagingList{`0})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="data">数据</param>
+        </member>
+        <member name="M:Dapper.Sugar.PagingListExtendData`2.#ctor(System.Collections.Generic.List{`0},System.Int32)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="list">数据（数组）</param>
+            <param name="total">总个数</param>
+        </member>
+        <member name="M:Dapper.Sugar.PagingListExtendData`2.#ctor(System.Collections.Generic.List{`0},System.Int32,`1)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="list">数据（数组）</param>
+            <param name="total">总个数</param>
+            <param name="extend">扩展数据</param>
+        </member>
+        <member name="P:Dapper.Sugar.PagingListExtendData`2.Total">
+            <summary>
+            总个数
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.PagingListExtendData`2.List">
+            <summary>
+            数据（数组）
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.PagingListExtendData`2.Extend">
+            <summary>
+            扩展数据
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.PagingListExtendList`2">
+            <summary>
+            分页数据类型（带扩展数据，数组）
+            </summary>
+            <typeparam name="T">List类型</typeparam>
+            <typeparam name="ExtendT">Extend类型</typeparam>
+        </member>
+        <member name="M:Dapper.Sugar.PagingListExtendList`2.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="M:Dapper.Sugar.PagingListExtendList`2.#ctor(Dapper.Sugar.IPagingList{`0})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="data">数据</param>
+        </member>
+        <member name="M:Dapper.Sugar.PagingListExtendList`2.#ctor(Dapper.Sugar.IPagingList{`0},`1)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="data">数据</param>
+            <param name="extendList">扩展数据</param>
+        </member>
+        <member name="M:Dapper.Sugar.PagingListExtendList`2.#ctor(System.Collections.Generic.List{`0},System.Int32)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="list">数据（数组）</param>
+            <param name="total">总个数</param>
+        </member>
+        <member name="M:Dapper.Sugar.PagingListExtendList`2.#ctor(System.Collections.Generic.List{`0},System.Int32,`1)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="list">数据（数组）</param>
+            <param name="total">总个数</param>
+            <param name="extendList">扩展数据</param>
+        </member>
+        <member name="P:Dapper.Sugar.PagingListExtendList`2.Total">
+            <summary>
+            总个数
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.PagingListExtendList`2.List">
+            <summary>
+            数据（数组）
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.PagingListExtendList`2.Extend">
+            <summary>
+            扩展数据（数组）
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.IgnoreAddAttribute">
+            <summary>
+            新增忽略此属性
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.IgnoreUpdateAttribute">
+            <summary>
+            修改忽略此属性
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.SqlAttribute">
+            <summary>
+            sql自动生成属性设置
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.SqlAttribute.Key">
+            <summary>
+            修改语句条件主键(大小写敏感)
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.SqlAttribute.TableName">
+            <summary>
+            新增、修改语句表名称（大小写不敏感）
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.EffentNextType">
+            <summary>
+            影响行数类型
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.EffentNextType.None">
+            <summary>
+            对其他语句无任何影响 
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.EffentNextType.ExcuteEffectRows">
+            <summary>
+            当前语句影响到的行数必须大于0，否则回滚事务
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.SugarCommandType">
+            <summary>
+            执行命令类型
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.SugarCommandType.Text">
+            <summary>
+            SQL 文本命令（默认）
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.SugarCommandType.StoredProcedure">
+            <summary>
+            存储过程名称
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.SugarCommandType.AddTableDirect">
+            <summary>
+            新增操作表名称
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.SugarCommandType.UpdateTableDirect">
+            <summary>
+            修改操作表名称
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.SugarCommandType.QueryTableDirect">
+            <summary>
+            查询操作表名称
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.SugarCommandType.QuerySelectSql">
+            <summary>
+            查询语句（不含where条件语句）
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.CommandInfo">
+            <summary>
+            执行命令实体
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.CommandInfo.EffectRows">
+            <summary>
+            限制影响结果（-1：影响到的行数必须大于0，否则回滚事务 0：不限制影响行数 > 0：限制影响到的行数必须为固定数）
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.CommandInfo.SqlText">
+            <summary>
+            sql语句
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.CommandInfo.Param">
+            <summary>
+            参数
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.CommandInfo.CommandType">
+            <summary>
+            命令类型
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.CommandInfo.Timeout">
+            <summary>
+            过期时间（秒）
+            </summary>
+        </member>
+        <member name="M:Dapper.Sugar.CommandInfo.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="M:Dapper.Sugar.CommandInfo.#ctor(System.String,System.Object,Dapper.Sugar.SugarCommandType,System.Nullable{System.Int32})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="sqlText">sql语句</param>
+            <param name="param">参数</param>
+            <param name="commandType">命令类型</param>
+            <param name="timeout">过期时间（秒）</param>
+        </member>
+        <member name="M:Dapper.Sugar.CommandInfo.#ctor(System.String,System.Object,Dapper.Sugar.EffentNextType,Dapper.Sugar.SugarCommandType,System.Nullable{System.Int32})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="sqlText">sql语句</param>
+            <param name="param">参数</param>
+            <param name="type">影响结果类型</param>
+            <param name="commandType">命令类型</param>
+            <param name="timeout">过期时间（秒）</param>
+        </member>
+        <member name="M:Dapper.Sugar.CommandInfo.#ctor(System.String,System.Object,System.Int32,Dapper.Sugar.SugarCommandType,System.Nullable{System.Int32})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="sqlText">sql语句</param>
+            <param name="param">参数</param>
+            <param name="effectRows">限制影响结果</param>
+            <param name="commandType">命令类型</param>
+            <param name="timeout">过期时间（秒）</param>
+        </member>
+        <member name="T:Dapper.Sugar.CommandCollection">
+            <summary>
+            执行命令集合
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.CommandCollection.Commands">
+            <summary>
+            执行命令集合
+            </summary>
+        </member>
+        <member name="M:Dapper.Sugar.CommandCollection.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.CommandCollection.Count">
+            <summary>
+            元素数
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.CommandCollection.Item(System.Int32)">
+            <summary>
+            索引
+            </summary>
+            <param name="index">索引</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.CommandCollection.Add(System.String,System.Object,System.Nullable{System.Int32})">
+            <summary>
+            添加
+            </summary>
+            <param name="sqlText">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="timeout">过期时间（秒）</param>
+        </member>
+        <member name="M:Dapper.Sugar.CommandCollection.Add(System.String,System.Object,Dapper.Sugar.SugarCommandType,System.Nullable{System.Int32})">
+            <summary>
+            添加
+            </summary>
+            <param name="sqlText">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType">命令类型</param>
+            <param name="timeout">过期时间（秒）</param>
+        </member>
+        <member name="M:Dapper.Sugar.CommandCollection.Add(System.String,System.Object,Dapper.Sugar.EffentNextType,Dapper.Sugar.SugarCommandType,System.Nullable{System.Int32})">
+            <summary>
+            添加
+            </summary>
+            <param name="sqlText">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="type">影响结果类型</param>
+            <param name="commandType">命令类型</param>
+            <param name="timeout">过期时间（秒）</param>
+        </member>
+        <member name="M:Dapper.Sugar.CommandCollection.Add(System.String,System.Object,System.Int32,Dapper.Sugar.SugarCommandType,System.Nullable{System.Int32})">
+            <summary>
+            添加
+            </summary>
+            <param name="sqlText">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="effectRows">限制影响结果</param>
+            <param name="commandType">命令类型</param>
+            <param name="timeout">过期时间（秒）</param>
+        </member>
+        <member name="M:Dapper.Sugar.CommandCollection.Add(Dapper.Sugar.CommandInfo)">
+            <summary>
+            添加
+            </summary>
+            <param name="item"></param>
+        </member>
+        <member name="M:Dapper.Sugar.CommandCollection.AddRange(Dapper.Sugar.CommandCollection)">
+            <summary>
+            添加多个
+            </summary>
+            <param name="collection"></param>
+        </member>
+        <member name="M:Dapper.Sugar.CommandCollection.AddRange(System.Collections.Generic.IEnumerable{Dapper.Sugar.CommandInfo})">
+            <summary>
+            添加多个
+            </summary>
+            <param name="collection"></param>
+        </member>
+        <member name="M:Dapper.Sugar.CommandCollection.AsEnumerable">
+            <summary>
+            返回类型为 System.Collections.Generic.IEnumerable 的输入
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.CommandCollection.GetEnumerator">
+            <summary>
+            返回循环访问 System.Collections.Generic.List 的枚举器
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.CommandCollection.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            返回循环访问 System.Collections.Generic.List 的枚举器
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Dapper.Sugar.Config">
+            <summary>
+            配置
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.Config.Debug">
+            <summary>
+            是否调试模式（true：如果出现错误会抛出异常）
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.Config.LogSql">
+            <summary>
+            记录sql语句
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.Config.ConnectionList">
+            <summary>
+            数据库连接配置
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.Config.DataBaseType">
+            <summary>
+            数据库类型
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.Config.DataBaseType.MySql">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.Config.DataBaseType.SqlServer">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.Config.DataBaseType.PostgreSql">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.Config.DataBaseType.Oracle">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.Config.DataBaseAuthority">
+            <summary>
+            数据库权限
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.Config.DataBaseAuthority.Read">
+            <summary>
+            读取
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.Config.DataBaseAuthority.Write">
+            <summary>
+            写入
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.Config.ConnectionConfig">
+            <summary>
+            连接配置
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.Config.ConnectionConfig.Name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.Config.ConnectionConfig.Type">
+            <summary>
+            数据库类型
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.Config.ConnectionConfig.ReadList">
+            <summary>
+            数据库连接字符串
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.Config.ConnectionConfig.WriteList">
+            <summary>
+            数据库连接字符串
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.DbProvider">
+            <summary>
+            数据访问底层类
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.DbProvider.Connection">
+            <summary>
+            连接
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.DbProvider.Factory">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.DbProvider.Builder">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.CreateDbProvide(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.CreateConnection(System.Nullable{Dapper.Sugar.Config.DataBaseAuthority})">
+            <summary>
+            创建连接
+            </summary>
+            <param name="authority"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.CreateConnection(System.String)">
+            <summary>
+            创建连接
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Dapper.Sugar.DbProvider.SPLITON">
+            <summary>
+            联合查询分割表数据标识
+            </summary>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.BaseQuery``1(System.Data.IDbConnection,System.String,System.Object,System.Data.CommandType,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            基础查询列表
+            </summary>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.BaseQueryScalar``1(System.Data.IDbConnection,System.String,System.Object,System.Data.CommandType,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            基础查询单个值
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="conn"></param>
+            <param name="sql"></param>
+            <param name="param"></param>
+            <param name="commandType"></param>
+            <param name="transaction"></param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryData``1(System.Data.IDbConnection,System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            基础查询列表(1)
+            </summary>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryData``3(System.Data.IDbConnection,System.Func{``0,``1,``2},System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            基础连表查询列表(2)
+            </summary>
+            <typeparam name="TFirst">数据实体</typeparam>
+            <typeparam name="TSecond">数据实体</typeparam>
+            <typeparam name="TReturn">返回数据实体</typeparam>
+            <param name="conn"></param>
+            <param name="map">委托-两个表数据逻辑处理</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType"> 命令类型 </param>
+            <param name="sortSql"></param>
+            <param name="splitOn">分割两表数据的列名称</param>
+            <param name="buffered"></param>
+            <param name="transaction"></param>
+            <param name="timeout"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryData``4(System.Data.IDbConnection,System.Func{``0,``1,``2,``3},System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            基础连表查询列表(3)
+            </summary>
+            <typeparam name="TFirst">数据实体</typeparam>
+            <typeparam name="TSecond">数据实体</typeparam>
+            <typeparam name="TThird">数据实体</typeparam>
+            <typeparam name="TReturn">返回数据实体</typeparam>
+            <param name="conn"></param>
+            <param name="map">委托-两个表数据逻辑处理</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType"> 命令类型 </param>
+            <param name="sortSql"></param>
+            <param name="splitOn">分割两表数据的列名称</param>
+            <param name="buffered"></param>
+            <param name="transaction"></param>
+            <param name="timeout"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryData``5(System.Data.IDbConnection,System.Func{``0,``1,``2,``3,``4},System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            基础连表查询列表(4)
+            </summary>
+            <typeparam name="TFirst">数据实体</typeparam>
+            <typeparam name="TSecond">数据实体</typeparam>
+            <typeparam name="TThird">数据实体</typeparam>
+            <typeparam name="TFourth">数据实体</typeparam>
+            <typeparam name="TReturn">返回数据实体</typeparam>
+            <param name="conn"></param>
+            <param name="map">委托-两个表数据逻辑处理</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType"> 命令类型 </param>
+            <param name="sortSql"></param>
+            <param name="splitOn">分割两表数据的列名称</param>
+            <param name="buffered"></param>
+            <param name="transaction"></param>
+            <param name="timeout"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryData``6(System.Data.IDbConnection,System.Func{``0,``1,``2,``3,``4,``5},System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            基础连表查询列表(5)
+            </summary>
+            <typeparam name="TFirst">数据实体</typeparam>
+            <typeparam name="TSecond">数据实体</typeparam>
+            <typeparam name="TThird">数据实体</typeparam>
+            <typeparam name="TFourth">数据实体</typeparam>
+            <typeparam name="TFifth">数据实体</typeparam>
+            <typeparam name="TReturn">返回数据实体</typeparam>
+            <param name="conn"></param>
+            <param name="map">委托-两个表数据逻辑处理</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType"> 命令类型 </param>
+            <param name="sortSql"></param>
+            <param name="splitOn">分割两表数据的列名称</param>
+            <param name="buffered"></param>
+            <param name="transaction"></param>
+            <param name="timeout"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryPagingData``1(System.Data.IDbConnection,System.Int32,System.Int32,System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            基础分页查询列表（limit分页）
+            </summary>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.PagingList``1(System.Int32,System.Int32,System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            分页集合
+            </summary>
+            <typeparam name="T">数据实体</typeparam>
+            <param name="pageNumber">当前页</param>
+            <param name="pageSize">每页记录数</param>
+            <param name="resource">集合</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.TranslateCommand(Dapper.Sugar.CommandInfo)">
+            <summary>
+            转换sql命令
+            </summary>
+            <param name="info"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.TranslateSelectSql(System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String)">
+            <summary>
+            转换sql命令
+            </summary>
+            <param name="sql"></param>
+            <param name="param"></param>
+            <param name="commandType"></param>
+            <param name="sortSql"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.Query(System.String,System.Data.Common.DbParameter[])">
+            <summary>
+            查询（以Dataset返回结果的）
+            </summary>
+            <param name="sql">sql语句</param>
+            <param name="parms">参数</param>
+            <returns>失败返回null</returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.Query(System.Data.Common.DbConnection,System.String,System.Data.Common.DbParameter[])">
+            <summary>
+            查询（以Dataset返回结果的）
+            </summary>
+            <param name="conn"></param>
+            <param name="sql">sql语句</param>
+            <param name="parms">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryScalar``1(System.Data.IDbConnection,System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            查询单个数值（如存在多个取首行首列）
+            </summary>
+            <typeparam name="T">数据实体</typeparam>
+            <param name="conn">连接</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType">命令类型</param>
+            <param name="sortSql">排序语句</param>
+            <param name="transaction">事务</param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QuerySingle``1(System.Data.IDbConnection,System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            查询单个实体
+            </summary>
+            <typeparam name="T">数据实体</typeparam>
+            <param name="conn">连接</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType">命令类型</param>
+            <param name="sortSql">排序语句</param>
+            <param name="buffered">是否缓存</param>
+            <param name="transaction">事务</param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QuerySingle``3(System.Data.IDbConnection,System.Func{``0,``1,``2},System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            连表查询单个实体(2)
+            </summary>
+            <typeparam name="TFirst">数据实体</typeparam>
+            <typeparam name="TSecond">数据实体</typeparam>
+            <typeparam name="TReturn">返回数据实体</typeparam>
+            <param name="conn">连接</param>
+            <param name="map">委托-两个表数据逻辑处理</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType"> 命令类型 </param>
+            <param name="sortSql">排序语句</param>
+            <param name="splitOn">分割两表数据的列名称</param>
+            <param name="buffered">是否缓存</param>
+            <param name="transaction">事务</param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QuerySingle``4(System.Data.IDbConnection,System.Func{``0,``1,``2,``3},System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            连表查询单个实体(3)
+            </summary>
+            <typeparam name="TFirst">数据实体</typeparam>
+            <typeparam name="TSecond">数据实体</typeparam>
+            <typeparam name="TThird">数据实体</typeparam>
+            <typeparam name="TReturn">返回数据实体</typeparam>
+            <param name="conn">连接</param>
+            <param name="map">委托-两个表数据逻辑处理</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType"> 命令类型 </param>
+            <param name="sortSql">排序语句</param>
+            <param name="splitOn">分割两表数据的列名称</param>
+            <param name="buffered">是否缓存</param>
+            <param name="transaction">事务</param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QuerySingle``5(System.Data.IDbConnection,System.Func{``0,``1,``2,``3,``4},System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            连表查询单个实体(4)
+            </summary>
+            <typeparam name="TFirst">数据实体</typeparam>
+            <typeparam name="TSecond">数据实体</typeparam>
+            <typeparam name="TThird">数据实体</typeparam>
+            <typeparam name="TFourth">数据实体</typeparam>
+            <typeparam name="TReturn">返回数据实体</typeparam>
+            <param name="conn">连接</param>
+            <param name="map">委托-两个表数据逻辑处理</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType"> 命令类型 </param>
+            <param name="sortSql">排序语句</param>
+            <param name="splitOn">分割两表数据的列名称</param>
+            <param name="buffered">是否缓存</param>
+            <param name="transaction">事务</param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QuerySingle``6(System.Data.IDbConnection,System.Func{``0,``1,``2,``3,``4,``5},System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            连表查询单个实体(5)
+            </summary>
+            <typeparam name="TFirst">数据实体</typeparam>
+            <typeparam name="TSecond">数据实体</typeparam>
+            <typeparam name="TThird">数据实体</typeparam>
+            <typeparam name="TFourth">数据实体</typeparam>
+            <typeparam name="TFifth">数据实体</typeparam>
+            <typeparam name="TReturn">返回数据实体</typeparam>
+            <param name="conn">连接</param>
+            <param name="map">委托-两个表数据逻辑处理</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType"> 命令类型 </param>
+            <param name="sortSql">排序语句</param>
+            <param name="splitOn">分割两表数据的列名称</param>
+            <param name="buffered">是否缓存</param>
+            <param name="transaction">事务</param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryList``1(System.Data.IDbConnection,System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            查询列表(多个model)
+            </summary>
+            <typeparam name="T">数据实体</typeparam>
+            <param name="conn">连接</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType">命令类型</param>
+            <param name="sortSql">排序语句</param>
+            <param name="buffered">是否缓存</param>
+            <param name="transaction">事务</param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryList``3(System.Data.IDbConnection,System.Func{``0,``1,``2},System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            连表查询列表(2)
+            </summary>
+            <typeparam name="TFirst">数据实体</typeparam>
+            <typeparam name="TSecond">数据实体</typeparam>
+            <typeparam name="TReturn">返回数据实体</typeparam>
+            <param name="conn">连接</param>
+            <param name="map">委托-两个表数据逻辑处理</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType"> 命令类型 </param>
+            <param name="sortSql">排序语句</param>
+            <param name="splitOn">分割两表数据的列名称</param>
+            <param name="buffered">是否缓存</param>
+            <param name="transaction">事务</param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryList``4(System.Data.IDbConnection,System.Func{``0,``1,``2,``3},System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            连表查询列表(3)
+            </summary>
+            <typeparam name="TFirst">数据实体</typeparam>
+            <typeparam name="TSecond">数据实体</typeparam>
+            <typeparam name="TThird">数据实体</typeparam>
+            <typeparam name="TReturn">返回数据实体</typeparam>
+            <param name="conn">连接</param>
+            <param name="map">委托-两个表数据逻辑处理</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType"> 命令类型 </param>
+            <param name="sortSql">排序语句</param>
+            <param name="splitOn">分割两表数据的列名称</param>
+            <param name="buffered">是否缓存</param>
+            <param name="transaction">事务</param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryList``5(System.Data.IDbConnection,System.Func{``0,``1,``2,``3,``4},System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            连表查询列表(4)
+            </summary>
+            <typeparam name="TFirst">数据实体</typeparam>
+            <typeparam name="TSecond">数据实体</typeparam>
+            <typeparam name="TThird">数据实体</typeparam>
+            <typeparam name="TFourth">数据实体</typeparam>
+            <typeparam name="TReturn">返回数据实体</typeparam>
+            <param name="conn">连接</param>
+            <param name="map">委托-两个表数据逻辑处理</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType"> 命令类型 </param>
+            <param name="sortSql">排序语句</param>
+            <param name="splitOn">分割两表数据的列名称</param>
+            <param name="buffered">是否缓存</param>
+            <param name="transaction">事务</param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryList``6(System.Data.IDbConnection,System.Func{``0,``1,``2,``3,``4,``5},System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            连表查询列表(5)
+            </summary>
+            <typeparam name="TFirst">数据实体</typeparam>
+            <typeparam name="TSecond">数据实体</typeparam>
+            <typeparam name="TThird">数据实体</typeparam>
+            <typeparam name="TFourth">数据实体</typeparam>
+            <typeparam name="TFifth">数据实体</typeparam>
+            <typeparam name="TReturn">返回数据实体</typeparam>
+            <param name="conn">连接</param>
+            <param name="map">委托-两个表数据逻辑处理</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType"> 命令类型 </param>
+            <param name="sortSql">排序语句</param>
+            <param name="splitOn">分割两表数据的列名称</param>
+            <param name="buffered">是否缓存</param>
+            <param name="transaction">事务</param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryPagingList``1(System.Data.IDbConnection,System.Int32,System.Int32,System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            分页查询列表(1) - 内存分页
+            </summary>
+            <typeparam name="T">数据实体</typeparam>
+            <param name="conn">连接</param>
+            <param name="pageNumber">当前页</param>
+            <param name="pageSize">每页记录数</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType">命令类型</param>
+            <param name="sortSql">排序语句</param>
+            <param name="buffered">是否缓存</param>
+            <param name="transaction">事务</param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryPagingList2``1(System.Data.IDbConnection,System.Int32,System.Int32,System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            分页查询列表(1) - limi分页
+            </summary>
+            <typeparam name="T">数据实体</typeparam>
+            <param name="conn">连接</param>
+            <param name="pageNumber">当前页</param>
+            <param name="pageSize">每页记录数</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType">命令类型</param>
+            <param name="sortSql">排序语句</param>
+            <param name="buffered">是否缓存</param>
+            <param name="transaction">事务</param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.ExecuteSql(System.Data.IDbConnection,System.String,System.Object,Dapper.Sugar.SugarCommandType,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            执行命令(返回影响行数，-1为执行失败)
+            </summary>
+            <param name="conn">连接</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType">命令类型</param>
+            <param name="transaction">事务</param>
+            <param name="timeout">过期时间（秒）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.ExecuteSql(System.Data.IDbConnection,Dapper.Sugar.CommandInfo,System.Data.IDbTransaction)">
+            <summary>
+            执行命令(返回影响行数，-1为执行失败)
+            </summary>
+            <param name="conn">连接</param>
+            <param name="command">命令</param>
+            <param name="transaction">事务</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.ExecuteSqlTran(Dapper.Sugar.CommandCollection)">
+            <summary>
+            执行事务
+            </summary>
+            <param name="commands">命令集合</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.ExecuteSqlTran(System.Func{System.Data.IDbConnection,System.Data.IDbTransaction,System.Boolean})">
+            <summary>
+            执行事务
+            </summary>
+            <param name="runFun"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Dapper.Sugar.ICommandInfo">
+            <summary>
+            命令类型
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.ICommandInfo.CommandType">
+            <summary>
+            命令类型
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.ICommandInfo.EffectRows">
+            <summary>
+            限制影响结果（-1：影响到的行数必须大于0，否则回滚事务 0：不限制影响行数 > 0：限制影响到的行数必须为固定数）
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.ICommandInfo.Param">
+            <summary>
+            参数
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.ICommandInfo.SqlText">
+            <summary>
+            sql语句
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.ICommandInfo.Timeout">
+            <summary>
+            过期时间（秒）
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.Log">
+            <summary>
+            日志
+            </summary>
+        </member>
+        <member name="M:Dapper.Sugar.Log.InfoSql(System.String,System.Object)">
+            <summary>
+            记录sql信息
+            </summary>
+            <param name="sql"></param>
+            <param name="param"></param>
+        </member>
+        <member name="M:Dapper.Sugar.Log.InfoProcedure(System.String,System.Object)">
+            <summary>
+            记录sql信息
+            </summary>
+            <param name="sql"></param>
+            <param name="param"></param>
+        </member>
+        <member name="M:Dapper.Sugar.Log.Error(System.String,System.Exception)">
+            <summary>
+            记录错误信息
+            </summary>
+            <param name="content"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="M:Dapper.Sugar.Log.ErrorSql(System.String,System.Object,System.Exception)">
+            <summary>
+            记录sql信息
+            </summary>
+            <param name="sql"></param>
+            <param name="param"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="M:Dapper.Sugar.Log.ErrorProcedure(System.String,System.Object,System.Exception)">
+            <summary>
+            记录存储过程信息
+            </summary>
+            <param name="sql"></param>
+            <param name="param"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="T:Dapper.Sugar.FormateTypeSingle">
+            <summary>
+            格式化类型（不含逻辑关系）
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.FormateTypeSingle.TableName">
+            <summary>
+            表名称
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.FormateTypeSingle.FieldName">
+            <summary>
+            字段名称
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.FormateTypeSingle.ParamName">
+            <summary>
+            参数名称
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.FormateTypeCalculate">
+            <summary>
+            格式化类型（含逻辑关系）
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.FormateTypeCalculate.ParamEqual">
+            <summary>
+            等于
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.FormateTypeCalculate.ParamLess">
+            <summary>
+            小于
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.FormateTypeCalculate.ParamLessEqual">
+            <summary>
+            小于等于
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.FormateTypeCalculate.ParamMore">
+            <summary>
+            大于
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.FormateTypeCalculate.ParamMoreEqual">
+            <summary>
+            大于等于
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.FormateTypeCalculate.ParamLike">
+            <summary>
+            模糊查询
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.FormateTypeCalculate.ParamIn">
+            <summary>
+            In
+            </summary>
+        </member>
+        <member name="F:Dapper.Sugar.FormateTypeCalculate.ParamUnEqual">
+            <summary>
+            不等于
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.ISqlBuilder.ParamSign">
+            <summary>
+            参数标识
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.ISqlBuilder.SqlPrefix">
+            <summary>
+            前缀
+            </summary>
+        </member>
+        <member name="P:Dapper.Sugar.ISqlBuilder.SqlSuffix">
+            <summary>
+            后缀
+            </summary>
+        </member>
+        <member name="T:Dapper.Sugar.SqlBuilder">
+            <summary>
+            生成sql语句
+            </summary>
+        </member>
+        <member name="M:Dapper.Sugar.SqlBuilder.GetFieldName(System.String)">
+            <summary>
+            格式化字段名称（FieldName）
+            </summary>
+            <param name="fieldName">字段名称</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.SqlBuilder.GetTableName(System.String)">
+            <summary>
+            格式化表名称（TableName）
+            </summary>
+            <param name="tableName">表名称</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.SqlBuilder.GetParamName(System.String)">
+            <summary>
+            格式化参数名称
+            </summary>
+            <param name="paramName">参数名称</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.SqlBuilder.GetParamSql(Dapper.Sugar.FormateTypeCalculate,System.String)">
+            <summary>
+            生成字段sql（参数）
+            </summary>
+            <param name="fieldName">字段名称</param>
+            <param name="type">格式化类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.SqlBuilder.GetParamSql(Dapper.Sugar.FormateTypeCalculate,System.String,System.String)">
+            <summary>
+            生成字段sql（参数）
+            </summary>
+            <param name="type">格式化类型</param>
+            <param name="fieldName">字段名称</param>
+            <param name="paramName">参数名称</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.SqlBuilder.GetSelectSqlFromTableDirect(System.String,System.Object,System.String)">
+            <summary>
+            生成查询语句sql
+            </summary>
+            <param name="param"></param>
+            <param name="sql">可为tableName或selectSql</param>
+            <param name="additionalSql"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.SqlBuilder.GetSelectSqlFromSelectSql(System.String,System.Object,System.String)">
+            <summary>
+            生成查询语句sql
+            </summary>
+            <param name="param"></param>
+            <param name="sql">可为tableName或selectSql</param>
+            <param name="additionalSql"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.SqlBuilder.GetConditionSqlByParam(System.Object,System.String)">
+            <summary>
+            参数转成条件sql（默认返回1=1）
+            </summary>
+            <param name="param">参数（lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="defaultSql">默认无参数时sql语句</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.SqlBuilder.GetInsertSql(System.String,System.Object)">
+            <summary>
+            生成新增sql命令
+            </summary>
+            <param name="tableName"></param>
+            <param name="param"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.SqlBuilder.GetUpdateSql(System.String,System.Object,System.String)">
+            <summary>
+            生成修改sql命令
+            </summary>
+            <param name="param"></param>
+            <param name="tableName"></param>
+            <param name="tableKey"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.SqlBuilder.GetPagingSql(System.String,System.Int32,System.Int32)">
+            <summary>
+            生成分页查询语句
+            </summary>
+            <param name="sql"></param>
+            <param name="pageSize"></param>
+            <param name="pageNumber"></param>
+            <returns>totalSql:查询语句 dataSql:分页语句（limit）</returns>
+        </member>
+    </members>
+</doc>
