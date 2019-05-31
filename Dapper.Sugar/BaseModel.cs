@@ -31,7 +31,7 @@ namespace Dapper.Sugar
         /// </summary>
         public PagingList()
         {
-            List = new List<T>();
+            List = null;
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Dapper.Sugar
         /// </summary>
         public PagingListExtendData()
         {
-            List = new List<T>();
+            List = null;
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace Dapper.Sugar
         /// </summary>
         public PagingListExtendList()
         {
-            this.List = new List<T>();
+            this.List = null;
         }
 
         /// <summary>

@@ -40,7 +40,7 @@ namespace Dapper.Sugar
                 Log.ErrorSql(sql, param, ex);
                 if (Config.Instance.Debug)
                     throw new Exception($"SQL命令[ {sql} ]执行出错，错误信息：{ex.Message}！", ex);
-                return new List<T>();
+                return new List<T>(0);
             }
         }
 
@@ -123,7 +123,7 @@ namespace Dapper.Sugar
                 Log.ErrorSql(SqlText, param, ex);
                 if (Config.Instance.Debug)
                     throw new Exception($"SQL命令[ {SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
-                return new List<TReturn>();
+                return new List<TReturn>(0);
             }
         }
 
@@ -166,7 +166,7 @@ namespace Dapper.Sugar
                 Log.ErrorSql(SqlText, param, ex);
                 if (Config.Instance.Debug)
                     throw new Exception($"SQL命令[ {SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
-                return new List<TReturn>();
+                return new List<TReturn>(0);
             }
         }
 
@@ -211,7 +211,7 @@ namespace Dapper.Sugar
                 Log.ErrorSql(SqlText, param, ex);
                 if (Config.Instance.Debug)
                     throw new Exception($"SQL命令[ {SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
-                return new List<TReturn>();
+                return new List<TReturn>(0);
             }
         }
 
@@ -258,7 +258,7 @@ namespace Dapper.Sugar
                 Log.ErrorSql(SqlText, param, ex);
                 if (Config.Instance.Debug)
                     throw new Exception($"SQL命令[ {SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
-                return new List<TReturn>();
+                return new List<TReturn>(0);
             }
         }
 
@@ -279,7 +279,7 @@ namespace Dapper.Sugar
 
             if (total == 0)
             {
-                return new PagingList<T>(new List<T>(), 0);
+                return new PagingList<T>(new List<T>(0), 0);
             }
 
             List<T> result = BaseQuery<T>(conn, DataSql, param, CommandType.Text, buffered, transaction, timeout).ToList();
@@ -305,12 +305,14 @@ namespace Dapper.Sugar
         {
             PagingList<T> result = new PagingList<T>()
             {
-                Total = resource.Count()
+                Total = resource.Count(),
             };
 
             if (result.Total > 0)
                 result.List = resource.Skip<T>(pageNumber * pageSize).Take<T>(pageSize).ToList();
-            return result;
+            else
+                result.List = new List<T>(0);
+                return result;
         }
 
         /// <summary>
