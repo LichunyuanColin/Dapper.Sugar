@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Dapper.Sugar
 {
@@ -14,7 +15,7 @@ namespace Dapper.Sugar
         /// <summary>
         /// 联合查询分割表数据标识
         /// </summary>
-        private const string SPLITON = "Id";
+        private const string SPLITON = "ID";
 
         #region 基础方法
 
@@ -116,7 +117,7 @@ namespace Dapper.Sugar
                     conn.Open();
                 if (Config.Instance.LogSql)//写入日志
                     Log.InfoSql(sql, param);
-                return conn.Query<TFirst, TSecond, TReturn>(SqlText, map, param, transaction, buffered, splitOn, timeout, CommandType);
+                return conn.Query<TFirst, TSecond, TReturn>(SqlText, map, param, transaction, buffered, splitOn ?? SPLITON, timeout, CommandType);
             }
             catch (Exception ex)
             {
@@ -159,7 +160,7 @@ namespace Dapper.Sugar
                     conn.Open();
                 if (Config.Instance.LogSql)//写入日志
                     Log.InfoSql(sql, param);
-                return conn.Query<TFirst, TSecond, TThird, TReturn>(SqlText, map, param, transaction, buffered, splitOn, timeout, CommandType);
+                return conn.Query<TFirst, TSecond, TThird, TReturn>(SqlText, map, param, transaction, buffered, splitOn ?? SPLITON, timeout, CommandType);
             }
             catch (Exception ex)
             {
@@ -204,7 +205,7 @@ namespace Dapper.Sugar
                     conn.Open();
                 if (Config.Instance.LogSql)//写入日志
                     Log.InfoSql(sql, param);
-                return conn.Query<TFirst, TSecond, TThird, TFourth, TReturn>(SqlText, map, param, transaction, buffered, splitOn, timeout, CommandType);
+                return conn.Query<TFirst, TSecond, TThird, TFourth, TReturn>(SqlText, map, param, transaction, buffered, splitOn ?? SPLITON, timeout, CommandType);
             }
             catch (Exception ex)
             {
@@ -251,7 +252,7 @@ namespace Dapper.Sugar
                     conn.Open();
                 if (Config.Instance.LogSql)//写入日志
                     Log.InfoSql(sql, param);
-                return conn.Query<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(SqlText, map, param, transaction, buffered, splitOn, timeout, CommandType);
+                return conn.Query<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(SqlText, map, param, transaction, buffered, splitOn ?? SPLITON, timeout, CommandType);
             }
             catch (Exception ex)
             {
@@ -287,8 +288,6 @@ namespace Dapper.Sugar
             return new PagingList<T>(result, total);
         }
 
-
-
         #endregion
 
         #region 工具
@@ -301,7 +300,7 @@ namespace Dapper.Sugar
         /// <param name="pageSize">每页记录数</param>
         /// <param name="resource">集合</param>
         /// <returns></returns>
-        public PagingList<T> PagingList<T>(int pageNumber, int pageSize, IEnumerable<T> resource)
+        public IPagingList<T> PagingList<T>(int pageNumber, int pageSize, IEnumerable<T> resource)
         {
             PagingList<T> result = new PagingList<T>()
             {
@@ -312,7 +311,7 @@ namespace Dapper.Sugar
                 result.List = resource.Skip<T>(pageNumber * pageSize).Take<T>(pageSize).ToList();
             else
                 result.List = new List<T>(0);
-                return result;
+            return result;
         }
 
         /// <summary>
@@ -375,46 +374,6 @@ namespace Dapper.Sugar
         /// <summary>
         /// 查询（以Dataset返回结果的）
         /// </summary>
-        /// <param name="sql">sql语句</param>
-        /// <param name="parms">参数</param>
-        /// <returns>失败返回null</returns>
-        public DataSet Query(string sql, params DbParameter[] parms)
-        {
-            using (DbConnection conn = this.CreateConnection(Config.DataBaseAuthority.Read))
-            {
-                DbCommand cmd = this.Factory.CreateCommand();
-                cmd.CommandText = sql;
-                cmd.Connection = conn;
-                foreach (IDataParameter param in parms)
-                {
-                    cmd.Parameters.Add(param);
-                }
-                using (DbDataAdapter da = this.Factory.CreateDataAdapter())
-                {
-                    da.SelectCommand = cmd;
-                    DataSet ds = new DataSet();
-                    try
-                    {
-                        if (Config.Instance.LogSql)//写入日志
-                            Log.InfoSql(sql, parms);
-                        da.Fill(ds, "dt");
-                        cmd.Parameters.Clear();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.ErrorSql(sql, parms, ex);
-                        if (Config.Instance.Debug)
-                            throw new Exception($"SQL命令[ {sql} ]执行出错，错误信息：{ex.Message}！", ex);
-                        return null;
-                    }
-                    return ds;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 查询（以Dataset返回结果的）
-        /// </summary>
         /// <param name="conn"></param>
         /// <param name="sql">sql语句</param>
         /// <param name="parms">参数</param>
@@ -450,7 +409,16 @@ namespace Dapper.Sugar
             }
         }
 
-
+        /// <summary>
+        /// 查询自增
+        /// </summary>
+        /// <param name="conn">连接</param>
+        /// <param name="fieldName">字段名称（仅限PostgreSql需要）</param>
+        /// <returns></returns>
+        public long QueryAutoIncrement(DbConnection conn, string fieldName = null)
+        {
+            return QueryScalar<long>(conn, this.Builder.GetAutoIncrement(fieldName), null, SugarCommandType.Text);
+        }
 
         #endregion
 
@@ -520,7 +488,7 @@ namespace Dapper.Sugar
         /// <param name="transaction">事务</param>
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
-        public TReturn QuerySingle<TFirst, TSecond, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = "Id", bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
+        public TReturn QuerySingle<TFirst, TSecond, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
             where TFirst : class
             where TSecond : class
             where TReturn : class
@@ -546,7 +514,7 @@ namespace Dapper.Sugar
         /// <param name="transaction">事务</param>
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
-        public TReturn QuerySingle<TFirst, TSecond, TThird, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = "Id", bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
+        public TReturn QuerySingle<TFirst, TSecond, TThird, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
             where TFirst : class
             where TSecond : class
             where TThird : class
@@ -574,7 +542,7 @@ namespace Dapper.Sugar
         /// <param name="transaction">事务</param>
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
-        public TReturn QuerySingle<TFirst, TSecond, TThird, TFourth, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TFourth, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = "Id", bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
+        public TReturn QuerySingle<TFirst, TSecond, TThird, TFourth, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TFourth, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
             where TFirst : class
             where TSecond : class
             where TThird : class
@@ -604,7 +572,7 @@ namespace Dapper.Sugar
         /// <param name="transaction">事务</param>
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
-        public TReturn QuerySingle<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TFourth, TFifth, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = "Id", bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
+        public TReturn QuerySingle<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TFourth, TFifth, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
             where TFirst : class
             where TSecond : class
             where TThird : class
@@ -632,7 +600,7 @@ namespace Dapper.Sugar
         /// <param name="transaction">事务</param>
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
-        public List<T> QueryList<T>(IDbConnection conn, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
+        public IEnumerable<T> QueryList<T>(IDbConnection conn, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
             where T : class
         {
             return QueryData<T>(conn, sql, param, commandType, sortSql, buffered, transaction, timeout).ToList();
@@ -655,7 +623,7 @@ namespace Dapper.Sugar
         /// <param name="transaction">事务</param>
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
-        public List<TReturn> QueryList<TFirst, TSecond, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = "Id", bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
+        public IEnumerable<TReturn> QueryList<TFirst, TSecond, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
             where TFirst : class
             where TSecond : class
             where TReturn : class
@@ -681,7 +649,7 @@ namespace Dapper.Sugar
         /// <param name="transaction">事务</param>
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
-        public List<TReturn> QueryList<TFirst, TSecond, TThird, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = "Id", bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
+        public IEnumerable<TReturn> QueryList<TFirst, TSecond, TThird, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
             where TFirst : class
             where TSecond : class
             where TThird : class
@@ -709,7 +677,7 @@ namespace Dapper.Sugar
         /// <param name="transaction">事务</param>
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
-        public List<TReturn> QueryList<TFirst, TSecond, TThird, TFourth, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TFourth, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = "Id", bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
+        public IEnumerable<TReturn> QueryList<TFirst, TSecond, TThird, TFourth, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TFourth, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
             where TFirst : class
             where TSecond : class
             where TThird : class
@@ -739,7 +707,7 @@ namespace Dapper.Sugar
         /// <param name="transaction">事务</param>
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
-        public List<TReturn> QueryList<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TFourth, TFifth, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = "Id", bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
+        public IEnumerable<TReturn> QueryList<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TFourth, TFifth, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
             where TFirst : class
             where TSecond : class
             where TThird : class
@@ -1082,6 +1050,21 @@ namespace Dapper.Sugar
             return ExecuteSql(conn, new CommandInfo(sql, param, commandType, timeout), transaction);
         }
 
+        ///// <summary>
+        ///// 异步执行命令(返回影响行数，-1为执行失败)
+        ///// </summary>
+        ///// <param name="conn">连接</param>
+        ///// <param name="sql">sql语句</param>
+        ///// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+        ///// <param name="commandType">命令类型</param>
+        ///// <param name="transaction">事务</param>
+        ///// <param name="timeout">过期时间（秒）</param>
+        ///// <returns></returns>
+        //public Task<int> ExecuteSqlAsync(IDbConnection conn, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, IDbTransaction transaction = null, int? timeout = null)
+        //{
+        //    return ExecuteSqlAsync(conn, new CommandInfo(sql, param, commandType, timeout), transaction);
+        //}
+
         /// <summary>
         /// 执行命令(返回影响行数，-1为执行失败)
         /// </summary>
@@ -1121,6 +1104,50 @@ namespace Dapper.Sugar
                 return -1;
             }
         }
+
+        ///// <summary>
+        ///// 异步执行命令(返回影响行数，-1为执行失败)
+        ///// </summary>
+        ///// <param name="conn">连接</param>
+        ///// <param name="command">命令</param>
+        ///// <param name="transaction">事务</param>
+        ///// <returns></returns>
+        //public Task<int> ExecuteSqlAsync(IDbConnection conn, CommandInfo command, IDbTransaction transaction = null)
+        //{
+        //    /*(string SqlText, CommandType CommandType) cmd =*/
+        //    this.TranslateCommand(command);
+
+        //    try
+        //    {
+        //        if (conn.State == ConnectionState.Closed)
+        //            conn.Open();
+        //        if (Config.Instance.LogSql)//写入日志
+        //            if (command.CommandType == SugarCommandType.StoredProcedure)
+        //                Log.InfoProcedure(command.SqlText, command.Param);
+        //            else
+        //                Log.InfoSql(command.SqlText, command.Param);
+
+        //        return conn.ExecuteAsync(command.SqlText, command.Param, transaction, command.Timeout,
+        //            command.CommandType == SugarCommandType.StoredProcedure ? CommandType.StoredProcedure : CommandType.Text);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //if (Config.Instance.LogSql)//写入日志
+        //        if (command.CommandType == SugarCommandType.StoredProcedure)
+        //            Log.ErrorProcedure(command.SqlText, command.Param, ex);
+        //        else
+        //            Log.ErrorSql(command.SqlText, command.Param, ex);
+        //        if (Config.Instance.Debug)
+        //        {
+        //            throw new Exception($"{(command.CommandType == SugarCommandType.StoredProcedure ? "Stored Procedure：" : "Sql：")}[ {command.SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
+        //        }
+
+        //        return new Task<int>(() =>
+        //        {
+        //            return -1;
+        //        });
+        //    }
+        //}
 
         /// <summary>
         /// 执行事务

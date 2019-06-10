@@ -83,14 +83,21 @@ namespace UnitTest
         [TestMethod]
         public void TestAdd1()
         {
-            var result = DbHelp.ExecuteSql("employee", new
+            int result = 0;
+            long id = 0;
+            using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                /*Id = 7,*/
-                Account = "qinming",
-                Name = "秦明",
-                sq_Age = "38",
-                sq_Status = "20"
-            }, SugarCommandType.AddTableDirect);
+                result = DbHelp.DbProvider.ExecuteSql(conn, "employee", new
+                {
+                    /*Id = 7,*/
+                    Account = "qinming",
+                    Name = "秦明",
+                    sq_Age = "38",
+                    sq_Status = "20"
+                }, SugarCommandType.AddTableDirect);
+
+                id = DbHelp.DbProvider.QueryAutoIncrement(conn);
+            }
 
             Assert.AreEqual(result, 1, "新增-表名-单个匿名对象");
         }
@@ -166,7 +173,7 @@ namespace UnitTest
                     sq_2 = "or Id = 2",
                     sq_3 = ")",
                     Status = 20
-                }, SugarCommandType.QueryTableDirect);
+                }, SugarCommandType.QueryTableDirect).ToList();
 
                 Assert.AreEqual(info2.Count, 2, "查询多个对象");
 
@@ -239,7 +246,7 @@ namespace UnitTest
             //查询多个对象
             var result = DbHelp.QueryList<EmployeeModel>("employee", new { Age_ge = 50, Age_le = 50 }, SugarCommandType.QueryTableDirect);
 
-            Assert.AreEqual(result.Count, 1, "查询多个对象");
+            Assert.AreEqual(result.Count(), 1, "查询多个对象");
         }
 
         /// <summary>
@@ -250,14 +257,14 @@ namespace UnitTest
         {
             //别名查询多个对象
             //new { ue_e_Id = 1, ge_e_Age = 48 }
-            dynamic param = new { e_Id_ue = 1, e_Age_ge = 48 };
+            var param = new { e_Id_ue = 1, e_Age_ge = 48 };
             //dynamic param = new ExpandoObject();
             //param.e_Age_ge = 48;
             //param.ue_e_Id = 1;
             //param.ge_e_Age = 48;
             var result = DbHelp.QueryList<EmployeeModel>("select * from employee e where", param, SugarCommandType.QuerySelectSql);
 
-            Assert.AreEqual(result.Count, 1, "别名查询多个对象错误");
+            Assert.AreEqual(result.Count(), 1, "别名查询多个对象错误");
 
         }
 
@@ -268,7 +275,7 @@ namespace UnitTest
         public void TestQuery4()
         {
             //带条件查询多个对象
-            var result = DbHelp.QueryList<EmployeeModel>("select * from employee e where e.Status=20 and", new { e_Age_ge = 48 }, SugarCommandType.QuerySelectSql);
+            var result = DbHelp.QueryList<EmployeeModel>("select * from employee e where e.Status=20 and", new { e_Age_ge = 48 }, SugarCommandType.QuerySelectSql).ToList();
 
             Assert.AreEqual(result.Count, 1, "带条件查询多个对象错误");
 
@@ -293,7 +300,7 @@ namespace UnitTest
             {
                 result = DbHelp.DbProvider.QueryScalar<int>(conn, "select Count(*) from employee e where", param, SugarCommandType.QuerySelectSql);
 
-                result2 = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "select * from employee e where e.Status=20 and", new { e_Age_ge = 48 }, SugarCommandType.QuerySelectSql);
+                result2 = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "select * from employee e where e.Status=20 and", new { e_Age_ge = 48 }, SugarCommandType.QuerySelectSql).ToList();
             }
 
             Assert.AreEqual(result, 1, "查询个数错误");
@@ -313,9 +320,9 @@ namespace UnitTest
             //带条件查询多个对象
             var result = DbHelp.QueryPagingList<EmployeeModel>(1, 2, "select * from employee e where e.Status>0 and", new { e_Id_ue = 1 }, SugarCommandType.QuerySelectSql);
 
-            Assert.AreEqual(result.List.Count, 2, "带条件查询多个对象错误");
+            Assert.AreEqual(result.List.Count(), 2, "带条件查询多个对象错误");
 
-            Assert.AreEqual(result.List[0].Id, 4, "带条件查询多个对象错误");
+            Assert.AreEqual(result.List.FirstOrDefault().Id, 4, "带条件查询多个对象错误");
 
         }
 
@@ -328,9 +335,9 @@ namespace UnitTest
             //带条件查询多个对象
             var result = DbHelp.QueryPagingList2<EmployeeModel>(1, 2, "select * from employee e where e.Status>0 and", new { e_Id_ue = 1 }, SugarCommandType.QuerySelectSql);
 
-            Assert.AreEqual(result.List.Count, 2, "带条件查询多个对象错误");
+            Assert.AreEqual(result.List.Count(), 2, "带条件查询多个对象错误");
 
-            Assert.AreEqual(result.List[0].Id, 4, "带条件查询多个对象错误");
+            Assert.AreEqual(result.List.FirstOrDefault().Id, 4, "带条件查询多个对象错误");
 
         }
 

@@ -96,6 +96,7 @@ namespace Dapper.Sugar
         string GetParamSql(FormateTypeCalculate type, string fieldName, string paramName);
         string GetTableName(string tableName);
         string GetUpdateSql(string tableName, object param, string tableKey = "Id");
+        string GetAutoIncrement(string fieldName);
     }
 
     /// <summary>
@@ -105,7 +106,7 @@ namespace Dapper.Sugar
     {
         protected const string DEFAULT_CONDITION_SQL = "1=1";
         //private const string TABLE_PREFIX = "jth";//TablePrefix
-        protected const string TABLE_KEY = "Id";//
+        protected const string TABLE_KEY = "ID";//
 
         public virtual string ParamSign { get; set; } = "@";//参数标识
         public string SqlPrefix { get; set; }//前缀
@@ -624,11 +625,28 @@ namespace Dapper.Sugar
             return ($"SELECT COUNT(*) {sql.Substring(sql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
                 $"{sql} LIMIT { pageNumber * pageSize},{pageSize}");
         }
+
+        /// <summary>
+        /// 获取自增主键查询语句
+        /// </summary>
+        /// <returns></returns>
+        public virtual string GetAutoIncrement(string fieldName = TABLE_KEY)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 
     class MySqlBuilder : SqlBuilder
     {
+        /// <summary>
+        /// 获取自增主键查询语句
+        /// </summary>
+        /// <returns></returns>
+        public override string GetAutoIncrement(string fieldName = TABLE_KEY)
+        {
+            return ";Select Last_Insert_Id()";
+        }
     }
 
     class SqlServerBuilder : SqlBuilder
@@ -638,6 +656,15 @@ namespace Dapper.Sugar
             return ($"SELECT COUNT(*) {sql.Substring(sql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
                 $"{sql} offset {pageNumber * pageSize} rows fetch next { pageSize} rows only");
         }
+
+        /// <summary>
+        /// 获取自增主键查询语句
+        /// </summary>
+        /// <returns></returns>
+        public override string GetAutoIncrement(string fieldName = TABLE_KEY)
+        {
+            return ";Select Scope_Identity()";
+        }
     }
 
     class PostgreSqlBuilder : SqlBuilder
@@ -646,6 +673,15 @@ namespace Dapper.Sugar
         {
             return ($"SELECT COUNT(*) {sql.Substring(sql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
                 $"{sql} LIMIT { pageSize} OFFSET {pageNumber * pageSize}");
+        }
+
+        /// <summary>
+        /// 获取自增主键查询语句
+        /// </summary>
+        /// <returns></returns>
+        public override string GetAutoIncrement(string fieldName = TABLE_KEY)
+        {
+            return $";Returning {fieldName ?? TABLE_KEY}";
         }
     }
 

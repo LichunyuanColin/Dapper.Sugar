@@ -17,7 +17,7 @@ namespace Dapper.Sugar
         /// <summary>
         /// 数据（数组）
         /// </summary>
-        List<T> List { get; set; }
+        IEnumerable<T> List { get; set; }
     }
 
     /// <summary>
@@ -31,7 +31,6 @@ namespace Dapper.Sugar
         /// </summary>
         public PagingList()
         {
-            List = null;
         }
 
         /// <summary>
@@ -53,7 +52,7 @@ namespace Dapper.Sugar
         /// <summary>
         /// 数据（数组）
         /// </summary>
-        public List<T> List { get; set; }
+        public IEnumerable<T> List { get; set; }
 
     }
 
@@ -69,7 +68,6 @@ namespace Dapper.Sugar
         /// </summary>
         public PagingListExtendData()
         {
-            List = null;
         }
 
         /// <summary>
@@ -98,7 +96,7 @@ namespace Dapper.Sugar
         /// <param name="list">数据（数组）</param>
         /// <param name="total">总个数</param>
         /// <param name="extend">扩展数据</param>
-        public PagingListExtendData(List<T> list, int total, ExtendT extend)
+        public PagingListExtendData(IEnumerable<T> list, int total, ExtendT extend)
         {
             this.List = list;
             this.Total = total;
@@ -113,7 +111,7 @@ namespace Dapper.Sugar
         /// <summary>
         /// 数据（数组）
         /// </summary>
-        public List<T> List { get; set; }
+        public IEnumerable<T> List { get; set; }
 
         /// <summary>
         /// 扩展数据
@@ -163,7 +161,7 @@ namespace Dapper.Sugar
         /// </summary>
         /// <param name="list">数据（数组）</param>
         /// <param name="total">总个数</param>
-        public PagingListExtendList(List<T> list, int total)
+        public PagingListExtendList(IEnumerable<T> list, int total)
         {
             this.List = list;
             this.Total = total;
@@ -174,7 +172,7 @@ namespace Dapper.Sugar
         /// <param name="list">数据（数组）</param>
         /// <param name="total">总个数</param>
         /// <param name="extendList">扩展数据</param>
-        public PagingListExtendList(List<T> list, int total, ExtendT extendList)
+        public PagingListExtendList(IEnumerable<T> list, int total, ExtendT extendList)
         {
             this.List = list;
             this.Total = total;
@@ -189,7 +187,7 @@ namespace Dapper.Sugar
         /// <summary>
         /// 数据（数组）
         /// </summary>
-        public List<T> List { get; set; }
+        public IEnumerable<T> List { get; set; }
 
         /// <summary>
         /// 扩展数据（数组）

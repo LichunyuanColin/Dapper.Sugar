@@ -1,4 +1,5 @@
 ﻿using Dapper.Sugar;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -21,7 +22,7 @@ namespace UnitTest
         {
             using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
             {
-                return DbProvider.Query(sql, parms);
+                return DbProvider.Query(conn, sql, parms);
             }
         }
 
@@ -65,6 +66,122 @@ namespace UnitTest
         }
 
         /// <summary>
+        /// 连表查询单个实体(2)
+        /// </summary>
+        /// <typeparam name="TFirst">数据实体</typeparam>
+        /// <typeparam name="TSecond">数据实体</typeparam>
+        /// <typeparam name="TReturn">返回数据实体</typeparam>
+        /// <param name="map">委托-两个表数据逻辑处理</param>
+        /// <param name="sql">sql语句</param>
+        /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+        /// <param name="commandType"> 命令类型 </param>
+        /// <param name="sortSql">排序语句</param>
+        /// <param name="splitOn">分割两表数据的列名称</param>
+        /// <param name="buffered">是否缓存</param>
+        /// <param name="timeout">过期时间（秒）</param>
+        /// <returns></returns>
+        public static TReturn QuerySingle<TFirst, TSecond, TReturn>(Func<TFirst, TSecond, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, int? timeout = null)
+            where TFirst : class
+            where TSecond : class
+            where TReturn : class
+        {
+            using (var conn = DbProvider.CreateConnection())
+            {
+                return DbProvider.QuerySingle<TFirst, TSecond, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, null, timeout);
+            }
+        }
+
+        /// <summary>
+        /// 连表查询单个实体(3)
+        /// </summary>
+        /// <typeparam name="TFirst">数据实体</typeparam>
+        /// <typeparam name="TSecond">数据实体</typeparam>
+        /// <typeparam name="TThird">数据实体</typeparam>
+        /// <typeparam name="TReturn">返回数据实体</typeparam>
+        /// <param name="map">委托-两个表数据逻辑处理</param>
+        /// <param name="sql">sql语句</param>
+        /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+        /// <param name="commandType"> 命令类型 </param>
+        /// <param name="sortSql">排序语句</param>
+        /// <param name="splitOn">分割两表数据的列名称</param>
+        /// <param name="buffered">是否缓存</param>
+        /// <param name="timeout">过期时间（秒）</param>
+        /// <returns></returns>
+        public static TReturn QuerySingle<TFirst, TSecond, TThird, TReturn>(Func<TFirst, TSecond, TThird, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, int? timeout = null)
+            where TFirst : class
+            where TSecond : class
+            where TThird : class
+            where TReturn : class
+        {
+            using (var conn = DbProvider.CreateConnection())
+            {
+                return DbProvider.QuerySingle<TFirst, TSecond, TThird, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, null, timeout);
+            }
+        }
+
+        /// <summary>
+        /// 连表查询单个实体(4)
+        /// </summary>
+        /// <typeparam name="TFirst">数据实体</typeparam>
+        /// <typeparam name="TSecond">数据实体</typeparam>
+        /// <typeparam name="TThird">数据实体</typeparam>
+        /// <typeparam name="TFourth">数据实体</typeparam>
+        /// <typeparam name="TReturn">返回数据实体</typeparam>
+        /// <param name="map">委托-两个表数据逻辑处理</param>
+        /// <param name="sql">sql语句</param>
+        /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+        /// <param name="commandType"> 命令类型 </param>
+        /// <param name="sortSql">排序语句</param>
+        /// <param name="splitOn">分割两表数据的列名称</param>
+        /// <param name="buffered">是否缓存</param>
+        /// <param name="timeout">过期时间（秒）</param>
+        /// <returns></returns>
+        public static TReturn QuerySingle<TFirst, TSecond, TThird, TFourth, TReturn>(Func<TFirst, TSecond, TThird, TFourth, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, int? timeout = null)
+            where TFirst : class
+            where TSecond : class
+            where TThird : class
+            where TFourth : class
+            where TReturn : class
+        {
+            using (var conn = DbProvider.CreateConnection())
+            {
+                return DbProvider.QuerySingle<TFirst, TSecond, TThird, TFourth, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, null, timeout);
+            }
+        }
+
+        /// <summary>
+        /// 连表查询单个实体(5)
+        /// </summary>
+        /// <typeparam name="TFirst">数据实体</typeparam>
+        /// <typeparam name="TSecond">数据实体</typeparam>
+        /// <typeparam name="TThird">数据实体</typeparam>
+        /// <typeparam name="TFourth">数据实体</typeparam>
+        /// <typeparam name="TFifth">数据实体</typeparam>
+        /// <typeparam name="TReturn">返回数据实体</typeparam>
+        /// <param name="map">委托-两个表数据逻辑处理</param>
+        /// <param name="sql">sql语句</param>
+        /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+        /// <param name="commandType"> 命令类型 </param>
+        /// <param name="sortSql">排序语句</param>
+        /// <param name="splitOn">分割两表数据的列名称</param>
+        /// <param name="buffered">是否缓存</param>
+        /// <param name="timeout">过期时间（秒）</param>
+        /// <returns></returns>
+        public static TReturn QuerySingle<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(Func<TFirst, TSecond, TThird, TFourth, TFifth, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, int? timeout = null)
+            where TFirst : class
+            where TSecond : class
+            where TThird : class
+            where TFourth : class
+            where TFifth : class
+            where TReturn : class
+        {
+            using (var conn = DbProvider.CreateConnection())
+            {
+                return DbProvider.QuerySingle<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, null, timeout);
+            }
+        }
+
+        /// <summary>
         /// 查询列表(多个model)
         /// </summary>
         /// <typeparam name="T">数据实体</typeparam>
@@ -75,12 +192,128 @@ namespace UnitTest
         /// <param name="buffered">是否缓存</param>
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
-        public static List<T> QueryList<T>(string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, int? timeout = null)
+        public static IEnumerable<T> QueryList<T>(string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, int? timeout = null)
             where T : class
         {
             using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
             {
                 return DbProvider.QueryList<T>(conn, sql, param, commandType, sortSql, buffered, null, timeout);
+            }
+        }
+
+        /// <summary>
+        /// 连表查询列表(2)
+        /// </summary>
+        /// <typeparam name="TFirst">数据实体</typeparam>
+        /// <typeparam name="TSecond">数据实体</typeparam>
+        /// <typeparam name="TReturn">返回数据实体</typeparam>
+        /// <param name="map">委托-两个表数据逻辑处理</param>
+        /// <param name="sql">sql语句</param>
+        /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+        /// <param name="commandType"> 命令类型 </param>
+        /// <param name="sortSql">排序语句</param>
+        /// <param name="splitOn">分割两表数据的列名称</param>
+        /// <param name="buffered">是否缓存</param>
+        /// <param name="timeout">过期时间（秒）</param>
+        /// <returns></returns>
+        public static IEnumerable<TReturn> QueryList<TFirst, TSecond, TReturn>(Func<TFirst, TSecond, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, int? timeout = null)
+            where TFirst : class
+            where TSecond : class
+            where TReturn : class
+        {
+            using (var conn = DbProvider.CreateConnection())
+            {
+                return DbProvider.QueryList<TFirst, TSecond, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, null, timeout);
+            }
+        }
+
+        /// <summary>
+        /// 连表查询列表(3)
+        /// </summary>
+        /// <typeparam name="TFirst">数据实体</typeparam>
+        /// <typeparam name="TSecond">数据实体</typeparam>
+        /// <typeparam name="TThird">数据实体</typeparam>
+        /// <typeparam name="TReturn">返回数据实体</typeparam>
+        /// <param name="map">委托-两个表数据逻辑处理</param>
+        /// <param name="sql">sql语句</param>
+        /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+        /// <param name="commandType"> 命令类型 </param>
+        /// <param name="sortSql">排序语句</param>
+        /// <param name="splitOn">分割两表数据的列名称</param>
+        /// <param name="buffered">是否缓存</param>
+        /// <param name="timeout">过期时间（秒）</param>
+        /// <returns></returns>
+        public static IEnumerable<TReturn> QueryList<TFirst, TSecond, TThird, TReturn>(Func<TFirst, TSecond, TThird, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, int? timeout = null)
+            where TFirst : class
+            where TSecond : class
+            where TThird : class
+            where TReturn : class
+        {
+            using (var conn = DbProvider.CreateConnection())
+            {
+                return DbProvider.QueryList<TFirst, TSecond, TThird, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, null, timeout);
+            }
+        }
+
+        /// <summary>
+        /// 连表查询列表(4)
+        /// </summary>
+        /// <typeparam name="TFirst">数据实体</typeparam>
+        /// <typeparam name="TSecond">数据实体</typeparam>
+        /// <typeparam name="TThird">数据实体</typeparam>
+        /// <typeparam name="TFourth">数据实体</typeparam>
+        /// <typeparam name="TReturn">返回数据实体</typeparam>
+        /// <param name="map">委托-两个表数据逻辑处理</param>
+        /// <param name="sql">sql语句</param>
+        /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+        /// <param name="commandType"> 命令类型 </param>
+        /// <param name="sortSql">排序语句</param>
+        /// <param name="splitOn">分割两表数据的列名称</param>
+        /// <param name="buffered">是否缓存</param>
+        /// <param name="timeout">过期时间（秒）</param>
+        /// <returns></returns>
+        public static IEnumerable<TReturn> QueryList<TFirst, TSecond, TThird, TFourth, TReturn>(Func<TFirst, TSecond, TThird, TFourth, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, int? timeout = null)
+            where TFirst : class
+            where TSecond : class
+            where TThird : class
+            where TFourth : class
+            where TReturn : class
+        {
+            using (var conn = DbProvider.CreateConnection())
+            {
+                return DbProvider.QueryList<TFirst, TSecond, TThird, TFourth, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, null, timeout);
+            }
+        }
+
+        /// <summary>
+        /// 连表查询列表(5)
+        /// </summary>
+        /// <typeparam name="TFirst">数据实体</typeparam>
+        /// <typeparam name="TSecond">数据实体</typeparam>
+        /// <typeparam name="TThird">数据实体</typeparam>
+        /// <typeparam name="TFourth">数据实体</typeparam>
+        /// <typeparam name="TFifth">数据实体</typeparam>
+        /// <typeparam name="TReturn">返回数据实体</typeparam>
+        /// <param name="map">委托-两个表数据逻辑处理</param>
+        /// <param name="sql">sql语句</param>
+        /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+        /// <param name="commandType"> 命令类型 </param>
+        /// <param name="sortSql">排序语句</param>
+        /// <param name="splitOn">分割两表数据的列名称</param>
+        /// <param name="buffered">是否缓存</param>
+        /// <param name="timeout">过期时间（秒）</param>
+        /// <returns></returns>
+        public static IEnumerable<TReturn> QueryList<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(Func<TFirst, TSecond, TThird, TFourth, TFifth, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, int? timeout = null)
+            where TFirst : class
+            where TSecond : class
+            where TThird : class
+            where TFourth : class
+            where TFifth : class
+            where TReturn : class
+        {
+            using (var conn = DbProvider.CreateConnection())
+            {
+                return DbProvider.QueryList<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, null, timeout);
             }
         }
 
@@ -107,7 +340,7 @@ namespace UnitTest
         }
 
         /// <summary>
-        /// 分页查询列表(1) - limi分页
+        /// 分页查询列表(1) - sql分页
         /// </summary>
         /// <typeparam name="T">数据实体</typeparam>
         /// <param name="pageNumber">当前页</param>
@@ -171,6 +404,15 @@ namespace UnitTest
             return DbProvider.ExecuteSqlTran(commands);
         }
 
+        /// <summary>
+        /// 执行事务
+        /// </summary>
+        /// <param name="runFun">执行语句</param>
+        /// <returns></returns>
+        public static bool ExecuteSqlTran(Func<IDbConnection, IDbTransaction, bool> runFun)
+        {
+            return DbProvider.ExecuteSqlTran(runFun);
+        }
         #endregion
     }
 }
