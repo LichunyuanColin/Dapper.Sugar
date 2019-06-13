@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
@@ -39,9 +40,9 @@ namespace Dapper.Sugar
         public ISqlBuilder Builder { get; }
 
         /// <summary>
-        /// 
+        /// 获取数据库访问支持
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">ConnectionStrings配置名称</param>
         /// <returns></returns>
         public static DbProvider CreateDbProvide(string name)
         {
@@ -59,7 +60,7 @@ namespace Dapper.Sugar
         /// <summary>
         /// 创建连接
         /// </summary>
-        /// <param name="authority"></param>
+        /// <param name="authority">访问权限</param>
         /// <returns></returns>
         public DbConnection CreateConnection(DataBaseAuthority? authority = null)
         {
@@ -94,7 +95,44 @@ namespace Dapper.Sugar
         /// <summary>
         /// 创建连接
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="authority">访问权限</param>
+        /// <returns></returns>
+        public DbConnection CreateOpenConnection(DataBaseAuthority? authority = null)
+        {
+            var conn = Factory.CreateConnection();
+
+            if (authority == DataBaseAuthority.Read)
+            {
+                if (Connection.ReadList.Keys.Count == 1)
+                {
+                    conn.ConnectionString = Connection.ReadList[Connection.WriteList.Keys.First()];
+                }
+                else
+                {
+                    conn.ConnectionString = Connection.ReadList[Connection.WriteList.Keys.ToList()[new Random().Next(0, Connection.ReadList.Count)]];
+                }
+            }
+            else
+            {
+                if (Connection.WriteList.Keys.Count == 1)
+                {
+                    conn.ConnectionString = Connection.WriteList[Connection.WriteList.Keys.First()];
+                }
+                else
+                {
+                    conn.ConnectionString = Connection.WriteList[Connection.WriteList.Keys.ToList()[new Random().Next(0, Connection.WriteList.Count)]];
+                }
+            }
+
+            conn.Open();
+
+            return conn;
+        }
+
+        /// <summary>
+        /// 创建连接
+        /// </summary>
+        /// <param name="name">connectionString配置名称</param>
         /// <returns></returns>
         public DbConnection CreateConnection(string name)
         {
@@ -111,6 +149,33 @@ namespace Dapper.Sugar
             {
                 throw new ArgumentException($"缺少对应name的connectionString配置");
             }
+            return conn;
+        }
+
+
+        /// <summary>
+        /// 创建连接
+        /// </summary>
+        /// <param name="name">connectionString配置名称</param>
+        /// <returns></returns>
+        public DbConnection CreateOpenConnection(string name)
+        {
+            var conn = Factory.CreateConnection();
+            if (Connection.ReadList.ContainsKey(name))
+            {
+                conn.ConnectionString = Connection.ReadList[name];
+            }
+            else if (Connection.WriteList.ContainsKey(name))
+            {
+                conn.ConnectionString = Connection.WriteList[name];
+            }
+            else
+            {
+                throw new ArgumentException($"缺少对应name的connectionString配置");
+            }
+
+            conn.Open();
+
             return conn;
         }
 

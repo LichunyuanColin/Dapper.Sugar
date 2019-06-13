@@ -29,10 +29,9 @@ namespace Dapper.Sugar
         {
             try
             {
-                if (conn.State == ConnectionState.Closed)
-                    conn.Open();
                 if (Config.Instance.LogSql)//写入日志
                     Log.InfoSql(sql, param);
+                OpenConnection(conn);
                 return conn.Query<T>(sql, param, transaction, buffered, timeout, commandType);
             }
             catch (Exception ex)
@@ -61,10 +60,9 @@ namespace Dapper.Sugar
         {
             try
             {
-                if (conn.State == ConnectionState.Closed)
-                    conn.Open();
                 if (Config.Instance.LogSql)//写入日志
                     Log.InfoSql(sql, param);
+                OpenConnection(conn);
                 return conn.ExecuteScalar<T>(sql, param, transaction, timeout, commandType);
             }
             catch (Exception ex)
@@ -113,10 +111,9 @@ namespace Dapper.Sugar
 
             try
             {
-                if (conn.State == ConnectionState.Closed)
-                    conn.Open();
                 if (Config.Instance.LogSql)//写入日志
                     Log.InfoSql(sql, param);
+                OpenConnection(conn);
                 return conn.Query<TFirst, TSecond, TReturn>(SqlText, map, param, transaction, buffered, splitOn ?? SPLITON, timeout, CommandType);
             }
             catch (Exception ex)
@@ -156,10 +153,9 @@ namespace Dapper.Sugar
 
             try
             {
-                if (conn.State == ConnectionState.Closed)
-                    conn.Open();
                 if (Config.Instance.LogSql)//写入日志
                     Log.InfoSql(sql, param);
+                OpenConnection(conn);
                 return conn.Query<TFirst, TSecond, TThird, TReturn>(SqlText, map, param, transaction, buffered, splitOn ?? SPLITON, timeout, CommandType);
             }
             catch (Exception ex)
@@ -201,10 +197,9 @@ namespace Dapper.Sugar
 
             try
             {
-                if (conn.State == ConnectionState.Closed)
-                    conn.Open();
                 if (Config.Instance.LogSql)//写入日志
                     Log.InfoSql(sql, param);
+                OpenConnection(conn);
                 return conn.Query<TFirst, TSecond, TThird, TFourth, TReturn>(SqlText, map, param, transaction, buffered, splitOn ?? SPLITON, timeout, CommandType);
             }
             catch (Exception ex)
@@ -248,10 +243,9 @@ namespace Dapper.Sugar
 
             try
             {
-                if (conn.State == ConnectionState.Closed)
-                    conn.Open();
                 if (Config.Instance.LogSql)//写入日志
                     Log.InfoSql(sql, param);
+                OpenConnection(conn);
                 return conn.Query<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(SqlText, map, param, transaction, buffered, splitOn ?? SPLITON, timeout, CommandType);
             }
             catch (Exception ex)
@@ -291,6 +285,22 @@ namespace Dapper.Sugar
         #endregion
 
         #region 工具
+
+        /// <summary>
+        /// 打开连接
+        /// </summary>
+        /// <param name="conn"></param>
+        private void OpenConnection(IDbConnection conn)
+        {
+            if (conn.State == ConnectionState.Closed)
+                conn.Open();
+            else if (conn.State == ConnectionState.Broken)
+            {
+                conn.Close();
+                conn.Open();
+            }
+        }
+
 
         /// <summary>
         /// 分页集合
@@ -1079,14 +1089,12 @@ namespace Dapper.Sugar
 
             try
             {
-                if (conn.State == ConnectionState.Closed)
-                    conn.Open();
                 if (Config.Instance.LogSql)//写入日志
                     if (command.CommandType == SugarCommandType.StoredProcedure)
                         Log.InfoProcedure(command.SqlText, command.Param);
                     else
                         Log.InfoSql(command.SqlText, command.Param);
-
+                OpenConnection(conn);
                 return conn.Execute(command.SqlText, command.Param, transaction, command.Timeout,
                     command.CommandType == SugarCommandType.StoredProcedure ? CommandType.StoredProcedure : CommandType.Text);
             }
@@ -1119,14 +1127,12 @@ namespace Dapper.Sugar
 
         //    try
         //    {
-        //        if (conn.State == ConnectionState.Closed)
-        //            conn.Open();
         //        if (Config.Instance.LogSql)//写入日志
         //            if (command.CommandType == SugarCommandType.StoredProcedure)
         //                Log.InfoProcedure(command.SqlText, command.Param);
         //            else
         //                Log.InfoSql(command.SqlText, command.Param);
-
+        //        OpenConnection(conn);
         //        return conn.ExecuteAsync(command.SqlText, command.Param, transaction, command.Timeout,
         //            command.CommandType == SugarCommandType.StoredProcedure ? CommandType.StoredProcedure : CommandType.Text);
         //    }
