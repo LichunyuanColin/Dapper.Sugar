@@ -1,5 +1,9 @@
 ﻿using log4net;
+using log4net.Appender;
 using log4net.Config;
+using log4net.Core;
+using log4net.Layout;
+using log4net.Repository.Hierarchy;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,19 +18,72 @@ namespace Dapper.Sugar
     /// </summary>
     class Log
     {
-        private static readonly ILog logInfo = null;
-        private static readonly ILog logError = null;
+        private static readonly ILog logger = null;
+        //private static readonly ILog logError = null;
 
         static Log()
         {
-            var repositoryInfo = LogManager.CreateRepository("InfoLogging");
-            var repositoryError = LogManager.CreateRepository("ErrorLogging");
+            var repository = LogManager.CreateRepository("");
+
             var file = new FileInfo("dappersugar.config");
-            //log4net从log4net.config文件中读取配置信息
-            XmlConfigurator.Configure(repositoryInfo, file);
-            XmlConfigurator.Configure(repositoryError, file);
-            logInfo = LogManager.GetLogger(repositoryInfo.Name, "");
-            logError = LogManager.GetLogger(repositoryError.Name, "");
+
+            if (file.Exists)
+            {
+                //log4net从log4net.config文件中读取配置信息
+                XmlConfigurator.Configure(repository, file);
+            }
+            else
+            {
+                var defaultAppender = new RollingFileAppender()
+                {
+                    Name = "DefaultAppender",
+                    File = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "DapperSugar", "Sql"),
+                    LockingModel = new FileAppender.MinimalLock(),
+                    DatePattern = "yyyy-MM-dd\".txt\"",
+                    StaticLogFileName = false,
+                    AppendToFile = true,
+                    RollingStyle = RollingFileAppender.RollingMode.Date,
+                    Layout = new PatternLayout()
+                    {
+                        ConversionPattern = "%date [%t]%-5p %c - %m %n %exception %n",
+                    },
+                    //Threshold = Level.Debug,
+                };
+
+                defaultAppender.AddFilter(new log4net.Filter.LevelRangeFilter()
+                {
+                    LevelMax = Level.Warn,
+                    LevelMin = Level.Debug
+                });
+
+                var errorAppender = new RollingFileAppender()
+                {
+                    Name = "ErrorAppender",
+                    File = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "DapperSugar", "Error"),
+                    LockingModel = new FileAppender.MinimalLock(),
+                    DatePattern = "yyyy-MM-dd\".txt\"",
+                    StaticLogFileName = false,
+                    AppendToFile = true,
+                    RollingStyle = RollingFileAppender.RollingMode.Date,
+                    Layout = new PatternLayout()
+                    {
+                        ConversionPattern = "%date [%t]%-5p %c - %m %n %exception %n",
+                    },
+                    //Threshold = Level.Error,
+                };
+
+                errorAppender.AddFilter(new log4net.Filter.LevelRangeFilter()
+                {
+                    LevelMax = Level.Fatal,
+                    LevelMin = Level.Error
+                });
+
+                repository.Threshold = Level.All;
+
+                BasicConfigurator.Configure(repository, defaultAppender, errorAppender);
+            }
+
+            logger = LogManager.GetLogger(repository.Name, "");
         }
 
         /// <summary>
@@ -36,7 +93,7 @@ namespace Dapper.Sugar
         /// <param name="param"></param>
         public static void InfoSql(string sql, object param = null)
         {
-            logInfo.Info($"sql：[ {sql} ] param：[ {JsonConvert.SerializeObject(param)} ]");
+            logger.Info($"sql：[ {sql} ] param：[ {JsonConvert.SerializeObject(param)} ]");
         }
 
         /// <summary>
@@ -46,7 +103,7 @@ namespace Dapper.Sugar
         /// <param name="param"></param>
         public static void InfoProcedure(string sql, object param = null)
         {
-            logInfo.Info($"store procedure：[ {sql} ] param：[ {JsonConvert.SerializeObject(param)} ]");
+            logger.Info($"store procedure：[ {sql} ] param：[ {JsonConvert.SerializeObject(param)} ]");
         }
 
         /// <summary>
@@ -57,9 +114,9 @@ namespace Dapper.Sugar
         public static void Error(string content, Exception ex)
         {
             if (ex == null)
-                logError.Info(content);
+                logger.Error(content);
             else
-                logError.Info(content, ex);
+                logger.Error(content, ex);
         }
 
         /// <summary>
@@ -71,9 +128,9 @@ namespace Dapper.Sugar
         public static void ErrorSql(string sql, object param, Exception ex)
         {
             if (ex == null)
-                logError.Info($"sql：[ {sql} ] param：[ {JsonConvert.SerializeObject(param)} ]");
+                logger.Error($"sql：[ {sql} ] param：[ {JsonConvert.SerializeObject(param)} ]");
             else
-                logError.Info($"sql：[ {sql} ] param：[ {JsonConvert.SerializeObject(param)} ]", ex);
+                logger.Error($"sql：[ {sql} ] param：[ {JsonConvert.SerializeObject(param)} ]", ex);
         }
 
         /// <summary>
@@ -85,9 +142,9 @@ namespace Dapper.Sugar
         public static void ErrorProcedure(string sql, object param, Exception ex)
         {
             if (ex == null)
-                logError.Info($"store procedure：[ {sql} ] param：[ {JsonConvert.SerializeObject(param)} ]");
+                logger.Error($"store procedure：[ {sql} ] param：[ {JsonConvert.SerializeObject(param)} ]");
             else
-                logError.Info($"store procedure：[ {sql} ] param：[ {JsonConvert.SerializeObject(param)} ]", ex);
+                logger.Error($"store procedure：[ {sql} ] param：[ {JsonConvert.SerializeObject(param)} ]", ex);
         }
 
         ///// <summary>

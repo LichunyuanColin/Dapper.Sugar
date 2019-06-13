@@ -1,1 +1,154 @@
 # Dapper.Sugar
+
+[TOC]
+
+#1. 介绍
+Dapper.Sugar基于[Dapper](https://github.com/StackExchange/Dapper "微型ORMDapper")进行封装，包含实体映射sql语句、基本查询条件映射、基本CRUD操作
+
+  
+
+#2. 参数说明
+## 2.1 动态生成语句类型
+1. `SugarCommandType.Text`
+
+   Sql文本命令，仅dapper对数组做处理，[见例1](#例1：Text Sql文本命令)
+
+2. `SugarCommandType.QueryTableDirect`
+
+   查询操作，sql文本为查询的表名，根据参数（param）动态生成select命令，[见例2](#例2：QueryTableDirect 查询操作)
+
+
+3. `SugarCommandType.QuerySelectSql`
+
+   查询操作，sql文本为查询部分，条件由参数（param）动态生成，[见例3](#例3：QuerySelectSql 查询操作)
+
+4. `SugarCommandType.AddTableDirect`
+
+   新增操作，sql文本为表名，根据参数（param）动态生成insert命令，[见例4](#例4：AddTableDirect 新增操作)
+
+5. `SugarCommandType.UpdateTableDirect`
+
+   修改操作，sql文本为表名，根据参数（param）动态生成update命令，[见例5](#例5：UpdateTableDirect 修改操作)
+
+6. `SugarCommandType.StoredProcedure`
+
+   存储过程，sql文本为存储过程名称，[见例6](#例6：StoredProcedure 存储过程)
+
+
+##2.2 条件映射说明
+
+1. 参数可为匿名对象或实体（class）对象
+
+2. 任意类型属性为null时，动态生成语句时会忽略该属性，并不会添加进条件
+
+3. 参数对象属性名：[AliasName_FieldName_OperateName]
+  3.1 OperateName为比较操作符，仅限以下选项：
+
+   * `_gt`：>(大于：greater than)
+   * `_ge`：>=(大于等于：greater equal)
+   * `_lt`：<(小于：less than)
+   * `_le`：<=(小于等于：less equal)
+   * `_lk`：like(模糊查询：like)
+   * `_ue`：!=(不等于：unequal)
+
+  3.2 AliasName为表的别名，目前仅限单个字符（a-z，A-Z）
+
+  3.3 FieldName为属性名称，需要对应数据库字段名称
+
+  3.4 OperateName和AliasName可分开或合并使用
+
+
+
+
+#3. 实例
+## 例1：Text Sql文本命令
+
+查询操作，对于条件in语法可以直接写成数组
+同样sql命令也可以是insert、update、delete、stored procedure
+
+``` c#
+DbHelp.QuerySingle<EmployeeModel>("select * from employee where Account=@Account and Status in @Status;", new { Account = "songjiang", Status = new int[] { 10, 5 } }, SugarCommandType.Text);
+
+DbHelp.QuerySingle<EmployeeModel>("select * from employee where Account=@Account and Status in @Status;", new { Account = "songjiang", Status = new List<int> { 10, 5 } }, SugarCommandType.Text);
+```
+sql语句 ：
+``` mysql
+select * from employee where Account=@Account and Status in (@Status1,@Status2);
+```
+
+
+```c#
+//新增
+DbHelp.ExecuteSql("insert into employee (Account,Name,Age) values (@Account,@Name,@Age);", new { Account = "test",Name="测试", Age = 50 }, SugarCommandType.Text);
+//调用存储
+DbHelp.ExecuteSql("call update_employee(@p_id);", new { p_id = 1 }, SugarCommandType.Text);
+```
+
+
+
+## 例2：QueryTableDirect 查询操作
+
+根据param生成where条件，sortSql可追加sql语句
+
+```c#
+DbHelp.QueryList<EmployeeModel>("employee", new { Status_ge = 5, Age_gt = 48 }, SugarCommandType.QueryTableDirect, "order by id");
+```
+sql语句
+```mysql
+select * from employee where Status>=@Status_ge and Age>@Age_gt order by id;
+```
+
+
+
+
+## 例3：QuerySelectSql 查询操作
+
+查询语句，不含条件，根据param生成where条件
+
+```c#
+DbHelp.QueryPagingList<EmployeeModel>(0, 10, "select a.*,b.Alias from employee a left join employee_alias b on a.Id=b.EmployeeId", new { a_Account = "songjiang", a_Age_gt = 45, Status = new int[] { 10, 5 } }, SugarCommandType.QuerySelectSql);
+```
+
+sql语句
+
+```mysql
+select a.*,b.Alias from employee a left join employee_alias b on a.Id=b.EmployeeId where a.Account=@a_Account and a.Age>@a_Age_gt and Status in (@Status1,@Status2);
+```
+
+
+
+## 例4：AddTableDirect 新增操作
+
+```c#
+DbHelp.ExecuteSql("employee", new { Account="ceshi", Name = "测试", Age = 20 }, SugarCommandType.AddTableDirect);
+```
+sql语句
+```mysql
+insert into employee(Account,Name,Age) values(@Account,@Name,@Age);
+```
+
+
+
+## 例5：UpdateTableDirect 修改操作
+
+```c#
+DbHelp.ExecuteSql("employee", new { Id = 1, Name = "宋江", Age = 50 }, SugarCommandType.UpdateTableDirect);
+```
+sql语句
+```mysql
+update employee set Name=@Name,Age=@Age where Id=@Id;
+```
+
+
+
+## 例6：StoredProcedure 存储过程
+
+存储过程，根据存储名称调用存储过程
+```c#
+DbHelp.ExecuteSql("update_employee", new { p_id = 1}, SugarCommandType.StoredProcedure);
+```
+
+
+
+
+
