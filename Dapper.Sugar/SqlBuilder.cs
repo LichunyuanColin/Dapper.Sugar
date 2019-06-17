@@ -95,7 +95,7 @@ namespace Dapper.Sugar
         string GetParamSql(FormateTypeCalculate type, string fieldName);
         string GetParamSql(FormateTypeCalculate type, string fieldName, string paramName);
         string GetTableName(string tableName);
-        string GetUpdateSql(string tableName, object param, string tableKey = "Id");
+        string GetUpdateSql(string tableName, object param, string tableKey = "ID");
         string GetAutoIncrement(string fieldName);
     }
 
@@ -645,7 +645,7 @@ namespace Dapper.Sugar
         /// <returns></returns>
         public override string GetAutoIncrement(string fieldName = TABLE_KEY)
         {
-            return ";Select Last_Insert_Id()";
+            return ";Select Last_Insert_ID()";
         }
     }
 

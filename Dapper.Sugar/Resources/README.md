@@ -106,13 +106,13 @@ select * from employee where Status>=@Status_ge and Age>@Age_gt order by id;
 查询语句，不含条件，根据param生成where条件
 
 ```c#
-DbHelp.QueryPagingList<EmployeeModel>(0, 10, "select a.*,b.Alias from employee a left join employee_alias b on a.Id=b.EmployeeId", new { a_Account = "songjiang", a_Age_gt = 45, Status = new int[] { 10, 5 } }, SugarCommandType.QuerySelectSql);
+DbHelp.QueryPagingList<EmployeeModel>(0, 10, "select a.*,b.Alias from employee a left join employee_alias b on a.ID=b.EmployeeID", new { a_Account = "songjiang", a_Age_gt = 45, Status = new int[] { 10, 5 } }, SugarCommandType.QuerySelectSql);
 ```
 
 sql语句
 
 ```mysql
-select a.*,b.Alias from employee a left join employee_alias b on a.Id=b.EmployeeId where a.Account=@a_Account and a.Age>@a_Age_gt and Status in (@Status1,@Status2);
+select a.*,b.Alias from employee a left join employee_alias b on a.ID=b.EmployeeID where a.Account=@a_Account and a.Age>@a_Age_gt and Status in (@Status1,@Status2);
 ```
 
 
@@ -132,11 +132,11 @@ insert into employee(Account,Name,Age) values(@Account,@Name,@Age);
 ## 例5：UpdateTableDirect 修改操作
 
 ```c#
-DbHelp.ExecuteSql("employee", new { Id = 1, Name = "宋江", Age = 50 }, SugarCommandType.UpdateTableDirect);
+DbHelp.ExecuteSql("employee", new { ID = 1, Name = "宋江", Age = 50 }, SugarCommandType.UpdateTableDirect);
 ```
 sql语句
 ```mysql
-update employee set Name=@Name,Age=@Age where Id=@Id;
+update employee set Name=@Name,Age=@Age where ID=@ID;
 ```
 
 
