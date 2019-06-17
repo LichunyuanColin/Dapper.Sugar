@@ -15,7 +15,6 @@ using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.
 }
 ```
 
-
 # 2. 参数说明
 ## 2.1 动态生成语句类型
 1. `SugarCommandType.Text`

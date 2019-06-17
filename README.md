@@ -2,12 +2,20 @@
 
 [TOC]
 
-#1. 介绍
+# 1. 介绍
 Dapper.Sugar基于[Dapper](https://github.com/StackExchange/Dapper "微型ORMDapper")进行封装，包含实体映射sql语句、基本查询条件映射、基本CRUD操作
 
-  
+基本查询
+``` c#
+// 创建连接
+using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
+{
+	// 执行语句
+	return DbProvider.QueryScalar<T>(conn, sql, param, commandType, sortSql, null, timeout);
+}
+```
 
-#2. 参数说明
+# 2. 参数说明
 ## 2.1 动态生成语句类型
 1. `SugarCommandType.Text`
 
@@ -67,21 +75,21 @@ Dapper.Sugar基于[Dapper](https://github.com/StackExchange/Dapper "微型ORMDapper"
 同样sql命令也可以是insert、update、delete、stored procedure
 
 ``` c#
-DbHelp.QuerySingle<EmployeeModel>("select * from employee where Account=@Account and Status in @Status;", new { Account = "songjiang", Status = new int[] { 10, 5 } }, SugarCommandType.Text);
+DbProvider.QuerySingle<EmployeeModel>("select * from employee where Account=@Account and Status in @Status;", new { Account = "songjiang", Status = new int[] { 10, 5 } }, SugarCommandType.Text);
 
-DbHelp.QuerySingle<EmployeeModel>("select * from employee where Account=@Account and Status in @Status;", new { Account = "songjiang", Status = new List<int> { 10, 5 } }, SugarCommandType.Text);
+DbProvider.QuerySingle<EmployeeModel>("select * from employee where Account=@Account and Status in @Status;", new { Account = "songjiang", Status = new List<int> { 10, 5 } }, SugarCommandType.Text);
 ```
 sql语句 ：
-``` mysql
+``` sql
 select * from employee where Account=@Account and Status in (@Status1,@Status2);
 ```
 
 
-```c#
+``` c#
 //新增
-DbHelp.ExecuteSql("insert into employee (Account,Name,Age) values (@Account,@Name,@Age);", new { Account = "test",Name="测试", Age = 50 }, SugarCommandType.Text);
+DbProvider.ExecuteSql("insert into employee (Account,Name,Age) values (@Account,@Name,@Age);", new { Account = "test",Name="测试", Age = 50 }, SugarCommandType.Text);
 //调用存储
-DbHelp.ExecuteSql("call update_employee(@p_id);", new { p_id = 1 }, SugarCommandType.Text);
+DbProvider.ExecuteSql("call update_employee(@p_id);", new { p_id = 1 }, SugarCommandType.Text);
 ```
 
 
@@ -90,11 +98,11 @@ DbHelp.ExecuteSql("call update_employee(@p_id);", new { p_id = 1 }, SugarCommand
 
 根据param生成where条件，sortSql可追加sql语句
 
-```c#
-DbHelp.QueryList<EmployeeModel>("employee", new { Status_ge = 5, Age_gt = 48 }, SugarCommandType.QueryTableDirect, "order by id");
+``` c#
+DbProvider.QueryList<EmployeeModel>("employee", new { Status_ge = 5, Age_gt = 48 }, SugarCommandType.QueryTableDirect, "order by id");
 ```
 sql语句
-```mysql
+``` sql
 select * from employee where Status>=@Status_ge and Age>@Age_gt order by id;
 ```
 
@@ -105,25 +113,25 @@ select * from employee where Status>=@Status_ge and Age>@Age_gt order by id;
 
 查询语句，不含条件，根据param生成where条件
 
-```c#
-DbHelp.QueryPagingList<EmployeeModel>(0, 10, "select a.*,b.Alias from employee a left join employee_alias b on a.Id=b.EmployeeId", new { a_Account = "songjiang", a_Age_gt = 45, Status = new int[] { 10, 5 } }, SugarCommandType.QuerySelectSql);
+``` c#
+DbProvider.QueryPagingList<EmployeeModel>(0, 10, "select a.*,b.Alias from employee a left join employee_alias b on a.ID=b.EmployeeID", new { a_Account = "songjiang", a_Age_gt = 45, Status = new int[] { 10, 5 } }, SugarCommandType.QuerySelectSql);
 ```
 
 sql语句
 
-```mysql
-select a.*,b.Alias from employee a left join employee_alias b on a.Id=b.EmployeeId where a.Account=@a_Account and a.Age>@a_Age_gt and Status in (@Status1,@Status2);
+``` sql
+select a.*,b.Alias from employee a left join employee_alias b on a.ID=b.EmployeeID where a.Account=@a_Account and a.Age>@a_Age_gt and Status in (@Status1,@Status2);
 ```
 
 
 
 ## 例4：AddTableDirect 新增操作
 
-```c#
-DbHelp.ExecuteSql("employee", new { Account="ceshi", Name = "测试", Age = 20 }, SugarCommandType.AddTableDirect);
+``` c#
+DbProvider.ExecuteSql("employee", new { Account="ceshi", Name = "测试", Age = 20 }, SugarCommandType.AddTableDirect);
 ```
 sql语句
-```mysql
+``` sql
 insert into employee(Account,Name,Age) values(@Account,@Name,@Age);
 ```
 
@@ -131,12 +139,12 @@ insert into employee(Account,Name,Age) values(@Account,@Name,@Age);
 
 ## 例5：UpdateTableDirect 修改操作
 
-```c#
-DbHelp.ExecuteSql("employee", new { Id = 1, Name = "宋江", Age = 50 }, SugarCommandType.UpdateTableDirect);
+``` c#
+DbProvider.ExecuteSql("employee", new { ID = 1, Name = "宋江", Age = 50 }, SugarCommandType.UpdateTableDirect);
 ```
 sql语句
-```mysql
-update employee set Name=@Name,Age=@Age where Id=@Id;
+``` sql
+update employee set Name=@Name,Age=@Age where ID=@ID;
 ```
 
 
@@ -144,11 +152,251 @@ update employee set Name=@Name,Age=@Age where Id=@Id;
 ## 例6：StoredProcedure 存储过程
 
 存储过程，根据存储名称调用存储过程
-```c#
-DbHelp.ExecuteSql("update_employee", new { p_id = 1}, SugarCommandType.StoredProcedure);
+``` c#
+DbProvider.ExecuteSql("update_employee", new { p_id = 1}, SugarCommandType.StoredProcedure);
 ```
 
+# 3.配置说明
 
+## 3.1 .Net Core
+数据库连接配置区分.Net Core、.Net Framework，另外配置也区分简化版（单库）、完整版（多库）配置，完整版配置优先级高于简化版
 
+单库配置
+``` json
+{
+  "DapperSugar": {
+    "debug": true, // 调试模式，sql执行异常只有调试模式会抛出，非调试模式会截取异常
+    "logsql": true,	// 记录sql语句，执行异常始终会记录日志
+    "name": "mysql", // 数据库名称
+    "type": "MySql", // MySql, SqlServer, PostgreSql, Oracle, SQLite
+    "connectionString": "Server=localhost;Database=test;Uid=root;Pwd=aikCaBRQ#hL;CharSet=utf8mb4",
+  }
+}
+```
+多库配置
+``` json
+{
+  "DapperSugar": {
+    "debug": true, // 调试模式，sql执行异常只有调试模式会抛出，非调试模式会截取异常
+    "logsql": true, // 记录sql语句，执行异常始终会记录日志
+    "connectionStrings": [
+      {
+        "name": "mysql", // 数据库名称
+        "type": "MySql", // MySql, SqlServer, PostgreSql, Oracle, SQLite
+        "list": [
+          {
+            "name": "default", // 分库名称
+            "authority": "RW", //R：读 W：写 RW：读写
+            "connectionString": "Server=localhost;Database=test;Uid=root;Pwd=aikCaBRQ#hL;CharSet=utf8mb4"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+## 3.2 .Net Framework
+单库配置
+``` xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <configSections>
+    <section name="DapperSugar" type="Dapper.Sugar.DapperSugarSection, Dapper.Sugar" />
+  </configSections>
+  <DapperSugar debug="true" logsql="true" name="mysql" type="MySql" connectionString="Server=localhost;Database=test;Uid=root;Pwd=aikCaBRQ#hL;CharSet=utf8mb4">
+  </DapperSugar>
+</configuration>
+```
+多库配置
+``` xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <configSections>
+    <section name="DapperSugar" type="Dapper.Sugar.DapperSugarSection, Dapper.Sugar" />
+  </configSections>
+  <DapperSugar debug="true" logsql="true">
+    <connectionStrings>
+      <add name="mysql" type="MySql">
+        <list>
+          <add name="default" authority="RW" connectionString="Server=localhost;Database=test;Uid=root;Pwd=aikCaBRQ#hL;CharSet=utf8mb4" />
+        </list>
+      </add>
+    </connectionStrings>
+  </DapperSugar>
+</configuration>
+```
+
+# 4.实例
+``` c#
+public class DbHelp
+{
+    public static DbProvider DbProvider = DbProvider.CreateDbProvide("mysql");
+
+    #region 查询
+
+    /// <summary>
+    /// 查询（以Dataset返回结果的）
+    /// </summary>
+    /// <param name="sql">sql语句</param>
+    /// <param name="parms">参数</param>
+    /// <returns>失败返回null</returns>
+    public static DataSet Query(string sql, params DbParameter[] parms)
+    {
+        using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
+        {
+            return DbProvider.Query(sql, parms);
+        }
+    }
+
+    /// <summary>
+    /// 查询单个数值（如存在多个取首行首列）
+    /// </summary>
+    /// <typeparam name="T">数据实体</typeparam>
+    /// <param name="sql">sql语句</param>
+    /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+    /// <param name="commandType">命令类型</param>
+    /// <param name="sortSql">排序语句</param>
+    /// <param name="timeout"></param>
+    /// <returns></returns>
+    public static T QueryScalar<T>(string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, int? timeout = null)
+        where T : struct
+    {
+        using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
+        {
+            return DbProvider.QueryScalar<T>(conn, sql, param, commandType, sortSql, null, timeout);
+        }
+    }
+
+    /// <summary>
+    /// 查询单个实体
+    /// </summary>
+    /// <typeparam name="T">数据实体</typeparam>
+    /// <param name="sql">sql语句</param>
+    /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+    /// <param name="commandType">命令类型</param>
+    /// <param name="sortSql">排序语句</param>
+    /// <param name="buffered">是否缓存</param>
+    /// <param name="timeout">过期时间（秒）</param>
+    /// <returns></returns>
+    public static T QuerySingle<T>(string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, int? timeout = null)
+        where T : class
+    {
+        using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
+        {
+            return DbProvider.QuerySingle<T>(conn, sql, param, commandType, sortSql, buffered, null, timeout);
+        }
+    }
+
+    /// <summary>
+    /// 查询列表(多个model)
+    /// </summary>
+    /// <typeparam name="T">数据实体</typeparam>
+    /// <param name="sql">sql语句</param>
+    /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+    /// <param name="commandType">命令类型</param>
+    /// <param name="sortSql">排序语句</param>
+    /// <param name="buffered">是否缓存</param>
+    /// <param name="timeout">过期时间（秒）</param>
+    /// <returns></returns>
+    public static List<T> QueryList<T>(string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, int? timeout = null)
+        where T : class
+    {
+        using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
+        {
+            return DbProvider.QueryList<T>(conn, sql, param, commandType, sortSql, buffered, null, timeout);
+        }
+    }
+
+    /// <summary>
+    /// 分页查询列表(1) - 内存分页
+    /// </summary>
+    /// <typeparam name="T">数据实体</typeparam>
+    /// <param name="pageNumber">当前页</param>
+    /// <param name="pageSize">每页记录数</param>
+    /// <param name="sql">sql语句</param>
+    /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+    /// <param name="commandType">命令类型</param>
+    /// <param name="sortSql">排序语句</param>
+    /// <param name="buffered">是否缓存</param>
+    /// <param name="timeout">过期时间（秒）</param>
+    /// <returns></returns>
+    public static IPagingList<T> QueryPagingList<T>(int pageNumber, int pageSize, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, int? timeout = null)
+        where T : class
+    {
+        using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
+        {
+            return DbProvider.QueryPagingList<T>(conn, pageNumber, pageSize, sql, param, commandType, sortSql, buffered, null, timeout);
+        }
+    }
+
+    /// <summary>
+    /// 分页查询列表(1) - limi分页
+    /// </summary>
+    /// <typeparam name="T">数据实体</typeparam>
+    /// <param name="pageNumber">当前页</param>
+    /// <param name="pageSize">每页记录数</param>
+    /// <param name="sql">sql语句</param>
+    /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+    /// <param name="commandType">命令类型</param>
+    /// <param name="sortSql">排序语句</param>
+    /// <param name="buffered">是否缓存</param>
+    /// <param name="timeout">过期时间（秒）</param>
+    /// <returns></returns>
+    public static IPagingList<T> QueryPagingList2<T>(int pageNumber, int pageSize, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, int? timeout = null)
+        where T : class
+    {
+        using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
+        {
+            return DbProvider.QueryPagingList2<T>(conn, pageNumber, pageSize, sql, param, commandType, sortSql, buffered, null, timeout);
+        }
+    }
+
+    #endregion
+
+    #region 操作
+
+    /// <summary>
+    /// 执行命令(返回影响行数，-1为执行失败)
+    /// </summary>
+    /// <param name="sql">sql语句</param>
+    /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+    /// <param name="commandType">命令类型</param>
+    /// <param name="timeout">过期时间（秒）</param>
+    /// <returns></returns>
+    public static int ExecuteSql(string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, int? timeout = null)
+    {
+        using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
+        {
+            return DbProvider.ExecuteSql(conn, new CommandInfo(sql, param, commandType, timeout));
+        }
+    }
+
+    /// <summary>
+    /// 执行命令(返回影响行数，-1为执行失败)
+    /// </summary>
+    /// <param name="command">命令</param>
+    /// <returns></returns>
+    public static int ExecuteSql(CommandInfo command)
+    {
+        using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
+        {
+            return DbProvider.ExecuteSql(conn, command);
+        }
+    }
+
+    /// <summary>
+    /// 执行事务
+    /// </summary>
+    /// <param name="commands">命令集合</param>
+    /// <returns></returns>
+    public static bool ExecuteSqlTran(CommandCollection commands)
+    {
+        return DbProvider.ExecuteSqlTran(commands);
+    }
+
+    #endregion
+}
+```
 
 
