@@ -1,11 +1,11 @@
-using Dapper;
-using Dapper.Sugar;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+ï»¿using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dapper.Sugar;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace UnitTest_NetCore
+namespace UnitTest_Net45
 {
     [TestClass]
     public class UnitTest
@@ -15,66 +15,66 @@ namespace UnitTest_NetCore
             new EmployeeModel
             {
                 Account = "qinming",
-                Name = "ÇØÃ÷",
+                Name = "ç§¦æ˜",
                 Age = 36,
                 Status = EmployeeModel.EnumStatus.Complate,
             },
             new EmployeeModel
             {
                 Account = "huyanzhuo",
-                Name = "ºôÑÓ×Æ",
+                Name = "å‘¼å»¶ç¼",
                 Age = 36,
                 Status = EmployeeModel.EnumStatus.Complate,
             },
             new EmployeeModel
             {
                 Account = "huarong",
-                Name = "»¨ÈÙ",
+                Name = "èŠ±è£",
                 Age = 34,
                 Status = EmployeeModel.EnumStatus.Complate,
             },
             new EmployeeModel
             {
                 Account = "caijin",
-                Name = "²ñ½ø",
+                Name = "æŸ´è¿›",
                 Age = 34,
                 Status = EmployeeModel.EnumStatus.Complate,
             },
             new EmployeeModel
             {
                 Account = "liying",
-                Name = "ÀîÓ¦",
+                Name = "æåº”",
                 Age = 34,
                 Status = EmployeeModel.EnumStatus.Complate,
             },
             new EmployeeModel
             {
                 Account = "zhutong",
-                Name = "ÖìÙÚ",
+                Name = "æœ±ä»",
                 Age = 34,
                 Status = EmployeeModel.EnumStatus.Complate,
             },
             new EmployeeModel
             {
                 Account = "luzhishen",
-                Name = "Â³ÖÇÉî",
+                Name = "é²æ™ºæ·±",
                 Age = 34,
                 Status = EmployeeModel.EnumStatus.Complate,
             },
             new EmployeeModel
             {
                 Account = "wusong",
-                Name = "ÎäËÉ",
+                Name = "æ­¦æ¾",
                 Age = 34,
                 Status = EmployeeModel.EnumStatus.Complate,
             }
         };
 
-        #region ²Ù×÷
+        #region æ“ä½œ
 
 
         /// <summary>
-        /// ĞÂÔö-±íÃû-µ¥¸öÄäÃû¶ÔÏó
+        /// æ–°å¢-è¡¨å-å•ä¸ªåŒ¿åå¯¹è±¡
         /// </summary>
         [TestMethod]
         public void TestAdd1()
@@ -87,7 +87,7 @@ namespace UnitTest_NetCore
                 {
                     /*Id = 7,*/
                     Account = "qinming",
-                    Name = "ÇØÃ÷",
+                    Name = "ç§¦æ˜",
                     sq_Age = "38",
                     sq_Status = "20"
                 }, SugarCommandType.AddTableDirect);
@@ -95,11 +95,11 @@ namespace UnitTest_NetCore
                 id = DbHelp.DbProvider.QueryAutoIncrement(conn);
             }
 
-            Assert.AreEqual(result, 1, "ĞÂÔö-±íÃû-µ¥¸öÄäÃû¶ÔÏó");
+            Assert.AreEqual(result, 1, "æ–°å¢-è¡¨å-å•ä¸ªåŒ¿åå¯¹è±¡");
         }
 
         /// <summary>
-        /// ĞÂÔö-±íÃû-¶à¸öÄäÃû¶ÔÏó
+        /// æ–°å¢-è¡¨å-å¤šä¸ªåŒ¿åå¯¹è±¡
         /// </summary>
         [TestMethod]
         public void TestAdd2()
@@ -113,34 +113,34 @@ namespace UnitTest_NetCore
                 sq_Status = "@ig_Status"
             }).ToList(), SugarCommandType.AddTableDirect);
 
-            Assert.AreEqual(result, 2, "Ôö-±íÃû-¶à¸öÄäÃû¶ÔÏó");
+            Assert.AreEqual(result, 2, "å¢-è¡¨å-å¤šä¸ªåŒ¿åå¯¹è±¡");
         }
 
         /// <summary>
-        /// ĞÂÔö-±íÃû-µ¥¸öÊµÌå¶ÔÏó
+        /// æ–°å¢-è¡¨å-å•ä¸ªå®ä½“å¯¹è±¡
         /// </summary>
         [TestMethod]
         public void TestAdd3()
         {
             var result = DbHelp.ExecuteSql("employee", list.Skip(3).Take(1).First(), SugarCommandType.AddTableDirect);
 
-            Assert.AreEqual(result, 1, "ĞÂÔö-±íÃû-µ¥¸öÊµÌå¶ÔÏó");
+            Assert.AreEqual(result, 1, "æ–°å¢-è¡¨å-å•ä¸ªå®ä½“å¯¹è±¡");
         }
 
         /// <summary>
-        /// ĞÂÔö-±íÃû-¶à¸ö¸öÊµÌå¶ÔÏó
+        /// æ–°å¢-è¡¨å-å¤šä¸ªä¸ªå®ä½“å¯¹è±¡
         /// </summary>
         [TestMethod]
         public void TestAdd4()
         {
             var result = DbHelp.ExecuteSql("employee", list.Skip(4).Take(2).ToList(), SugarCommandType.AddTableDirect);
 
-            Assert.AreEqual(result, 2, "ĞÂÔö-±íÃû-¶à¸ö¸öÊµÌå¶ÔÏó");
+            Assert.AreEqual(result, 2, "æ–°å¢-è¡¨å-å¤šä¸ªä¸ªå®ä½“å¯¹è±¡");
         }
 
 
         /// <summary>
-        /// ĞŞ¸Ä-±íÃû-ÄäÃû¶ÔÏó
+        /// ä¿®æ”¹-è¡¨å-åŒ¿åå¯¹è±¡
         /// </summary>
         [TestMethod]
         public void TestUpdate1()
@@ -149,18 +149,18 @@ namespace UnitTest_NetCore
             {
                 var info = DbHelp.DbProvider.QuerySingle<EmployeeModel>(conn, "employee", new { sq_Id = "Id = 1" }, SugarCommandType.QueryTableDirect);
 
-                Assert.IsNotNull(info, "²éÑ¯µ¥¸ö¶ÔÏó");
+                Assert.IsNotNull(info, "æŸ¥è¯¢å•ä¸ªå¯¹è±¡");
 
                 var result = DbHelp.DbProvider.ExecuteSql(conn, "employee", new
                 {
                     Id = 1,
                     Account = "songjiang",
-                    Name = "ËÎ½­",
+                    Name = "å®‹æ±Ÿ",
                     sq_Age = "Age + 2",
                     Status = 20
                 }, SugarCommandType.UpdateTableDirect);
 
-                Assert.AreEqual(result, 1, "ĞŞ¸Ä-±íÃû-ÄäÃû¶ÔÏó");
+                Assert.AreEqual(result, 1, "ä¿®æ”¹-è¡¨å-åŒ¿åå¯¹è±¡");
 
                 var info2 = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new
                 {
@@ -171,14 +171,14 @@ namespace UnitTest_NetCore
                     Status = 20
                 }, SugarCommandType.QueryTableDirect).ToList();
 
-                Assert.AreEqual(info2.Count, 2, "²éÑ¯¶à¸ö¶ÔÏó");
+                Assert.AreEqual(info2.Count, 2, "æŸ¥è¯¢å¤šä¸ªå¯¹è±¡");
 
-                Assert.AreEqual(info2[0].Age, info.Age + 2, "ĞŞ¸Ä-±íÃû-ÄäÃû¶ÔÏó");
+                Assert.AreEqual(info2[0].Age, info.Age + 2, "ä¿®æ”¹-è¡¨å-åŒ¿åå¯¹è±¡");
             }
         }
 
         /// <summary>
-        /// ĞŞ¸Ä-±íÃû-¶à¸öÊµÌå¶ÔÏó
+        /// ä¿®æ”¹-è¡¨å-å¤šä¸ªå®ä½“å¯¹è±¡
         /// </summary>
         [TestMethod]
         public void TestUpdate2()
@@ -189,7 +189,7 @@ namespace UnitTest_NetCore
                 {
                     Id = 1,
                     Account = "songjiang",
-                    Name = "ËÎ½­",
+                    Name = "å®‹æ±Ÿ",
                     Age = 50,
                     Status = EmployeeModel.EnumStatus.Complate
                 },
@@ -197,61 +197,61 @@ namespace UnitTest_NetCore
                 {
                     Id = 2,
                     Account = "lujunyi",
-                    Name = "Â¬¿¡Òå",
+                    Name = "å¢ä¿Šä¹‰",
                     Age = 48,
                     Status = EmployeeModel.EnumStatus.Disable
                 }
             }, SugarCommandType.UpdateTableDirect);
 
-            Assert.AreEqual(result, 2, "ĞŞ¸Ä-±íÃû-¶à¸öÊµÌå¶ÔÏó");
+            Assert.AreEqual(result, 2, "ä¿®æ”¹-è¡¨å-å¤šä¸ªå®ä½“å¯¹è±¡");
 
         }
 
         #endregion
 
-        #region ²éÑ¯
+        #region æŸ¥è¯¢
 
         /// <summary>
-        /// ²éÑ¯µ¥¸ö¶ÔÏó
+        /// æŸ¥è¯¢å•ä¸ªå¯¹è±¡
         /// </summary>
         [TestMethod]
         public void TestQuery1()
         {
-            //²éÑ¯µ¥¸ö¶ÔÏó
+            //æŸ¥è¯¢å•ä¸ªå¯¹è±¡
             var result = DbHelp.QuerySingle<EmployeeModel>("employee", new
             {
                 ig_Account = "songjiang",
                 sq_Account = "Account=@ig_Account",
-                Name_lk = "ËÎ%",
+                Name_lk = "å®‹%",
                 Status = new int[] { 20 },
                 Age_gt = 40,
                 Age_lt = 80
             }, SugarCommandType.QueryTableDirect);
 
-            Assert.IsNotNull(result, "²éÑ¯µ¥¸ö¶ÔÏó");
+            Assert.IsNotNull(result, "æŸ¥è¯¢å•ä¸ªå¯¹è±¡");
 
-            Assert.AreEqual(result.Id, 1, "²éÑ¯µ¥¸ö¶ÔÏó");
+            Assert.AreEqual(result.Id, 1, "æŸ¥è¯¢å•ä¸ªå¯¹è±¡");
         }
 
         /// <summary>
-        /// ²éÑ¯¶à¸ö¶ÔÏó
+        /// æŸ¥è¯¢å¤šä¸ªå¯¹è±¡
         /// </summary>
         [TestMethod]
         public void TestQuery2()
         {
-            //²éÑ¯¶à¸ö¶ÔÏó
+            //æŸ¥è¯¢å¤šä¸ªå¯¹è±¡
             var result = DbHelp.QueryList<EmployeeModel>("employee", new { Age_ge = 50, Age_le = 50 }, SugarCommandType.QueryTableDirect);
 
-            Assert.AreEqual(result.Count(), 1, "²éÑ¯¶à¸ö¶ÔÏó");
+            Assert.AreEqual(result.Count(), 1, "æŸ¥è¯¢å¤šä¸ªå¯¹è±¡");
         }
 
         /// <summary>
-        /// ±ğÃû²éÑ¯¶à¸ö¶ÔÏó
+        /// åˆ«åæŸ¥è¯¢å¤šä¸ªå¯¹è±¡
         /// </summary>
         [TestMethod]
         public void TestQuery3()
         {
-            //±ğÃû²éÑ¯¶à¸ö¶ÔÏó
+            //åˆ«åæŸ¥è¯¢å¤šä¸ªå¯¹è±¡
             //new { ue_e_Id = 1, ge_e_Age = 48 }
             var param = new { e_Id_ue = 1, e_Age_ge = 48 };
             //dynamic param = new ExpandoObject();
@@ -260,31 +260,31 @@ namespace UnitTest_NetCore
             //param.ge_e_Age = 48;
             var result = DbHelp.QueryList<EmployeeModel>("select * from employee e where", param, SugarCommandType.QuerySelectSql);
 
-            Assert.AreEqual(result.Count(), 1, "±ğÃû²éÑ¯¶à¸ö¶ÔÏó´íÎó");
+            Assert.AreEqual(result.Count(), 1, "åˆ«åæŸ¥è¯¢å¤šä¸ªå¯¹è±¡é”™è¯¯");
 
         }
 
         /// <summary>
-        /// ´øÌõ¼ş²éÑ¯¶à¸ö¶ÔÏó
+        /// å¸¦æ¡ä»¶æŸ¥è¯¢å¤šä¸ªå¯¹è±¡
         /// </summary>
         [TestMethod]
         public void TestQuery4()
         {
-            //´øÌõ¼ş²éÑ¯¶à¸ö¶ÔÏó
+            //å¸¦æ¡ä»¶æŸ¥è¯¢å¤šä¸ªå¯¹è±¡
             var result = DbHelp.QueryList<EmployeeModel>("select * from employee e where e.Status=20 and", new { e_Age_ge = 48 }, SugarCommandType.QuerySelectSql).ToList();
 
-            Assert.AreEqual(result.Count, 1, "´øÌõ¼ş²éÑ¯¶à¸ö¶ÔÏó´íÎó");
+            Assert.AreEqual(result.Count, 1, "å¸¦æ¡ä»¶æŸ¥è¯¢å¤šä¸ªå¯¹è±¡é”™è¯¯");
 
-            Assert.AreEqual(result[0].Id, 1, "´øÌõ¼ş²éÑ¯¶à¸ö¶ÔÏó´íÎó");
+            Assert.AreEqual(result[0].Id, 1, "å¸¦æ¡ä»¶æŸ¥è¯¢å¤šä¸ªå¯¹è±¡é”™è¯¯");
         }
 
         /// <summary>
-        /// ²éÑ¯¸öÊı
+        /// æŸ¥è¯¢ä¸ªæ•°
         /// </summary>
         [TestMethod]
         public void TestQuery5()
         {
-            //±ğÃû²éÑ¯¶à¸ö¶ÔÏó
+            //åˆ«åæŸ¥è¯¢å¤šä¸ªå¯¹è±¡
             //new { ue_e_Id = 1, ge_e_Age = 48 }
             dynamic param = new { e_Id_ue = 1, e_Age_ge = 48 };
             //dynamic param = new ExpandoObject();
@@ -299,73 +299,73 @@ namespace UnitTest_NetCore
                 result2 = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "select * from employee e where e.Status=20 and", new { e_Age_ge = 48 }, SugarCommandType.QuerySelectSql).ToList();
             }
 
-            Assert.AreEqual(result, 1, "²éÑ¯¸öÊı´íÎó");
+            Assert.AreEqual(result, 1, "æŸ¥è¯¢ä¸ªæ•°é”™è¯¯");
 
-            Assert.AreEqual(result2.Count, 1, "´øÌõ¼ş²éÑ¯¶à¸ö¶ÔÏó´íÎó");
+            Assert.AreEqual(result2.Count, 1, "å¸¦æ¡ä»¶æŸ¥è¯¢å¤šä¸ªå¯¹è±¡é”™è¯¯");
 
-            Assert.AreEqual(result2[0].Id, 1, "´øÌõ¼ş²éÑ¯¶à¸ö¶ÔÏó´íÎó");
+            Assert.AreEqual(result2[0].Id, 1, "å¸¦æ¡ä»¶æŸ¥è¯¢å¤šä¸ªå¯¹è±¡é”™è¯¯");
 
         }
 
         /// <summary>
-        /// ·ÖÒ³²éÑ¯¶à¸ö¶ÔÏó - ÄÚ´æ·ÖÒ³
+        /// åˆ†é¡µæŸ¥è¯¢å¤šä¸ªå¯¹è±¡ - å†…å­˜åˆ†é¡µ
         /// </summary>
         [TestMethod]
         public void TestQueryPaging1()
         {
-            //´øÌõ¼ş²éÑ¯¶à¸ö¶ÔÏó
+            //å¸¦æ¡ä»¶æŸ¥è¯¢å¤šä¸ªå¯¹è±¡
             var result = DbHelp.QueryPagingList<EmployeeModel>(1, 2, "select * from employee e where e.Status>0 and", new { e_Id_ue = 1 }, SugarCommandType.QuerySelectSql);
 
-            Assert.AreEqual(result.List.Count(), 2, "´øÌõ¼ş²éÑ¯¶à¸ö¶ÔÏó´íÎó");
+            Assert.AreEqual(result.List.Count(), 2, "å¸¦æ¡ä»¶æŸ¥è¯¢å¤šä¸ªå¯¹è±¡é”™è¯¯");
 
-            Assert.AreEqual(result.List.FirstOrDefault().Id, 4, "´øÌõ¼ş²éÑ¯¶à¸ö¶ÔÏó´íÎó");
+            Assert.AreEqual(result.List.FirstOrDefault().Id, 4, "å¸¦æ¡ä»¶æŸ¥è¯¢å¤šä¸ªå¯¹è±¡é”™è¯¯");
 
         }
 
         /// <summary>
-        /// ·ÖÒ³²éÑ¯¶à¸ö¶ÔÏó - limit·ÖÒ³
+        /// åˆ†é¡µæŸ¥è¯¢å¤šä¸ªå¯¹è±¡ - limitåˆ†é¡µ
         /// </summary>
         [TestMethod]
         public void TestQueryPaging2()
         {
-            //´øÌõ¼ş²éÑ¯¶à¸ö¶ÔÏó
+            //å¸¦æ¡ä»¶æŸ¥è¯¢å¤šä¸ªå¯¹è±¡
             var result = DbHelp.QueryPagingList2<EmployeeModel>(1, 2, "select * from employee e where e.Status>0 and", new { e_Id_ue = 1 }, SugarCommandType.QuerySelectSql);
 
-            Assert.AreEqual(result.List.Count(), 2, "´øÌõ¼ş²éÑ¯¶à¸ö¶ÔÏó´íÎó");
+            Assert.AreEqual(result.List.Count(), 2, "å¸¦æ¡ä»¶æŸ¥è¯¢å¤šä¸ªå¯¹è±¡é”™è¯¯");
 
-            Assert.AreEqual(result.List.FirstOrDefault().Id, 4, "´øÌõ¼ş²éÑ¯¶à¸ö¶ÔÏó´íÎó");
+            Assert.AreEqual(result.List.FirstOrDefault().Id, 4, "å¸¦æ¡ä»¶æŸ¥è¯¢å¤šä¸ªå¯¹è±¡é”™è¯¯");
 
         }
 
         #endregion
 
-        #region ´æ´¢¹ı³Ì
+        #region å­˜å‚¨è¿‡ç¨‹
 
         /// <summary>
-        /// µ÷ÓÃ´æ´¢¹ı³Ì
+        /// è°ƒç”¨å­˜å‚¨è¿‡ç¨‹
         /// </summary>
         [TestMethod]
         public void TestStoredProcedure1()
         {
-            //´æ´¢¹ı³Ì£¬¸ù¾İ´æ´¢Ãû³Æµ÷ÓÃ´æ´¢¹ı³Ì
+            //å­˜å‚¨è¿‡ç¨‹ï¼Œæ ¹æ®å­˜å‚¨åç§°è°ƒç”¨å­˜å‚¨è¿‡ç¨‹
             var p = new DynamicParameters();
             p.Add("@startId", 6);
 
             var result = DbHelp.ExecuteSql("delete_data", p, SugarCommandType.StoredProcedure);
 
-            Assert.AreEqual(result, 6, "µ÷ÓÃ´æ´¢¹ı³Ì´íÎó");
+            Assert.AreEqual(result, 6, "è°ƒç”¨å­˜å‚¨è¿‡ç¨‹é”™è¯¯");
         }
 
         /// <summary>
-        /// µ÷ÓÃ´æ´¢¹ı³Ì
+        /// è°ƒç”¨å­˜å‚¨è¿‡ç¨‹
         /// </summary>
         [TestMethod]
         public void TestStoredProcedure2()
         {
-            //´æ´¢¹ı³Ì£¬¸ù¾İ´æ´¢Ãû³Æµ÷ÓÃ´æ´¢¹ı³Ì
+            //å­˜å‚¨è¿‡ç¨‹ï¼Œæ ¹æ®å­˜å‚¨åç§°è°ƒç”¨å­˜å‚¨è¿‡ç¨‹
             var result = DbHelp.ExecuteSql("delete_data", new { startId = 6 }, SugarCommandType.StoredProcedure);
 
-            Assert.AreEqual(result, 0, "µ÷ÓÃ´æ´¢¹ı³Ì´íÎó");
+            Assert.AreEqual(result, 0, "è°ƒç”¨å­˜å‚¨è¿‡ç¨‹é”™è¯¯");
         }
 
         #endregion
@@ -384,17 +384,17 @@ namespace UnitTest_NetCore
         public enum EnumStatus
         {
             /// <summary>
-            /// É¾³ı
+            /// åˆ é™¤
             /// </summary>
             Delete = 0,
 
             /// <summary>
-            /// ½ûÓÃ
+            /// ç¦ç”¨
             /// </summary>
             Disable = 10,
 
             /// <summary>
-            /// ³É¹¦
+            /// æˆåŠŸ
             /// </summary>
             Complate = 20
         }

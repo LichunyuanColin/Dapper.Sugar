@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 
-namespace UnitTest_NetCore
+namespace UnitTest_Net45
 {
     public class DbHelp
     {

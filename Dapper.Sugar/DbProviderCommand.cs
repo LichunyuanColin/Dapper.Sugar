@@ -405,7 +405,7 @@ namespace Dapper.Sugar
                 {
                     if (Config.Instance.LogSql)//写入日志
                         Log.InfoSql(sql, parms);
-                    da.Fill(ds, "dt");
+                    da.Fill(ds);
                     cmd.Parameters.Clear();
                 }
                 catch (Exception ex)
@@ -425,7 +425,7 @@ namespace Dapper.Sugar
         /// <param name="conn">连接</param>
         /// <param name="fieldName">字段名称（仅限PostgreSql需要）</param>
         /// <returns></returns>
-        public long QueryAutoIncrement(DbConnection conn, string fieldName = null)
+        public long QueryAutoIncrement(IDbConnection conn, string fieldName = null)
         {
             return QueryScalar<long>(conn, this.Builder.GetAutoIncrement(fieldName), null, SugarCommandType.Text);
         }
@@ -1238,11 +1238,11 @@ namespace Dapper.Sugar
         /// </summary>
         /// <param name="runFun"></param>
         /// <returns></returns>
-        public bool ExecuteSqlTran(Func<IDbConnection, IDbTransaction, bool> runFun)
+        public bool ExecuteSqlTran(Func<DbConnection, DbTransaction, bool> runFun)
         {
             using (var conn = this.CreateConnection(Config.DataBaseAuthority.Write))
             {
-                IDbTransaction trans = null;
+                DbTransaction trans = null;
                 try
                 {
                     conn.Open();

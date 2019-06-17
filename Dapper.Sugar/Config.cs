@@ -1,9 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+#if NET45
+using System.Configuration;
+#else
+using Microsoft.Extensions.Configuration;
+#endif
 namespace Dapper.Sugar
 {
     /// <summary>
@@ -19,6 +22,78 @@ namespace Dapper.Sugar
 
         static Config GetConfig()
         {
+#if NET45
+            DapperSugarSection section = (DapperSugarSection)ConfigurationManager.GetSection("DapperSugar");
+
+            Config result = new Config()
+            {
+                Debug = section.Debug,
+                LogSql = section.LogSql,
+                ConnectionList = null
+            };
+
+            if (section.ConnectionStrings?.Count > 0)
+            {
+                result.ConnectionList = new List<ConnectionConfig>(section.ConnectionStrings.Count);
+                foreach (DapperSugarSection.ConnectionStringsElement item in section.ConnectionStrings)
+                {
+                    if (item.List?.Count == 0)
+                        throw new Exception("缺少[dapperSugar: connectionStrings: list]配置");
+
+                    var read = new Dictionary<string, string>();
+                    var write = new Dictionary<string, string>();
+                    string connAuthority = null;
+
+                    foreach (DapperSugarSection.ConnectionStringsElement.ListElement conn in item.List)
+                    {
+                        connAuthority = conn.Authority.ToLower();
+                        if (connAuthority.Contains("w"))
+                        {
+                            if (write.ContainsKey(conn.Name))
+                                throw new Exception("配置[dapperSugar: connectionStrings: list: name]重复");
+
+                            write.Add(conn.Name, conn.ConnectionString);
+                        }
+
+                        if (connAuthority.Contains("r"))
+                        {
+                            if (read.ContainsKey(conn.Name))
+                                throw new Exception("配置[dapperSugar: connectionStrings: list: name]重复");
+
+                            read.Add(conn.Name, conn.ConnectionString);
+                        }
+                    }
+
+                    result.ConnectionList.Add(new ConnectionConfig
+                    {
+                        Name = item.Name,
+                        Type = item.Type,
+                        ReadList = read,
+                        WriteList = write,
+                    });
+                }
+            }
+            else if (section.Type.HasValue && !string.IsNullOrEmpty(section.ConnectionString))
+            {
+                string name = section.Name ?? "";
+                Dictionary<string, string> dic = new Dictionary<string, string> { { name, section.ConnectionString } };
+                result.ConnectionList = new List<ConnectionConfig>()
+                {
+                    new ConnectionConfig {
+                        Name = name,
+                        Type = section.Type.Value,
+                        ReadList = dic,
+                        WriteList = dic,
+                    }
+                };
+            }
+            else
+            {
+                throw new ArgumentException("缺少[dapperSugar: connectionStrings]配置");
+            }
+
+            return result;
+#else
             var builder = new ConfigurationBuilder()
                .AddJsonFile("appsettings.json");
             var configuration = builder.Build();
@@ -38,87 +113,111 @@ namespace Dapper.Sugar
             {
                 Debug = debug,
                 LogSql = logSql,
-                ConnectionList = new List<ConnectionConfig>(),
+                ConnectionList = null,
             };
 
-            var connectionStrings = sugar.GetSection("connectionStrings");
+            string name = sugar.GetSection("name").Value;
+            string type = sugar.GetSection("type").Value;
+            DataBaseType dbType;
+            string connectionString = sugar.GetSection("connectionString").Value;
 
-            var list = connectionStrings.GetChildren();
-            if (list.Count() == 0)
+            var connectionStrings = sugar.GetSection("connectionStrings").GetChildren();
+            if (connectionStrings.Count() > 0)
             {
-                throw new Exception("缺少[dapperSugar: connectionStrings]配置");
+                result.ConnectionList = new List<ConnectionConfig>(connectionStrings.Count());
+
+                foreach (var item in connectionStrings)
+                {
+                    name = item.GetSection("name").Value;
+                    type = item.GetSection("type").Value;
+                    var list = item.GetSection("list").GetChildren();
+
+                    if (string.IsNullOrEmpty(name))
+                        throw new Exception("缺少[dapperSugar: connectionStrings: name]配置");
+
+                    if (string.IsNullOrEmpty(type))
+                        throw new Exception("缺少[dapperSugar: connectionStrings: type]配置");
+
+                    if (!Enum.TryParse<DataBaseType>(type, out dbType))
+                        throw new Exception("[dapperSugar: connectionStrings: type]配置错误");
+
+                    if (list.Count() == 0)
+                        throw new Exception("缺少[dapperSugar: connectionStrings: list]配置");
+
+                    name = name.ToLower();
+
+                    var connectionItem = new ConnectionConfig
+                    {
+                        Name = name,
+                        Type = dbType,
+                        ReadList = new Dictionary<string, string>(),
+                        WriteList = new Dictionary<string, string>(),
+                    };
+
+                    foreach (var child in list)
+                    {
+                        var connName = child.GetSection("name").Value;
+
+                        var connAuthority = child.GetSection("authority").Value;
+
+                        var connString = child.GetSection("connectionString").Value;
+
+                        if (string.IsNullOrEmpty(connName))
+                            throw new Exception("缺少[dapperSugar: connectionStrings: list: name]配置");
+
+                        if (string.IsNullOrEmpty(connAuthority))
+                            throw new Exception("缺少[dapperSugar: connectionStrings: list: authority]配置");
+
+                        if (string.IsNullOrEmpty(connString))
+                            throw new Exception("缺少[dapperSugar: connectionStrings: list: connectionString]配置");
+
+                        connName = connName.ToLower();
+                        connAuthority = connAuthority.ToLower();
+
+                        if (connAuthority.Contains("w"))
+                        {
+                            if (connectionItem.WriteList.ContainsKey(connName))
+                                throw new Exception("配置[dapperSugar: connectionStrings: list: name]重复");
+
+                            connectionItem.WriteList.Add(connName, connString);
+                        }
+
+                        if (connAuthority.Contains("r"))
+                        {
+                            if (connectionItem.ReadList.ContainsKey(connName))
+                                throw new Exception("配置[dapperSugar: connectionStrings: list: name]重复");
+
+                            connectionItem.ReadList.Add(connName, connString);
+                        }
+                    }
+                    //CreateDbProviders(name, type, connectionString);
+                    result.ConnectionList.Add(connectionItem);
+                }
+
             }
-
-            foreach (var item in list)
+            else if (!string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(connectionString))
             {
-                var name = item.GetSection("name").Value;
-                var type = item.GetSection("type").Value;
-                var connectionList = item.GetSection("list").GetChildren();
-
-                if (string.IsNullOrEmpty(name))
-                    throw new Exception("缺少[dapperSugar: connectionStrings: name]配置");
-
-                if (string.IsNullOrEmpty(type))
-                    throw new Exception("缺少[dapperSugar: connectionStrings: type]配置");
-
-                DataBaseType dbType;
                 if (!Enum.TryParse<DataBaseType>(type, out dbType))
                     throw new Exception("[dapperSugar: connectionStrings: type]配置错误");
 
-                if (connectionList.Count() == 0)
-                    throw new Exception("缺少[dapperSugar: connectionStrings: list]配置");
-
-                name = name.ToLower();
-
-                var connectionItem = new ConnectionConfig
+                name = name ?? "";
+                Dictionary<string, string> dic = new Dictionary<string, string> { { name, connectionString } };
+                result.ConnectionList = new List<ConnectionConfig>()
                 {
-                    Name = name,
-                    Type = dbType,
-                    ReadList = new Dictionary<string, string>(),
-                    WriteList = new Dictionary<string, string>(),
+                    new ConnectionConfig
+                    {
+                        Name = name,
+                        Type = dbType,
+                        ReadList = dic,
+                        WriteList = dic,
+                    }
                 };
-
-                foreach (var child in connectionList)
-                {
-                    var connName = child.GetSection("name").Value;
-
-                    var connAuthority = child.GetSection("authority").Value;
-
-                    var connString = child.GetSection("connectionString").Value;
-
-                    if (string.IsNullOrEmpty(connName))
-                        throw new Exception("缺少[dapperSugar: connectionStrings: list: name]配置");
-
-                    if (string.IsNullOrEmpty(connAuthority))
-                        throw new Exception("缺少[dapperSugar: connectionStrings: list: authority]配置");
-
-                    if (string.IsNullOrEmpty(connString))
-                        throw new Exception("缺少[dapperSugar: connectionStrings: list: connectionString]配置");
-
-                    connName = connName.ToLower();
-                    connAuthority = connAuthority.ToLower();
-
-                    if (connAuthority.Contains("w"))
-                    {
-                        if (connectionItem.WriteList.ContainsKey(connName))
-                            throw new Exception("配置[dapperSugar: connectionStrings: list: name]重复");
-
-                        connectionItem.WriteList.Add(connName, connString);
-                    }
-
-                    if (connAuthority.Contains("r"))
-                    {
-                        if (connectionItem.ReadList.ContainsKey(connName))
-                            throw new Exception("配置[dapperSugar: connectionStrings: list: name]重复");
-
-                        connectionItem.ReadList.Add(connName, connString);
-                    }
-                }
-                //CreateDbProviders(name, type, connectionString);
-                result.ConnectionList.Add(connectionItem);
             }
+            else
+                throw new Exception("缺少[dapperSugar: connectionStrings]配置");
 
             return result;
+#endif
         }
 
         /// <summary>
@@ -206,4 +305,243 @@ namespace Dapper.Sugar
             public Dictionary<string, string> WriteList { get; set; }
         }
     }
+
+#if NET45
+    /// <summary>
+    /// 
+    /// </summary>
+    public class DapperSugarSection : ConfigurationSection
+    {
+        /// <summary>
+        /// 是否调试
+        /// </summary>
+        [ConfigurationProperty("debug", DefaultValue = "false")]
+        public bool Debug
+        {
+            get
+            {
+                return Convert.ToBoolean(this["debug"]);
+            }
+        }
+        /// <summary>
+        /// 是否记录sql语句
+        /// </summary>
+        [ConfigurationProperty("logsql", DefaultValue = "false")]
+        public bool LogSql
+        {
+            get
+            {
+                return Convert.ToBoolean(this["logsql"]);
+            }
+        }
+
+        /// <summary>
+        /// 名称
+        /// </summary>
+        [ConfigurationProperty("name")]
+        public string Name
+        {
+            get
+            {
+                return this["name"] as string;
+            }
+        }
+
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        [ConfigurationProperty("type")]
+        public Config.DataBaseType? Type
+        {
+            get
+            {
+                return this["type"] as Config.DataBaseType?;
+            }
+        }
+
+        /// <summary>
+        /// 数据库库连接字符串
+        /// </summary>
+        [ConfigurationProperty("connectionString")]
+        public string ConnectionString
+        {
+            get { return this["connectionString"].ToString(); }
+            set { this["connectionString"] = value; }
+        }
+
+        /// <summary>
+        /// 数据库库连接字符串
+        /// </summary>
+        [ConfigurationProperty("connectionStrings", IsDefaultCollection = false)]
+        [ConfigurationCollection(typeof(ConnectionStringsCollection), AddItemName = "add")]
+        public ConnectionStringsCollection ConnectionStrings
+        {
+            get { return (ConnectionStringsCollection)base["connectionStrings"]; }
+        }
+
+        ///// <summary>
+        ///// 连接配置
+        ///// </summary>
+        //[ConfigurationProperty("connectionStrings", IsDefaultCollection = false)]
+        //[ConfigurationCollection(typeof(ConnectionStringsCollection), AddItemName = "add")]
+        //public ConnectionStringsCollection ConnectionStrings
+        //{
+        //    get
+        //    {
+        //        return (ConnectionStringsCollection)base["connectionStrings"];
+        //    }
+        //}
+
+        /// <summary>
+        /// 数据库连接配置
+        /// </summary>
+        public class ConnectionStringsElement : ConfigurationElement
+        {
+            /// <summary>
+            /// 名称
+            /// </summary>
+            [ConfigurationProperty("name", IsKey = true, IsRequired = true)]
+            public string Name
+            {
+                get
+                {
+                    return this["name"] as string;
+                }
+            }
+
+            /// <summary>
+            /// 数据库类型
+            /// </summary>
+            [ConfigurationProperty("type", IsRequired = true)]
+            public Config.DataBaseType Type
+            {
+                get
+                {
+                    return (Config.DataBaseType)this["type"];
+                }
+            }
+
+            /// <summary>
+            /// 连接配置
+            /// </summary>
+            [ConfigurationProperty("list", IsDefaultCollection = false, IsRequired = true)]
+            [ConfigurationCollection(typeof(ListCollection), AddItemName = "add")]
+            public ListCollection List
+            {
+                get
+                {
+                    return (ListCollection)base["list"];
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public class ListElement : ConfigurationElement
+            {
+                /// <summary>
+                /// 名称
+                /// </summary>
+                [ConfigurationProperty("name", IsKey = true, IsRequired = true)]
+                public string Name
+                {
+                    get
+                    {
+                        return this["name"] as string;
+                    }
+                }
+
+                /// <summary>
+                /// 权限
+                /// </summary>
+                [ConfigurationProperty("authority", DefaultValue = "Write")]
+                public string Authority
+                {
+                    get
+                    {
+                        return this["authority"] as string;
+                    }
+                }
+
+                /// <summary>
+                /// 数据库库连接字符串
+                /// </summary>
+                [ConfigurationProperty("connectionString", IsRequired = true)]
+                public string ConnectionString
+                {
+                    get { return this["connectionString"].ToString(); }
+                    set { this["connectionString"] = value; }
+                }
+            }
+
+            /// <summary>
+            /// list配置
+            /// </summary>
+            public class ListCollection : ConfigurationElementCollection
+            {
+                public override ConfigurationElementCollectionType CollectionType
+                {
+                    get
+                    {
+                        return ConfigurationElementCollectionType.AddRemoveClearMap;
+                    }
+                }
+
+                protected override ConfigurationElement CreateNewElement()
+                {
+                    return new ListElement();
+                }
+
+                protected override object GetElementKey(ConfigurationElement element)
+                {
+                    return (element as ListElement).Name;
+                }
+
+                ///// <summary>
+                ///// 遍历
+                ///// </summary>
+                ///// <returns></returns>
+                //public IEnumerator<ListElement> GetEnumerator()
+                //{
+                //    return (IEnumerator<ListElement>)base.GetEnumerator();
+                //}
+            }
+        }
+
+
+        /// <summary>
+        /// list配置
+        /// </summary>
+        public class ConnectionStringsCollection : ConfigurationElementCollection
+        {
+            public override ConfigurationElementCollectionType CollectionType
+            {
+                get
+                {
+                    return ConfigurationElementCollectionType.AddRemoveClearMap;
+                }
+            }
+
+            protected override ConfigurationElement CreateNewElement()
+            {
+                return new ConnectionStringsElement();
+            }
+
+            protected override object GetElementKey(ConfigurationElement element)
+            {
+                return (element as ConnectionStringsElement).Name;
+            }
+
+            /// <summary>
+            /// 索引器
+            /// </summary>
+            /// <param name="index"></param>
+            /// <returns></returns>
+            public ConnectionStringsElement this[int index]
+            {
+                get { return (ConnectionStringsElement)BaseGet(index); }
+            }
+        }
+    }
+#endif
 }

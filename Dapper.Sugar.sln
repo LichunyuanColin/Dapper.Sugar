@@ -3,15 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dapper.Sugar", "Dapper.Sugar\Dapper.Sugar.csproj", "{BC85C8FD-0224-475B-84A5-CD5CF632464C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Sugar", "Dapper.Sugar\Dapper.Sugar.csproj", "{BC85C8FD-0224-475B-84A5-CD5CF632464C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{44476A28-9F10-4EF3-9502-425872CCFA23}"
-	ProjectSection(SolutionItems) = preProject
-		DbHelp.txt = DbHelp.txt
-		README.md = README.md
-	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "UnitTest\UnitTest.csproj", "{6DDF2975-D515-44A3-82C1-151DB75E036F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest-NetCore", "UnitTest\UnitTest-NetCore.csproj", "{6DDF2975-D515-44A3-82C1-151DB75E036F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest-Net45", "UnitTest-Net45\UnitTest-Net45.csproj", "{83E8F844-51F1-47D6-938D-4B96263EDC30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +25,10 @@ Global
 		{6DDF2975-D515-44A3-82C1-151DB75E036F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DDF2975-D515-44A3-82C1-151DB75E036F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DDF2975-D515-44A3-82C1-151DB75E036F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83E8F844-51F1-47D6-938D-4B96263EDC30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83E8F844-51F1-47D6-938D-4B96263EDC30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83E8F844-51F1-47D6-938D-4B96263EDC30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83E8F844-51F1-47D6-938D-4B96263EDC30}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
