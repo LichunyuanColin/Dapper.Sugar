@@ -523,93 +523,6 @@
             <param name="name">connectionString配置名称</param>
             <returns></returns>
         </member>
-        <member name="M:Dapper.Sugar.DbProvider.CreateOpenConnection(Systemry>
-        </member>
-        <member name="T:Dapper.Sugar.DapperSugarSection.ConnectionStringsElement.ListElement">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Dapper.Sugar.DapperSugarSection.ConnectionStringsElement.ListElement.Name">
-            <summary>
-            名称
-            </summary>
-        </member>
-        <member name="P:Dapper.Sugar.DapperSugarSection.ConnectionStringsElement.ListElement.Authority">
-            <summary>
-            权限
-            </summary>
-        </member>
-        <member name="P:Dapper.Sugar.DapperSugarSection.ConnectionStringsElement.ListElement.ConnectionString">
-            <summary>
-            数据库库连接字符串
-            </summary>
-        </member>
-        <member name="T:Dapper.Sugar.DapperSugarSection.ConnectionStringsElement.ListCollection">
-            <summary>
-            list配置
-            </summary>
-        </member>
-        <member name="T:Dapper.Sugar.DapperSugarSection.ConnectionStringsCollection">
-            <summary>
-            list配置
-            </summary>
-        </member>
-        <member name="P:Dapper.Sugar.DapperSugarSection.ConnectionStringsCollection.Item(System.Int32)">
-            <summary>
-            索引器
-            </summary>
-            <param name="index"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Dapper.Sugar.DbProvider">
-            <summary>
-            数据访问底层类
-            </summary>
-        </member>
-        <member name="P:Dapper.Sugar.DbProvider.Connection">
-            <summary>
-            连接
-            </summary>
-        </member>
-        <member name="P:Dapper.Sugar.DbProvider.Factory">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Dapper.Sugar.DbProvider.Builder">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:Dapper.Sugar.DbProvider.CreateDbProvide(System.String)">
-            <summary>
-            获取数据库访问支持
-            </summary>
-            <param name="name">ConnectionStrings配置名称</param>
-            <returns></returns>
-        </member>
-        <member name="M:Dapper.Sugar.DbProvider.CreateConnection(System.Nullable{Dapper.Sugar.Config.DataBaseAuthority})">
-            <summary>
-            创建连接
-            </summary>
-            <param name="authority">访问权限</param>
-            <returns></returns>
-        </member>
-        <member name="M:Dapper.Sugar.DbProvider.CreateOpenConnection(System.Nullable{Dapper.Sugar.Config.DataBaseAuthority})">
-            <summary>
-            创建连接
-            </summary>
-            <param name="authority">访问权限</param>
-            <returns></returns>
-        </member>
-        <member name="M:Dapper.Sugar.DbProvider.CreateConnection(System.String)">
-            <summary>
-            创建连接
-            </summary>
-            <param name="name">connectionString配置名称</param>
-            <returns></returns>
-        </member>
         <member name="M:Dapper.Sugar.DbProvider.CreateOpenConnection(System.String)">
             <summary>
             创建连接
@@ -691,7 +604,60 @@
             <typeparam name="TFirst">数据实体</typeparam>
             <typeparam name="TSecond">数据实体</typeparam>
             <typeparam name="TThird">数据实体</typeparam>
-            <typeparam name="TFourth">数�ram>
+            <typeparam name="TFourth">数据实体</typeparam>
+            <typeparam name="TReturn">返回数据实体</typeparam>
+            <param name="conn"></param>
+            <param name="map">委托-两个表数据逻辑处理</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType"> 命令类型 </param>
+            <param name="sortSql"></param>
+            <param name="splitOn">分割两表数据的列名称</param>
+            <param name="buffered"></param>
+            <param name="transaction"></param>
+            <param name="timeout"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryData``6(System.Data.IDbConnection,System.Func{``0,``1,``2,``3,``4,``5},System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            基础连表查询列表(5)
+            </summary>
+            <typeparam name="TFirst">数据实体</typeparam>
+            <typeparam name="TSecond">数据实体</typeparam>
+            <typeparam name="TThird">数据实体</typeparam>
+            <typeparam name="TFourth">数据实体</typeparam>
+            <typeparam name="TFifth">数据实体</typeparam>
+            <typeparam name="TReturn">返回数据实体</typeparam>
+            <param name="conn"></param>
+            <param name="map">委托-两个表数据逻辑处理</param>
+            <param name="sql">sql语句</param>
+            <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+            <param name="commandType"> 命令类型 </param>
+            <param name="sortSql"></param>
+            <param name="splitOn">分割两表数据的列名称</param>
+            <param name="buffered"></param>
+            <param name="transaction"></param>
+            <param name="timeout"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.QueryPagingData``1(System.Data.IDbConnection,System.Int32,System.Int32,System.String,System.Object,Dapper.Sugar.SugarCommandType,System.String,System.Boolean,System.Data.IDbTransaction,System.Nullable{System.Int32})">
+            <summary>
+            基础分页查询列表（limit分页）
+            </summary>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.OpenConnection(System.Data.IDbConnection)">
+            <summary>
+            打开连接
+            </summary>
+            <param name="conn"></param>
+        </member>
+        <member name="M:Dapper.Sugar.DbProvider.PagingList``1(System.Int32,System.Int32,System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            分页集合
+            </summary>
+            <typeparam name="T">数据实体</typeparam>
+            <param name="pageNumber">当前页</param>
+            <param name="pageSize">每页记录数</param>
             <param name="resource">集合</param>
             <returns></returns>
         </member>
@@ -1232,83 +1198,6 @@
         </member>
         <member name="M:Dapper.Sugar.SqlBuilder.GetSelectSqlFromTableDirect(System.String,System.Object,System.String)">
             <summary>
-            生成查询语句sql
-            </summary>
-            <param name="param"></param>
-            <param name="sql">可为tableName或selectSql</param>
-            <param name="additionalSql"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Dapper.Sugar.SqlBuilder.GetSelectSqlFromSelectSql(System.String,System.Object,System.String)">
-            <summary>
-            生成查询语句sql
-            </summary>
-            <param name="param"></param>
-            <param name="sql">可为tableName或selectSql</param>
-            <param name="additionalSql"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Dapper.Sugar.SqlBuilder.GetConditionSqlByParam(System.Object,System.String)">
-            <summary>
-            参数转成条件sql（默认返回1=1）
-            </summary>
-            <param name="param">参数（lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
-            <param name="defaultSql">默认无参数时sql语句</param>
-            <returns></returns>
-        </member>
-        <member name="M:Dapper.Sugar.SqlBuilder.GetInsertSql(System.String,System.Object)">
-            <summary>
-            生成新增sql命令
-            </summary>
-            <param name="tableName"></param>
-            <param name="param"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Dapper.Sugar.SqlBuilder.GetUpdateSql(System.String,System.Object,System.String)">
-            <summary>
-            生成修改sql命令
-            </summary>
-            <param name="param"></param>
-            <param name="tableName"></param>
-            <param name="tableKey"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Dapper.Sugar.SqlBuilder.GetPagingSql(System.String,System.Int32,System.Int32)">
-            <summary>
-            生成分页查询语句
-            </summary>
-            <param name="sql"></param>
-            <param name="pageSize"></param>
-            <param name="pageNumber"></param>
-            <returns>totalSql:查询语句 dataSql:分页语句（limit）</returns>
-        </member>
-        <member name="M:Dapper.Sugar.SqlBuilder.GetAutoIncrement(System.String)">
-            <summary>
-            获取自增主键查询语句
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Dapper.Sugar.MySqlBuilder.GetAutoIncrement(System.String)">
-            <summary>
-            获取自增主键查询语句
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Dapper.Sugar.SqlServerBuilder.GetAutoIncrement(System.String)">
-            <summary>
-            获取自增主键查询语句
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Dapper.Sugar.PostgreSqlBuilder.GetAutoIncrement(System.String)">
-            <summary>
-            获取自增主键查询语句
-            </summary>
-            <returns></returns>
-        </member>
-    </members>
-</doc>
-     <summary>
             生成查询语句sql
             </summary>
             <param name="param"></param>

@@ -4,7 +4,7 @@
     <TargetFrameworks>net4.5;netstandard2.0;netcoreapp2.0</TargetFrameworks>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.2.1</Version>
+    <Version>1.2.2</Version>
     <Company />
     <Authors>李春园</Authors>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
