@@ -245,7 +245,7 @@ public class DbHelp
     {
         using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
         {
-            return DbProvider.Query(sql, parms);
+            return DbProvider.Query(conn, sql, parms);
         }
     }
 

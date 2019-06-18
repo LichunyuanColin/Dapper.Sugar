@@ -260,7 +260,7 @@ namespace Dapper.Sugar
         /// <summary>
         /// 基础分页查询列表（limit分页）
         /// </summary>
-        private IPagingList<T> QueryPagingData<T>(IDbConnection conn, int pageNumber, int pageSize, string sql, object param, SugarCommandType commandType, string sortSql, bool buffered, IDbTransaction transaction, int? timeout)
+        private PagingList<T> QueryPagingData<T>(IDbConnection conn, int pageNumber, int pageSize, string sql, object param, SugarCommandType commandType, string sortSql, bool buffered, IDbTransaction transaction, int? timeout)
             where T : class
         {
             if (commandType == SugarCommandType.StoredProcedure)
@@ -310,7 +310,7 @@ namespace Dapper.Sugar
         /// <param name="pageSize">每页记录数</param>
         /// <param name="resource">集合</param>
         /// <returns></returns>
-        public IPagingList<T> PagingList<T>(int pageNumber, int pageSize, IEnumerable<T> resource)
+        public PagingList<T> PagingList<T>(int pageNumber, int pageSize, IEnumerable<T> resource)
         {
             PagingList<T> result = new PagingList<T>()
             {
@@ -758,7 +758,7 @@ namespace Dapper.Sugar
         /// <param name="transaction">事务</param>
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
-        public IPagingList<T> QueryPagingList<T>(IDbConnection conn, int pageNumber, int pageSize, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
+        public PagingList<T> QueryPagingList<T>(IDbConnection conn, int pageNumber, int pageSize, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
             where T : class
         {
             var list = QueryData<T>(conn, sql, param, commandType, sortSql, buffered, transaction, timeout);
@@ -780,7 +780,7 @@ namespace Dapper.Sugar
         /// <param name="transaction">事务</param>
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
-        public IPagingList<T> QueryPagingList2<T>(IDbConnection conn, int pageNumber, int pageSize, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
+        public PagingList<T> QueryPagingList2<T>(IDbConnection conn, int pageNumber, int pageSize, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
             where T : class
         {
             return QueryPagingData<T>(conn, pageNumber, pageSize, sql, param, commandType, sortSql, buffered, transaction, timeout);
