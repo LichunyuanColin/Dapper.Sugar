@@ -425,7 +425,18 @@ namespace Dapper.Sugar
         /// <param name="conn">连接</param>
         /// <param name="fieldName">字段名称（仅限PostgreSql需要）</param>
         /// <returns></returns>
-        public long QueryAutoIncrement(IDbConnection conn, string fieldName = null)
+        public int QueryAutoIncrement(IDbConnection conn, string fieldName = null)
+        {
+            return QueryScalar<int>(conn, this.Builder.GetAutoIncrement(fieldName), null, SugarCommandType.Text);
+        }
+
+        /// <summary>
+        /// 查询自增
+        /// </summary>
+        /// <param name="conn">连接</param>
+        /// <param name="fieldName">字段名称（仅限PostgreSql需要）</param>
+        /// <returns></returns>
+        public long QueryLongAutoIncrement(IDbConnection conn, string fieldName = null)
         {
             return QueryScalar<long>(conn, this.Builder.GetAutoIncrement(fieldName), null, SugarCommandType.Text);
         }
