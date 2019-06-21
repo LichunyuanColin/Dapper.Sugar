@@ -155,7 +155,6 @@ namespace Dapper.Sugar
         /// <param name="commandType">命令类型</param>
         /// <param name="timeout">过期时间（秒）</param>
         public CommandInfo(string sqlText, object param, EffentNextType type, SugarCommandType commandType = SugarCommandType.Text, int? timeout = null)
-       : this(sqlText, param, (int)type, commandType)
         {
             SqlText = sqlText;
             CommandType = commandType;
