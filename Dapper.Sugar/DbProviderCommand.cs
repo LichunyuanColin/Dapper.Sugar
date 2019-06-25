@@ -15,7 +15,7 @@ namespace Dapper.Sugar
         /// <summary>
         /// 联合查询分割表数据标识
         /// </summary>
-        private const string SPLITON = "ID";
+        private const string SPLITON = "Id";
 
         #region 基础方法
 

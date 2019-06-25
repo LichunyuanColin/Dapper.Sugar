@@ -34,49 +34,51 @@ namespace Dapper.Sugar
             }
             else
             {
+                PatternLayout layout = new PatternLayout()
+                {
+                    ConversionPattern = "%date [%thread]%-5p %c - %m %newline %exception %newline",
+                };
+                layout.ActivateOptions();
+
+                //info记录
                 var defaultAppender = new RollingFileAppender()
                 {
                     Name = "DefaultAppender",
-                    File = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "DapperSugar", "Sql"),
+                    File = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "DapperSugar", "Sql") + Path.DirectorySeparatorChar,
                     LockingModel = new FileAppender.MinimalLock(),
                     DatePattern = "yyyy-MM-dd\".txt\"",
                     StaticLogFileName = false,
                     AppendToFile = true,
                     RollingStyle = RollingFileAppender.RollingMode.Date,
-                    Layout = new PatternLayout()
-                    {
-                        ConversionPattern = "%date [%t]%-5p %c - %m %n %exception %n",
-                    },
-                    //Threshold = Level.Debug,
+                    Layout = layout,
+                    Threshold = Level.All,
                 };
-
                 defaultAppender.AddFilter(new log4net.Filter.LevelRangeFilter()
                 {
                     LevelMax = Level.Warn,
                     LevelMin = Level.Debug
                 });
+                defaultAppender.ActivateOptions();
 
+                //error记录
                 var errorAppender = new RollingFileAppender()
                 {
                     Name = "ErrorAppender",
-                    File = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "DapperSugar", "Error"),
+                    File = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "DapperSugar", "Error") + Path.DirectorySeparatorChar,
                     LockingModel = new FileAppender.MinimalLock(),
                     DatePattern = "yyyy-MM-dd\".txt\"",
                     StaticLogFileName = false,
                     AppendToFile = true,
                     RollingStyle = RollingFileAppender.RollingMode.Date,
-                    Layout = new PatternLayout()
-                    {
-                        ConversionPattern = "%date [%t]%-5p %c - %m %n %exception %n",
-                    },
-                    //Threshold = Level.Error,
+                    Layout = layout,
+                    Threshold = Level.All,
                 };
-
                 errorAppender.AddFilter(new log4net.Filter.LevelRangeFilter()
                 {
                     LevelMax = Level.Fatal,
                     LevelMin = Level.Error
                 });
+                errorAppender.ActivateOptions();
 
                 repository.Threshold = Level.All;
 

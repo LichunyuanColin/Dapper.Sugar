@@ -87,7 +87,7 @@ namespace Dapper.Sugar
 
         string GetSelectSqlFromTableDirect(string sql, object param, string additionalSql = null);
         string GetSelectSqlFromSelectSql(string sql, object param, string additionalSql = null);
-        string GetConditionSqlByParam(object param, string defaultSql = "1=1");
+        string GetConditionSqlByParam(object param, string defaultSql = null);
         string GetFieldName(string fieldName);
         string GetInsertSql(string tableName, object param);
         (string totalSql, string dataSql) GetPagingSql(string sql, int pageNumber, int pageSize);
@@ -95,7 +95,7 @@ namespace Dapper.Sugar
         string GetParamSql(FormateTypeCalculate type, string fieldName);
         string GetParamSql(FormateTypeCalculate type, string fieldName, string paramName);
         string GetTableName(string tableName);
-        string GetUpdateSql(string tableName, object param, string tableKey = "ID");
+        string GetUpdateSql(string tableName, object param, string tableKey = null);
         string GetAutoIncrement(string fieldName);
     }
 
@@ -106,7 +106,7 @@ namespace Dapper.Sugar
     {
         protected const string DEFAULT_CONDITION_SQL = "1=1";
         //private const string TABLE_PREFIX = "jth";//TablePrefix
-        protected const string TABLE_KEY = "ID";//
+        protected const string TABLE_KEY = "Id";//
 
         public virtual string ParamSign { get; set; } = "@";//参数标识
         public string SqlPrefix { get; set; }//前缀
