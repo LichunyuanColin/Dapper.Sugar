@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using static Dapper.Sugar.Config;
@@ -87,7 +88,7 @@ namespace Dapper.Sugar
 
         string GetSelectSqlFromTableDirect(string sql, object param, string additionalSql = null);
         string GetSelectSqlFromSelectSql(string sql, object param, string additionalSql = null);
-        string GetConditionSqlByParam(object param, string defaultSql = null);
+        string GetConditionSqlByParam(object param, string defaultSql = "1=1");
         string GetFieldName(string fieldName);
         string GetInsertSql(string tableName, object param);
         (string totalSql, string dataSql) GetPagingSql(string sql, int pageNumber, int pageSize);
@@ -95,7 +96,7 @@ namespace Dapper.Sugar
         string GetParamSql(FormateTypeCalculate type, string fieldName);
         string GetParamSql(FormateTypeCalculate type, string fieldName, string paramName);
         string GetTableName(string tableName);
-        string GetUpdateSql(string tableName, object param, string tableKey = null);
+        string GetUpdateSql(string tableName, object param, string tableKey = "Id");
         string GetAutoIncrement(string fieldName);
     }
 
@@ -152,6 +153,22 @@ namespace Dapper.Sugar
             return _sqlBuilder[type];
         }
 
+        /// <summary>
+        /// 判断是否数组或泛型数组
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private bool IsArrayOrList(Type type)
+        {
+            if (!type.IsGenericType)
+                return false;
+
+            var typeInfo = type.GetTypeInfo();
+
+            return
+               typeInfo.ImplementedInterfaces.Any(ti => ti.IsGenericType && ti.GetGenericTypeDefinition() == typeof(IEnumerable<>)) ||
+               typeInfo.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+        }
 
         #region 基础
 
@@ -320,98 +337,103 @@ namespace Dapper.Sugar
             StringBuilder sql = new StringBuilder();
             foreach (PropertyInfo item in props)
             {
-                if (item.Name.StartsWith("ig_"))
-                    continue;
-
                 var value = item.GetValue(param, null);
                 if (value == null)
                     continue;
 
-                if (item.Name.StartsWith("sq_"))
-                {
-                    if (!(value is string))
-                        throw new ArgumentException($"{item.Name}只能为string类型");
-
-                    string ss = (value as string).Trim();
-                    if (sql.Length > 0 && ss.Length > 2
-                        && ss.IndexOf("AND", 0, 3, StringComparison.OrdinalIgnoreCase) < 0
-                        && ss.IndexOf("OR", 0, 2, StringComparison.OrdinalIgnoreCase) < 0)
-                    {
-                        sql.Append(" AND ");
-                    }
-
-                    sql.Append(' ');
-                    sql.Append(ss);
-
-                    if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
-                        item.SetValue(param, null);
-
-                    continue;
-                }
-
-                TypeCode typeCode = Type.GetTypeCode(item.PropertyType);
-
                 if (item.PropertyType.IsValueType || Type.GetTypeCode(item.PropertyType) == TypeCode.String)//字符串或数字
                 {
-                    string filterName = item.Name.Substring(0, item.Name.Length - 3);
-
-                    //string prefix;
-                    if (item.Name.Length > 3 && item.Name[item.Name.Length - 3] == '_')
+                    if (item.Name.Length > 3)
                     {
-                        if (item.Name[item.Name.Length - 2] == 'l')
+                        if (item.Name[2] == '_')
                         {
-                            if (sql.Length > 0)
-                                sql.Append(" AND ");
+                            if (item.Name.StartsWith("ig"))
+                                continue;
 
-                            int index = item.Name.Length - 1;
+                            if (item.Name.StartsWith("sq"))
+                            {
+                                if (!(value is string))
+                                    throw new ArgumentException($"{item.Name}只能为string类型");
 
-                            if (item.Name[index] == 't')
-                            {
-                                sql.Append(GetParamSql(FormateTypeCalculate.ParamLess, filterName, item.Name));
+                                string ss = (value as string).Trim();
+                                if (sql.Length > 0 && ss.Length > 2
+                                    && ss.IndexOf("AND", 0, 3, StringComparison.OrdinalIgnoreCase) < 0
+                                    && ss.IndexOf("OR", 0, 2, StringComparison.OrdinalIgnoreCase) < 0)
+                                {
+                                    sql.Append(" AND ");
+                                }
+
+                                sql.Append(' ');
+                                sql.Append(ss);
+
+                                if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
+                                    item.SetValue(param, null);
+
+                                continue;
                             }
-                            else if (item.Name[index] == 'e')
+                        }
+                        else if (item.Name[item.Name.Length - 3] == '_')
+                        {
+                            string filterName = item.Name.Substring(0, item.Name.Length - 3);
+
+                            if (item.Name[item.Name.Length - 2] == 'l')
                             {
-                                sql.Append(GetParamSql(FormateTypeCalculate.ParamLessEqual, filterName, item.Name));
+                                if (sql.Length > 0)
+                                    sql.Append(" AND ");
+
+                                int index = item.Name.Length - 1;
+                                char c = item.Name[index];
+
+                                switch (c)
+                                {
+                                    case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamLess, filterName, item.Name)); break;
+                                    case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamLessEqual, filterName, item.Name)); break;
+                                    case 'k': sql.Append(GetParamSql(FormateTypeCalculate.ParamLike, filterName, item.Name)); break;
+                                    default:
+                                        throw new ArgumentException("暂不支持此前缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                                }
                             }
-                            else if (item.Name[index] == 'k')
+                            else if (item.Name.EndsWith("gt", StringComparison.Ordinal))
                             {
-                                sql.Append(GetParamSql(FormateTypeCalculate.ParamLike, filterName, item.Name));
+                                if (sql.Length > 0)
+                                    sql.Append(" AND ");
+                                sql.Append(GetParamSql(FormateTypeCalculate.ParamMore, filterName, item.Name));
                             }
+                            else if (item.Name.EndsWith("ge", StringComparison.Ordinal))
+                            {
+                                if (sql.Length > 0)
+                                    sql.Append(" AND ");
+                                sql.Append(GetParamSql(FormateTypeCalculate.ParamMoreEqual, filterName, item.Name));
+                            }
+                            else if (item.Name.EndsWith("ue", StringComparison.Ordinal) || item.Name.EndsWith("ne", StringComparison.Ordinal))
+                            {
+                                if (sql.Length > 0)
+                                    sql.Append(" AND ");
+                                sql.Append(GetParamSql(FormateTypeCalculate.ParamUnEqual, filterName, item.Name));
+                            }
+                            //else if (item.Name.EndsWith("_nn", StringComparison.Ordinal))
+                            //{
+                            //    if (sql.Length > 0)
+                            //        sql.Append(" AND ");
+                            //    sql.Append(GetParamSql(FormateTypeCalculate.ParamNotIn, filterName, item.Name));
+                            //}
+                            else if (item.Name.EndsWith("ig", StringComparison.Ordinal))
+                                continue;
                             else
-                                throw new ArgumentException("暂不支持此前缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                                throw new ArgumentException("暂不支持此前缀 " + item.Name.Substring(0, 2));
                         }
-                        else if (item.Name.EndsWith("_gt", StringComparison.Ordinal))
-                        {
-                            if (sql.Length > 0)
-                                sql.Append(" AND ");
-                            sql.Append(GetParamSql(FormateTypeCalculate.ParamMore, filterName, item.Name));
-                        }
-                        else if (item.Name.EndsWith("_ge", StringComparison.Ordinal))
-                        {
-                            if (sql.Length > 0)
-                                sql.Append(" AND ");
-                            sql.Append(GetParamSql(FormateTypeCalculate.ParamMoreEqual, filterName, item.Name));
-                        }
-                        else if (item.Name.EndsWith("_ue", StringComparison.Ordinal))
-                        {
-                            if (sql.Length > 0)
-                                sql.Append(" AND ");
-                            sql.Append(GetParamSql(FormateTypeCalculate.ParamUnEqual, filterName, item.Name));
-                        }
-                        //else if (item.Name.EndsWith("_nn", StringComparison.Ordinal))
-                        //{
-                        //    if (sql.Length > 0)
-                        //        sql.Append(" AND ");
-                        //    sql.Append(GetParamSql(FormateTypeCalculate.ParamNotIn, filterName, item.Name));
-                        //}
-                        else if (item.Name.EndsWith("_ig", StringComparison.Ordinal))
-                            continue;
-                        else
-                            throw new ArgumentException("暂不支持此前缀 " + item.Name.Substring(0, 2));
+                    }
+                    else
+                    {
+                        if (sql.Length > 0)
+                            sql.Append(" AND ");
+                        sql.Append(GetParamSql(FormateTypeCalculate.ParamEqual, item.Name));
                     }
                 }
                 //判断是否数组或List<T>,IsGenericType有bug，class<T>也返回true
-                else if (item.PropertyType.IsArray || item.PropertyType.Name.StartsWith("List`") || item.PropertyType.Name.StartsWith("IEnumerable`"))
+                else if (item.PropertyType.IsArray
+                    || (item.PropertyType.IsGenericType
+                    && (item.PropertyType.Name.StartsWith("List`") || item.PropertyType.Name.StartsWith("IEnumerable`"))))
                 {
                     if (sql.Length > 0)
                         sql.Append(" AND ");
@@ -444,7 +466,7 @@ namespace Dapper.Sugar
                 type = type.GetElementType();
                 param = (param as object[])[0];
             }
-            else if (type.Name.StartsWith("List`") || type.Name.StartsWith("ListPartition`") || type.Name.StartsWith("SelectListPartitionIterator`"))//type.Name.StartsWith("List`")
+            else if (IsArrayOrList(type))
             {
                 //判断是否泛型
                 var temp = type.GetGenericArguments();
@@ -509,10 +531,9 @@ namespace Dapper.Sugar
             {
                 //判断是否数组
                 type = type.GetElementType();
-
                 param = (param as object[])[0];
             }
-            else if (type.Name.StartsWith("List`") || type.Name.StartsWith("ListPartition`") || type.Name.StartsWith("SelectListPartitionIterator`"))//type.Name.StartsWith("List`")
+            else if (IsArrayOrList(type))
             {
                 //判断是否泛型
                 var temp = type.GetGenericArguments();

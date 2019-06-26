@@ -81,21 +81,34 @@ namespace UnitTest_Net45
         {
             int result = 0;
             long id = 0;
-            using (var conn = DbHelp.DbProvider.CreateConnection())
+            var employee = list[0];
+            EmployeeModel addInfo = null;
+
+            using (var conn = DbHelp.DbProvider.CreateConnection(Config.DataBaseAuthority.Write))
             {
                 result = DbHelp.DbProvider.ExecuteSql(conn, "employee", new
                 {
                     /*Id = 7,*/
-                    Account = "qinming",
-                    Name = "秦明",
-                    sq_Age = "38",
+                    Account = employee.Account,
+                    Name = employee.Name,
+                    sq_Age = employee.Age.ToString(),
                     sq_Status = "20"
                 }, SugarCommandType.AddTableDirect);
 
                 id = DbHelp.DbProvider.QueryAutoIncrement(conn);
+
+                addInfo = DbHelp.DbProvider.QuerySingle<EmployeeModel>(conn, "employee", new { Id = id }, SugarCommandType.QueryTableDirect);
             }
 
             Assert.AreEqual(result, 1, "新增-表名-单个匿名对象");
+
+            Assert.IsNotNull(addInfo, "新增-表名-单个匿名对象");
+
+            Assert.IsTrue(
+                addInfo.Account == employee.Account
+                && addInfo.Name == employee.Name
+                && addInfo.Age == employee.Age
+                && addInfo.Status == employee.Status, "新增-表名-单个匿名对象");
         }
 
         /// <summary>
@@ -104,16 +117,40 @@ namespace UnitTest_Net45
         [TestMethod]
         public void TestAdd2()
         {
-            var result = DbHelp.ExecuteSql("employee", list.Skip(1).Take(2).Select(t => new
+            int result = 0;
+            long id = 0;
+            var employeeList = list.Skip(1).Take(2).ToList();
+            List<EmployeeModel> addlist;
+
+            using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                Account = t.Account,
-                Name = t.Name,
-                Age = t.Age,
-                ig_Status = t.Status,
-                sq_Status = "@ig_Status"
-            }).ToList(), SugarCommandType.AddTableDirect);
+                result = DbHelp.ExecuteSql("employee", employeeList.Select(t => new
+                {
+                    Account = t.Account,
+                    Name = t.Name,
+                    Age = t.Age,
+                    ig_Status = t.Status,
+                    sq_Status = "@ig_Status"
+                }), SugarCommandType.AddTableDirect);
+
+                id = DbHelp.DbProvider.QueryAutoIncrement(conn);
+
+                addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id_lt = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2").ToList();
+            }
 
             Assert.AreEqual(result, 2, "增-表名-多个匿名对象");
+
+            Assert.IsTrue(addlist.Count == 2
+                && addlist[0].Account == employeeList[1].Account
+                && addlist[0].Name == employeeList[1].Name
+                && addlist[0].Age == employeeList[1].Age
+                && addlist[0].Status == employeeList[1].Status
+
+                && addlist[1].Account == employeeList[0].Account
+                && addlist[1].Name == employeeList[0].Name
+                && addlist[1].Age == employeeList[0].Age
+                && addlist[1].Status == employeeList[0].Status
+                , "增-表名-多个匿名对象");
         }
 
         /// <summary>
@@ -122,9 +159,29 @@ namespace UnitTest_Net45
         [TestMethod]
         public void TestAdd3()
         {
-            var result = DbHelp.ExecuteSql("employee", list.Skip(3).Take(1).First(), SugarCommandType.AddTableDirect);
+            int result = 0;
+            long id = 0;
+            var employee = list.Skip(3).Take(1).First();
+            EmployeeModel addInfo = null;
+
+            using (var conn = DbHelp.DbProvider.CreateConnection())
+            {
+                result = DbHelp.ExecuteSql("employee", employee, SugarCommandType.AddTableDirect);
+
+                id = DbHelp.DbProvider.QueryAutoIncrement(conn);
+
+                addInfo = DbHelp.DbProvider.QuerySingle<EmployeeModel>(conn, "select * from employee", new { Id = id }, SugarCommandType.QuerySelectSql);
+            }
 
             Assert.AreEqual(result, 1, "新增-表名-单个实体对象");
+
+            Assert.IsNotNull(addInfo, "新增-表名-单个匿名对象");
+
+            Assert.IsTrue(
+                addInfo.Account == employee.Account
+                && addInfo.Name == employee.Name
+                && addInfo.Age == employee.Age
+                && addInfo.Status == employee.Status, "新增-表名-单个匿名对象");
         }
 
         /// <summary>
@@ -133,9 +190,33 @@ namespace UnitTest_Net45
         [TestMethod]
         public void TestAdd4()
         {
-            var result = DbHelp.ExecuteSql("employee", list.Skip(4).Take(2).ToList(), SugarCommandType.AddTableDirect);
+            int result = 0;
+            long id = 0;
+            var employeeList = list.Skip(4).Take(2).ToList();
+            List<EmployeeModel> addlist;
 
-            Assert.AreEqual(result, 2, "新增-表名-多个个实体对象");
+            using (var conn = DbHelp.DbProvider.CreateConnection())
+            {
+                result = DbHelp.ExecuteSql("employee", employeeList, SugarCommandType.AddTableDirect);
+
+                id = DbHelp.DbProvider.QueryAutoIncrement(conn);
+
+                addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id_lt = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2").ToList();
+            }
+
+            Assert.AreEqual(result, 2, "增-表名-多个匿名对象");
+
+            Assert.IsTrue(addlist.Count == 2
+                && addlist[0].Account == employeeList[1].Account
+                && addlist[0].Name == employeeList[1].Name
+                && addlist[0].Age == employeeList[1].Age
+                && addlist[0].Status == employeeList[1].Status
+
+                && addlist[1].Account == employeeList[0].Account
+                && addlist[1].Name == employeeList[0].Name
+                && addlist[1].Age == employeeList[0].Age
+                && addlist[1].Status == employeeList[0].Status
+                , "增-表名-多个匿名对象");
         }
 
 
@@ -145,17 +226,18 @@ namespace UnitTest_Net45
         [TestMethod]
         public void TestUpdate1()
         {
+            string name = "卢俊义2";
             using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                var info = DbHelp.DbProvider.QuerySingle<EmployeeModel>(conn, "employee", new { sq_Id = "Id = 1" }, SugarCommandType.QueryTableDirect);
+                var info = DbHelp.DbProvider.QuerySingle<EmployeeModel>(conn, "employee", new { sq_Id = "Id = 2" }, SugarCommandType.QueryTableDirect);
 
                 Assert.IsNotNull(info, "查询单个对象");
 
                 var result = DbHelp.DbProvider.ExecuteSql(conn, "employee", new
                 {
-                    Id = 1,
-                    Account = "songjiang",
-                    Name = "宋江",
+                    Id = 2,
+                    Account = "lujunyi",
+                    Name = name,
                     sq_Age = "Age + 2",
                     Status = 20
                 }, SugarCommandType.UpdateTableDirect);
@@ -165,15 +247,17 @@ namespace UnitTest_Net45
                 var info2 = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new
                 {
                     Id_gt = 0,
-                    sq_1 = "(Id = 1",
-                    sq_2 = "or Id = 2",
+                    sq_1 = "(Id = 2",
+                    sq_2 = "or Id = 3",
                     sq_3 = ")",
                     Status = 20
-                }, SugarCommandType.QueryTableDirect).ToList();
+                }, SugarCommandType.QueryTableDirect, "Order By Id Asc").ToList();
 
                 Assert.AreEqual(info2.Count, 2, "查询多个对象");
 
                 Assert.AreEqual(info2[0].Age, info.Age + 2, "修改-表名-匿名对象");
+
+                Assert.AreEqual(info2[0].Name, name, "修改-表名-匿名对象");
             }
         }
 
@@ -183,7 +267,7 @@ namespace UnitTest_Net45
         [TestMethod]
         public void TestUpdate2()
         {
-            var result = DbHelp.ExecuteSql("employee", new List<EmployeeModel>
+            var employeeList = new List<EmployeeModel>
             {
                 new EmployeeModel
                 {
@@ -201,10 +285,28 @@ namespace UnitTest_Net45
                     Age = 48,
                     Status = EmployeeModel.EnumStatus.Disable
                 }
-            }, SugarCommandType.UpdateTableDirect);
+            };
 
-            Assert.AreEqual(result, 2, "修改-表名-多个实体对象");
+            using (var conn = DbHelp.DbProvider.CreateConnection())
+            {
+                var result = DbHelp.ExecuteSql("employee", employeeList, SugarCommandType.UpdateTableDirect);
 
+                var addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id = new int[] { 1, 2 } }, SugarCommandType.QueryTableDirect, "Order By Id Asc").ToList();
+
+                Assert.AreEqual(result, 2, "修改-表名-多个实体对象");
+
+                Assert.IsTrue(addlist.Count == 2
+                    && addlist[0].Account == employeeList[0].Account
+                    && addlist[0].Name == employeeList[0].Name
+                    && addlist[0].Age == employeeList[0].Age
+                    && addlist[0].Status == employeeList[0].Status
+
+                    && addlist[1].Account == employeeList[1].Account
+                    && addlist[1].Name == employeeList[1].Name
+                    && addlist[1].Age == employeeList[1].Age
+                    && addlist[1].Status == employeeList[1].Status
+                    , "修改-表名-多个实体对象");
+            }
         }
 
         #endregion
@@ -220,17 +322,17 @@ namespace UnitTest_Net45
             //查询单个对象
             var result = DbHelp.QuerySingle<EmployeeModel>("employee", new
             {
-                ig_Account = "songjiang",
+                ig_Account = "lujunyi",
                 sq_Account = "Account=@ig_Account",
-                Name_lk = "宋%",
-                Status = new int[] { 20 },
-                Age_gt = 40,
-                Age_lt = 80
+                Name_lk = "卢%",
+                Status = new int[] { 10 },
+                Age_gt = 47,
+                Age_lt = 49
             }, SugarCommandType.QueryTableDirect);
 
             Assert.IsNotNull(result, "查询单个对象");
 
-            Assert.AreEqual(result.Id, 1, "查询单个对象");
+            Assert.AreEqual(result.Id, 2, "查询单个对象");
         }
 
         /// <summary>
@@ -240,9 +342,11 @@ namespace UnitTest_Net45
         public void TestQuery2()
         {
             //查询多个对象
-            var result = DbHelp.QueryList<EmployeeModel>("employee", new { Age_ge = 50, Age_le = 50 }, SugarCommandType.QueryTableDirect);
+            var result = DbHelp.QueryList<EmployeeModel>("employee", new { Age_ge = 50, Age_le = 50 }, SugarCommandType.QueryTableDirect).ToList();
 
-            Assert.AreEqual(result.Count(), 1, "查询多个对象");
+            Assert.AreEqual(result.Count, 1, "查询多个对象");
+
+            Assert.AreEqual(result[0].Id, 1, "查询多个对象");
         }
 
         /// <summary>
@@ -258,10 +362,11 @@ namespace UnitTest_Net45
             //param.e_Age_ge = 48;
             //param.ue_e_Id = 1;
             //param.ge_e_Age = 48;
-            var result = DbHelp.QueryList<EmployeeModel>("select * from employee e where", param, SugarCommandType.QuerySelectSql);
+            var result = DbHelp.QueryList<EmployeeModel>("select * from employee e where", param, SugarCommandType.QuerySelectSql).ToList();
 
-            Assert.AreEqual(result.Count(), 1, "别名查询多个对象错误");
+            Assert.AreEqual(result.Count, 1, "别名查询多个对象错误");
 
+            Assert.AreEqual(result[0].Id, 2, "别名查询多个对象错误");
         }
 
         /// <summary>
