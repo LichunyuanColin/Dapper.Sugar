@@ -92,7 +92,7 @@ namespace UnitTest_NetCore
             DbHelp.DbProvider.Builder.GetSelectSqlFromTableDirect("employee", new
             {
                 Account1 = "sa",
-                Status = new List<int> { 20, 10 },
+                //Status = new List<int> { 20, 10 },
                 ig_Age = 20,
                 sq_Age = "@ig_Age",
                 Age_gt = 12,

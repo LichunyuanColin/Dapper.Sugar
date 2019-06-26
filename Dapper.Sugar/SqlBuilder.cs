@@ -381,7 +381,7 @@ namespace Dapper.Sugar
                             string filterName = item.Name.Substring(0, item.Name.Length - 3);
                             char end1 = item.Name[item.Name.Length - 2];
                             char end2 = item.Name[item.Name.Length - 1];
-                            
+
                             if (end1 == 'l')
                             {
                                 if (sql.Length > 0)
@@ -426,6 +426,12 @@ namespace Dapper.Sugar
                                 continue;
                             else
                                 throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                        }
+                        else
+                        {
+                            if (sql.Length > 0)
+                                sql.Append(" AND ");
+                            sql.Append(GetParamSql(FormateTypeCalculate.ParamEqual, item.Name));
                         }
                     }
                     else
