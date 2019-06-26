@@ -3,6 +3,7 @@ using Dapper.Sugar;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -72,65 +73,125 @@ namespace UnitTest_NetCore
         };
 
 
-        public static TimeSpan ts1;
-
-        public static TimeSpan ts2;
-
         #region ²Ù×÷
 
         [TestMethod]
         public void Test()
         {
-            DateTime t1 = DateTime.Now;
+            Stopwatch stopwatch1 = new Stopwatch();
 
-            var IEnumerableType = typeof(IEnumerable<>);
-
-            for (int i = 0; i < 100; i++)
+            DbHelp.DbProvider.Builder.GetSelectSqlFromTableDirect("employee", new
             {
-                DbHelp.DbProvider.Builder.GetSelectSqlFromTableDirect("employee", new
-                {
-                    Account = "sa",
-                    Status = 20,
-                    ig_Age = 20,
-                    sq_Age = "@ig_Age",
-                    Age_gt = 12,
-                    Name_lk = "%sa%",
-                });
-            }
+                Status = new List<int> { 20, 10 },
+                sq_Age = "@ig_Age",
+                Name_lk = "%sa%",
+            });
 
-            DateTime t2 = DateTime.Now;
+            stopwatch1.Start();
 
-            ts1 = t2 - t1;
+            DbHelp.DbProvider.Builder.GetSelectSqlFromTableDirect("employee", new
+            {
+                Account1 = "sa",
+                Status = new List<int> { 20, 10 },
+                ig_Age = 20,
+                sq_Age = "@ig_Age",
+                Age_gt = 12,
+                Name_lk = "%sa%",
+            });
 
-            Console.WriteLine(ts1.Ticks);
 
+
+
+            stopwatch1.Stop();
+
+            Console.WriteLine(stopwatch1.Elapsed.Ticks);
         }
+
+        [TestMethod]
+        public void Test1()
+        {
+            Stopwatch stopwatch1 = new Stopwatch();
+
+            DbHelp.DbProvider.Builder.GetUpdateSql("employee", new
+            {
+                Account = "sa",
+            });
+
+            stopwatch1.Start();
+
+            var s = DbHelp.DbProvider.Builder.GetUpdateSql("employee", new
+            {
+                Account1 = "sa",
+                Status = new List<int> { 20, 10 },
+                ig_Age = 20,
+                sq_Age = "@ig_Age",
+                Age_gt = 12,
+                Name_lk = "%sa%",
+            });
+
+            stopwatch1.Stop();
+
+            Console.WriteLine(stopwatch1.Elapsed.Ticks);
+        }
+
+
+        [TestMethod]
         public void Test2()
         {
-            var a = list.Where(t => t.Age > 0);
-            var b = a.Select(t => new { Account = t.Account });
-            var c = list.Select(t => new { Account = t.Account });
+            string aa = "Status_gt";
+            string cc = "gt_Status";
 
-            var type1 = a.GetType();
+            Stopwatch stopwatch = new Stopwatch();
 
-            var type2 = b.GetType();
-
-            var type3 = c.GetType();
-
-            DateTime t1 = DateTime.Now;
+            stopwatch.Start();
 
             for (int i = 0; i < 100; i++)
             {
-                typeof(System.Collections.IEnumerable).IsAssignableFrom(type1);
-                typeof(System.Collections.IEnumerable).IsAssignableFrom(type2);
-                typeof(System.Collections.IEnumerable).IsAssignableFrom(type3);
+                var b = aa.EndsWith("_gt");
             }
 
-            DateTime t2 = DateTime.Now;
+            stopwatch.Stop();
 
-            ts2 = t2 - t1;
+            Console.WriteLine(stopwatch.Elapsed.Ticks);
 
-            Console.WriteLine(ts2.Ticks);
+            stopwatch.Reset();
+
+            stopwatch.Start();
+
+            for (int i = 0; i < 100; i++)
+            {
+                var b = aa[aa.Length - 3] == '_' && aa[aa.Length - 2] == 'g' && aa[aa.Length - 1] == 't';
+            }
+
+            stopwatch.Stop();
+
+            Console.WriteLine(stopwatch.Elapsed.Ticks);
+
+            stopwatch.Reset();
+
+            stopwatch.Start();
+
+            for (int i = 0; i < 100; i++)
+            {
+                var b = cc.Substring(0, 3) == "gt_";
+            }
+
+            stopwatch.Stop();
+
+            Console.WriteLine(stopwatch.Elapsed.Ticks);
+
+            stopwatch.Reset();
+
+            stopwatch.Start();
+
+            for (int i = 0; i < 100; i++)
+            {
+                var b = cc[0] == 'g' && cc[1] == 't' && cc[2] == '_';
+            }
+
+            stopwatch.Stop();
+
+            Console.WriteLine(stopwatch.Elapsed.Ticks);
         }
 
         /// <summary>

@@ -341,18 +341,22 @@ namespace Dapper.Sugar
                 if (value == null)
                     continue;
 
-                if (item.PropertyType.IsValueType || Type.GetTypeCode(item.PropertyType) == TypeCode.String)//字符串或数字
+                bool isString = false;
+                if (item.PropertyType.IsValueType || (isString = item.PropertyType == typeof(string)))//字符串或数字
                 {
                     if (item.Name.Length > 3)
                     {
                         if (item.Name[2] == '_')
                         {
-                            if (item.Name.StartsWith("ig"))
+                            char start1 = item.Name[0];
+                            char start2 = item.Name[1];
+
+                            if (start1 == 'i' && start2 == 'g')
                                 continue;
 
-                            if (item.Name.StartsWith("sq"))
+                            if (start1 == 's' && start2 == 'q')
                             {
-                                if (!(value is string))
+                                if (!isString)
                                     throw new ArgumentException($"{item.Name}只能为string类型");
 
                                 string ss = (value as string).Trim();
@@ -375,40 +379,41 @@ namespace Dapper.Sugar
                         else if (item.Name[item.Name.Length - 3] == '_')
                         {
                             string filterName = item.Name.Substring(0, item.Name.Length - 3);
-
-                            if (item.Name[item.Name.Length - 2] == 'l')
+                            char end1 = item.Name[item.Name.Length - 2];
+                            char end2 = item.Name[item.Name.Length - 1];
+                            
+                            if (end1 == 'l')
                             {
                                 if (sql.Length > 0)
                                     sql.Append(" AND ");
 
-                                int index = item.Name.Length - 1;
-                                char c = item.Name[index];
-
-                                switch (c)
+                                switch (end2)
                                 {
                                     case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamLess, filterName, item.Name)); break;
                                     case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamLessEqual, filterName, item.Name)); break;
                                     case 'k': sql.Append(GetParamSql(FormateTypeCalculate.ParamLike, filterName, item.Name)); break;
                                     default:
-                                        throw new ArgumentException("暂不支持此前缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                                        throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
                                 }
                             }
-                            else if (item.Name.EndsWith("gt", StringComparison.Ordinal))
+                            else if (end1 == 'g')
                             {
                                 if (sql.Length > 0)
                                     sql.Append(" AND ");
-                                sql.Append(GetParamSql(FormateTypeCalculate.ParamMore, filterName, item.Name));
+
+                                switch (end2)
+                                {
+                                    case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamMore, filterName, item.Name)); break;
+                                    case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamMoreEqual, filterName, item.Name)); break;
+                                    default:
+                                        throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                                }
                             }
-                            else if (item.Name.EndsWith("ge", StringComparison.Ordinal))
+                            else if ((end1 == 'u' || end1 == 'n') && end2 == 'e')
                             {
                                 if (sql.Length > 0)
                                     sql.Append(" AND ");
-                                sql.Append(GetParamSql(FormateTypeCalculate.ParamMoreEqual, filterName, item.Name));
-                            }
-                            else if (item.Name.EndsWith("ue", StringComparison.Ordinal) || item.Name.EndsWith("ne", StringComparison.Ordinal))
-                            {
-                                if (sql.Length > 0)
-                                    sql.Append(" AND ");
+
                                 sql.Append(GetParamSql(FormateTypeCalculate.ParamUnEqual, filterName, item.Name));
                             }
                             //else if (item.Name.EndsWith("_nn", StringComparison.Ordinal))
@@ -417,10 +422,10 @@ namespace Dapper.Sugar
                             //        sql.Append(" AND ");
                             //    sql.Append(GetParamSql(FormateTypeCalculate.ParamNotIn, filterName, item.Name));
                             //}
-                            else if (item.Name.EndsWith("ig", StringComparison.Ordinal))
+                            else if (end1 == 'i' && end2 == 'g')
                                 continue;
                             else
-                                throw new ArgumentException("暂不支持此前缀 " + item.Name.Substring(0, 2));
+                                throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
                         }
                     }
                     else
@@ -481,26 +486,32 @@ namespace Dapper.Sugar
             StringBuilder sqlValue = new StringBuilder();
             foreach (PropertyInfo item in propertys)
             {
-                if (item.Name.StartsWith("ig_"))
-                    continue;
-
-                if (item.Name.StartsWith("sq_"))
+                if (item.Name.Length > 3 && item.Name[2] == '_')
                 {
-                    var v = item.GetValue(param, null);
-                    if (!(v is string))
-                        throw new ArgumentException($"{item.Name}只能为string类型");
-                    if (v != null)
+                    char start1 = item.Name[0];
+                    char start2 = item.Name[1];
+
+                    if (start1 == 'i' && start2 == 'g')
+                        continue;
+
+                    if (start1 == 's' && start2 == 'q')
                     {
-                        sqlField.Append(GetFieldName(item.Name.Substring(3)));
-                        sqlField.Append(",");
+                        var v = item.GetValue(param, null);
+                        if (!(v is string))
+                            throw new ArgumentException($"{item.Name}只能为string类型");
+                        if (v != null)
+                        {
+                            sqlField.Append(GetFieldName(item.Name.Substring(3)));
+                            sqlField.Append(",");
 
-                        sqlValue.Append(v);
-                        sqlValue.Append(",");
+                            sqlValue.Append(v);
+                            sqlValue.Append(",");
 
-                        if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
-                            item.SetValue(param, null);
+                            if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
+                                item.SetValue(param, null);
+                        }
+                        continue;
                     }
-                    continue;
                 }
 
                 if (item.GetCustomAttributes(typeof(IgnoreAddAttribute), false).Length == 0)
@@ -548,24 +559,30 @@ namespace Dapper.Sugar
             //StringBuilder sqlValue = new StringBuilder();
             foreach (PropertyInfo item in propertys)
             {
-                if (item.Name.StartsWith("ig_"))
-                    continue;
-
-                if (item.Name.StartsWith("sq_"))
+                if (item.Name.Length > 3 && item.Name[2] == '_')
                 {
-                    var v = item.GetValue(param, null);
-                    if (!(v is string))
-                        throw new ArgumentException($"{item.Name}只能为string类型");
-                    if (v != null)
+                    char start1 = item.Name[0];
+                    char start2 = item.Name[1];
+
+                    if (start1 == 'i' && start2 == 'g')
+                        continue;
+
+                    if (start1 == 's' && start2 == 'q')
                     {
-                        sqlField.Append(GetFieldName(item.Name.Substring(3)));
-                        sqlField.Append("=");
-                        sqlField.Append(v);
-                        sqlField.Append(",");
-                        if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
-                            item.SetValue(param, null);
+                        var v = item.GetValue(param, null);
+                        if (!(v is string))
+                            throw new ArgumentException($"{item.Name}只能为string类型");
+                        if (v != null)
+                        {
+                            sqlField.Append(GetFieldName(item.Name.Substring(3)));
+                            sqlField.Append("=");
+                            sqlField.Append(v);
+                            sqlField.Append(",");
+                            if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
+                                item.SetValue(param, null);
+                        }
+                        continue;
                     }
-                    continue;
                 }
 
                 if (item.GetCustomAttributes(typeof(IgnoreUpdateAttribute), false).Length == 0 && item.Name != tableKey)
