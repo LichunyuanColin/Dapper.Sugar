@@ -7,6 +7,9 @@ using static Dapper.Sugar.Config;
 
 namespace Dapper.Sugar
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class DbProviderFactoryManage
     {
         private static Dictionary<Config.DataBaseType, DbProviderFactory> _dbProviderFactory = new Dictionary<Config.DataBaseType, DbProviderFactory>();
@@ -15,7 +18,7 @@ namespace Dapper.Sugar
         {
             string[] typeStrings = typeString.Split(',');
             if (typeStrings.Length < 2)
-                throw new Exception("typeString错误");
+                throw new DapperSugarConfigException("typeString错误");
 
             string typeName = typeStrings[0].Trim();
             string assemblyName = typeStrings[1].Trim();

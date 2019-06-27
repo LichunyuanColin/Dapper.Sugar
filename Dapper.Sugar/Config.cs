@@ -38,7 +38,7 @@ namespace Dapper.Sugar
                 foreach (DapperSugarSection.ConnectionStringsElement item in section.ConnectionStrings)
                 {
                     if (item.List?.Count == 0)
-                        throw new Exception("缺少[dapperSugar: connectionStrings: list]配置");
+                        throw new DapperSugarConfigException("缺少[dapperSugar > connectionStrings > list]配置");
 
                     var read = new Dictionary<string, string>();
                     var write = new Dictionary<string, string>();
@@ -50,7 +50,7 @@ namespace Dapper.Sugar
                         if (connAuthority.Contains("w"))
                         {
                             if (write.ContainsKey(conn.Name))
-                                throw new Exception("配置[dapperSugar: connectionStrings: list: name]重复");
+                                throw new DapperSugarConfigException($"配置[dapperSugar > connectionStrings > list > name \"{conn.Name}\"]重复");
 
                             write.Add(conn.Name, conn.ConnectionString);
                         }
@@ -58,7 +58,7 @@ namespace Dapper.Sugar
                         if (connAuthority.Contains("r"))
                         {
                             if (read.ContainsKey(conn.Name))
-                                throw new Exception("配置[dapperSugar: connectionStrings: list: name]重复");
+                                throw new DapperSugarConfigException($"配置[dapperSugar > connectionStrings > list > name \"{conn.Name}\"]重复");
 
                             read.Add(conn.Name, conn.ConnectionString);
                         }
@@ -89,7 +89,7 @@ namespace Dapper.Sugar
             }
             else
             {
-                throw new ArgumentException("缺少[dapperSugar: connectionStrings]配置");
+                throw new ArgumentException("缺少[dapperSugar > connectionStrings]配置");
             }
 
             return result;
@@ -101,7 +101,7 @@ namespace Dapper.Sugar
             var sugar = configuration.GetSection("dapperSugar");
             if (sugar == null)
             {
-                throw new Exception("缺少[dapperSugar]配置");
+                throw new DapperSugarConfigException("缺少[dapperSugar]配置");
             }
 
             bool debug = false;
@@ -133,16 +133,16 @@ namespace Dapper.Sugar
                     var list = item.GetSection("list").GetChildren();
 
                     if (string.IsNullOrEmpty(name))
-                        throw new Exception("缺少[dapperSugar: connectionStrings: name]配置");
+                        throw new DapperSugarConfigException("缺少[dapperSugar > connectionStrings > name]配置");
 
                     if (string.IsNullOrEmpty(type))
-                        throw new Exception("缺少[dapperSugar: connectionStrings: type]配置");
+                        throw new DapperSugarConfigException("缺少[dapperSugar > connectionStrings > type]配置");
 
                     if (!Enum.TryParse<DataBaseType>(type, out dbType))
-                        throw new Exception("[dapperSugar: connectionStrings: type]配置错误");
+                        throw new DapperSugarConfigException("[dapperSugar > connectionStrings > type]配置错误");
 
                     if (list.Count() == 0)
-                        throw new Exception("缺少[dapperSugar: connectionStrings: list]配置");
+                        throw new DapperSugarConfigException("缺少[dapperSugar > connectionStrings > list]配置");
 
                     name = name.ToLower();
 
@@ -163,13 +163,13 @@ namespace Dapper.Sugar
                         var connString = child.GetSection("connectionString").Value;
 
                         if (string.IsNullOrEmpty(connName))
-                            throw new Exception("缺少[dapperSugar: connectionStrings: list: name]配置");
+                            throw new DapperSugarConfigException("缺少[dapperSugar > connectionStrings > list > name]配置");
 
                         if (string.IsNullOrEmpty(connAuthority))
-                            throw new Exception("缺少[dapperSugar: connectionStrings: list: authority]配置");
+                            throw new DapperSugarConfigException("缺少[dapperSugar > connectionStrings > list > authority]配置");
 
                         if (string.IsNullOrEmpty(connString))
-                            throw new Exception("缺少[dapperSugar: connectionStrings: list: connectionString]配置");
+                            throw new DapperSugarConfigException("缺少[dapperSugar > connectionStrings > list > connectionString]配置");
 
                         connName = connName.ToLower();
                         connAuthority = connAuthority.ToLower();
@@ -177,7 +177,7 @@ namespace Dapper.Sugar
                         if (connAuthority.Contains("w"))
                         {
                             if (connectionItem.WriteList.ContainsKey(connName))
-                                throw new Exception("配置[dapperSugar: connectionStrings: list: name]重复");
+                                throw new DapperSugarConfigException($"配置[dapperSugar > connectionStrings > list > name \"{connName}\"]重复");
 
                             connectionItem.WriteList.Add(connName, connString);
                         }
@@ -185,7 +185,7 @@ namespace Dapper.Sugar
                         if (connAuthority.Contains("r"))
                         {
                             if (connectionItem.ReadList.ContainsKey(connName))
-                                throw new Exception("配置[dapperSugar: connectionStrings: list: name]重复");
+                                throw new DapperSugarConfigException($"配置[dapperSugar > connectionStrings > list > name \"{connName}\"]重复");
 
                             connectionItem.ReadList.Add(connName, connString);
                         }
@@ -198,7 +198,7 @@ namespace Dapper.Sugar
             else if (!string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(connectionString))
             {
                 if (!Enum.TryParse<DataBaseType>(type, out dbType))
-                    throw new Exception("[dapperSugar: connectionStrings: type]配置错误");
+                    throw new DapperSugarConfigException("[dapperSugar > connectionStrings > type]配置错误");
 
                 name = name ?? "";
                 Dictionary<string, string> dic = new Dictionary<string, string> { { name, connectionString } };
@@ -214,7 +214,7 @@ namespace Dapper.Sugar
                 };
             }
             else
-                throw new Exception("缺少[dapperSugar: connectionStrings]配置");
+                throw new DapperSugarConfigException("缺少[dapperSugar > connectionStrings]配置");
 
             return result;
 #endif

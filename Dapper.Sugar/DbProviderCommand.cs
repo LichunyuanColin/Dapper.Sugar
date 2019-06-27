@@ -39,7 +39,7 @@ namespace Dapper.Sugar
                 //if (Config.Instance.LogSql)//写入日志
                 Log.ErrorSql(sql, param, ex);
                 if (Config.Instance.Debug)
-                    throw new Exception($"SQL命令[ {sql} ]执行出错，错误信息：{ex.Message}！", ex);
+                    throw new DapperSugarException($"SQL命令[ {sql} ]执行出错，错误信息：{ex.Message}！", ex);
                 return new List<T>(0);
             }
         }
@@ -69,7 +69,7 @@ namespace Dapper.Sugar
             {
                 Log.ErrorSql(sql, param, ex);
                 if (Config.Instance.Debug)
-                    throw new Exception($"SQL命令[ {sql} ]执行出错，错误信息：{ex.Message}！", ex);
+                    throw new DapperSugarException($"SQL命令[ {sql} ]执行出错，错误信息：{ex.Message}！", ex);
                 return default(T);
             }
         }
@@ -120,7 +120,7 @@ namespace Dapper.Sugar
             {
                 Log.ErrorSql(SqlText, param, ex);
                 if (Config.Instance.Debug)
-                    throw new Exception($"SQL命令[ {SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
+                    throw new DapperSugarException($"SQL命令[ {SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
                 return new List<TReturn>(0);
             }
         }
@@ -162,7 +162,7 @@ namespace Dapper.Sugar
             {
                 Log.ErrorSql(SqlText, param, ex);
                 if (Config.Instance.Debug)
-                    throw new Exception($"SQL命令[ {SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
+                    throw new DapperSugarException($"SQL命令[ {SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
                 return new List<TReturn>(0);
             }
         }
@@ -206,7 +206,7 @@ namespace Dapper.Sugar
             {
                 Log.ErrorSql(SqlText, param, ex);
                 if (Config.Instance.Debug)
-                    throw new Exception($"SQL命令[ {SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
+                    throw new DapperSugarException($"SQL命令[ {SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
                 return new List<TReturn>(0);
             }
         }
@@ -252,7 +252,7 @@ namespace Dapper.Sugar
             {
                 Log.ErrorSql(SqlText, param, ex);
                 if (Config.Instance.Debug)
-                    throw new Exception($"SQL命令[ {SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
+                    throw new DapperSugarException($"SQL命令[ {SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
                 return new List<TReturn>(0);
             }
         }
@@ -412,7 +412,7 @@ namespace Dapper.Sugar
                 {
                     Log.ErrorSql(sql, parms, ex);
                     if (Config.Instance.Debug)
-                        throw new Exception($"SQL命令[ {sql} ]执行出错，错误信息：{ex.Message}！", ex);
+                        throw new DapperSugarException($"SQL命令[ {sql} ]执行出错，错误信息：{ex.Message}！", ex);
                     return null;
                 }
                 return ds;
@@ -1118,7 +1118,7 @@ namespace Dapper.Sugar
                     Log.ErrorSql(command.SqlText, command.Param, ex);
                 if (Config.Instance.Debug)
                 {
-                    throw new Exception($"{(command.CommandType == SugarCommandType.StoredProcedure ? "Stored Procedure：" : "Sql：")}[ {command.SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
+                    throw new DapperSugarException($"{(command.CommandType == SugarCommandType.StoredProcedure ? "Stored Procedure：" : "Sql：")}[ {command.SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
                 }
                 return -1;
             }
@@ -1156,7 +1156,7 @@ namespace Dapper.Sugar
         //            Log.ErrorSql(command.SqlText, command.Param, ex);
         //        if (Config.Instance.Debug)
         //        {
-        //            throw new Exception($"{(command.CommandType == SugarCommandType.StoredProcedure ? "Stored Procedure：" : "Sql：")}[ {command.SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
+        //            throw new SugarException($"{(command.CommandType == SugarCommandType.StoredProcedure ? "Stored Procedure：" : "Sql：")}[ {command.SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
         //        }
 
         //        return new Task<int>(() =>
@@ -1174,7 +1174,7 @@ namespace Dapper.Sugar
         public bool ExecuteSqlTran(CommandCollection commands)
         {
             if (commands.Count <= 0)
-                throw new Exception("commands数目为0");
+                throw new DapperSugarException("commands数目为0");
 
             using (var conn = this.CreateConnection(Config.DataBaseAuthority.Write))
             {
@@ -1202,7 +1202,7 @@ namespace Dapper.Sugar
                             if (affected_rows == 0)
                             {
                                 if (Config.Instance.Debug)
-                                    throw new Exception("执行语句影响行数为0");
+                                    throw new DapperSugarException($"第[ {i} ]条SQL命令[ {commands[i].SqlText} ]执行出错，错误信息：执行语句影响行数为0");
                                 else
                                 {
                                     if (trans != null)
@@ -1217,12 +1217,12 @@ namespace Dapper.Sugar
                             if (affected_rows != commands[i].EffectRows)
                             {
                                 if (Config.Instance.Debug)
-                                    throw new Exception($"执行语句影响行数为{affected_rows}，不等于影响行数{commands[i].EffectRows}的设定");
+                                    throw new DapperSugarException($"第[ {i} ]条SQL命令[ {commands[i].SqlText} ]执行出错，错误信息：执行语句影响行数为{affected_rows}，不等于影响行数{commands[i].EffectRows}的限制");
                                 else
                                 {
                                     if (trans != null)
                                         trans.Rollback();
-                                    Log.InfoSql($"第[ {i} ]条SQL命令[ {commands[i].SqlText} ]执行出错，错误信息：执行语句影响行数为{affected_rows}，不等于影响行数{commands[i].EffectRows}的设定", commands[i].Param);
+                                    Log.InfoSql($"第[ {i} ]条SQL命令[ {commands[i].SqlText} ]执行出错，错误信息：执行语句影响行数为{affected_rows}，不等于影响行数{commands[i].EffectRows}的限制", commands[i].Param);
                                     return false;
                                 }
                             }
@@ -1238,7 +1238,7 @@ namespace Dapper.Sugar
                         trans.Rollback();
                     Log.ErrorSql($"第[ {i} ]条SQL命令[ {commands[i].SqlText} ]执行出错，错误信息：{ex.Message}", commands[i].Param, ex);
                     if (Config.Instance.Debug)
-                        throw new Exception($"第[ {i} ]条SQL命令[ {commands[i].SqlText} ]执行出错，错误信息：{ex.Message}", ex);
+                        throw new DapperSugarException($"第[ {i} ]条SQL命令[ {commands[i].SqlText} ]执行出错，错误信息：{ex.Message}", ex);
                     return false;
                 }
             }
@@ -1277,7 +1277,7 @@ namespace Dapper.Sugar
                         trans.Rollback();
                     Log.Error($"事务执行出错，错误信息：{ex.Message}", ex);
                     if (Config.Instance.Debug)
-                        throw new Exception($"事务执行出错，错误信息：{ex.Message}", ex);
+                        throw new DapperSugarException($"事务执行出错，错误信息：{ex.Message}", ex);
                     return false;
                 }
             }

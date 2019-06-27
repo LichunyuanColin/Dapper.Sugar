@@ -17,7 +17,7 @@ namespace Dapper.Sugar
             Connection = Config.Instance.ConnectionList.FirstOrDefault(t => t.Name == name);
 
             if (Connection == null)
-                throw new Exception("缺少对应name的ConnectionStrings配置");
+                throw new DapperSugarConfigException($"缺少对应name为\"{name}\"的ConnectionStrings配置");
 
             this.Factory = DbProviderFactoryManage.GetDbProviderFactory(this.Connection.Type);
             this.Builder = SqlBuilder.GetSqlBuilder(this.Connection.Type, this.Factory);

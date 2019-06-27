@@ -327,7 +327,7 @@ namespace UnitTest_Net45
                 Name_lk = "卢%",
                 Status = new int[] { 10 },
                 Age_gt = 47,
-                Age_lt = 49
+                Age_lt = 49,
             }, SugarCommandType.QueryTableDirect);
 
             Assert.IsNotNull(result, "查询单个对象");

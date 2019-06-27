@@ -604,7 +604,7 @@ namespace Dapper.Sugar
         //    Type type = param.GetType();
         //    Type typeCondition = param.GetType();
         //    if (typeCondition.IsArray || typeCondition.Name.StartsWith("List`"))
-        //        throw new Exception(nameof(conditionParam)+"错误，不能为数组类型");
+        //        throw new SugarException(nameof(conditionParam)+"错误，不能为数组类型");
 
         //    if (type.IsArray)
         //    {
