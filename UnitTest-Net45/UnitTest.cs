@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dapper.Sugar;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Diagnostics;
 
 namespace UnitTest_Net45
 {
@@ -72,7 +73,6 @@ namespace UnitTest_Net45
 
         #region 操作
 
-
         /// <summary>
         /// 新增-表名-单个匿名对象
         /// </summary>
@@ -135,10 +135,10 @@ namespace UnitTest_Net45
 
                 id = DbHelp.DbProvider.QueryAutoIncrement(conn);
 
-                addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id_lt = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2").ToList();
+                addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id_le = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2").ToList();
             }
 
-            Assert.AreEqual(result, 2, "增-表名-多个匿名对象");
+            Assert.AreEqual(result, 2, "新增个数");
 
             Assert.IsTrue(addlist.Count == 2
                 && addlist[0].Account == employeeList[1].Account
@@ -150,7 +150,7 @@ namespace UnitTest_Net45
                 && addlist[1].Name == employeeList[0].Name
                 && addlist[1].Age == employeeList[0].Age
                 && addlist[1].Status == employeeList[0].Status
-                , "增-表名-多个匿名对象");
+                , "新增数据比对");
         }
 
         /// <summary>
@@ -201,10 +201,10 @@ namespace UnitTest_Net45
 
                 id = DbHelp.DbProvider.QueryAutoIncrement(conn);
 
-                addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id_lt = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2").ToList();
+                addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id_le = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2").ToList();
             }
 
-            Assert.AreEqual(result, 2, "增-表名-多个匿名对象");
+            Assert.AreEqual(result, 2, "新增个数");
 
             Assert.IsTrue(addlist.Count == 2
                 && addlist[0].Account == employeeList[1].Account
@@ -216,7 +216,7 @@ namespace UnitTest_Net45
                 && addlist[1].Name == employeeList[0].Name
                 && addlist[1].Age == employeeList[0].Age
                 && addlist[1].Status == employeeList[0].Status
-                , "增-表名-多个匿名对象");
+                , "新增数据比对");
         }
 
 
@@ -253,11 +253,11 @@ namespace UnitTest_Net45
                     Status = 20
                 }, SugarCommandType.QueryTableDirect, "Order By Id Asc").ToList();
 
-                Assert.AreEqual(info2.Count, 2, "查询多个对象");
+                Assert.AreEqual(info2.Count, 1, "查询数据个数");
 
-                Assert.AreEqual(info2[0].Age, info.Age + 2, "修改-表名-匿名对象");
+                Assert.AreEqual(info2[0].Age, info.Age + 2, "比对修改数据Age");
 
-                Assert.AreEqual(info2[0].Name, name, "修改-表名-匿名对象");
+                Assert.AreEqual(info2[0].Name, name, "比对修改数据Name");
             }
         }
 

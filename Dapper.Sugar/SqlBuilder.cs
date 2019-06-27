@@ -363,11 +363,9 @@ namespace Dapper.Sugar
                                 if (sql.Length > 0 && ss.Length > 2
                                     && ss.IndexOf("AND", 0, 3, StringComparison.OrdinalIgnoreCase) < 0
                                     && ss.IndexOf("OR", 0, 2, StringComparison.OrdinalIgnoreCase) < 0)
-                                {
                                     sql.Append(" AND ");
-                                }
-
-                                sql.Append(' ');
+                                else
+                                    sql.Append(' ');
                                 sql.Append(ss);
 
                                 if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
@@ -376,7 +374,8 @@ namespace Dapper.Sugar
                                 continue;
                             }
                         }
-                        else if (item.Name[item.Name.Length - 3] == '_')
+
+                        if (item.Name[item.Name.Length - 3] == '_')
                         {
                             string filterName = item.Name.Substring(0, item.Name.Length - 3);
                             char end1 = item.Name[item.Name.Length - 2];
@@ -395,6 +394,7 @@ namespace Dapper.Sugar
                                     default:
                                         throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
                                 }
+                                continue;
                             }
                             else if (end1 == 'g')
                             {
@@ -408,6 +408,7 @@ namespace Dapper.Sugar
                                     default:
                                         throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
                                 }
+                                continue;
                             }
                             else if ((end1 == 'u' || end1 == 'n') && end2 == 'e')
                             {
@@ -415,6 +416,7 @@ namespace Dapper.Sugar
                                     sql.Append(" AND ");
 
                                 sql.Append(GetParamSql(FormateTypeCalculate.ParamUnEqual, filterName, item.Name));
+                                continue;
                             }
                             //else if (item.Name.EndsWith("_nn", StringComparison.Ordinal))
                             //{
@@ -427,19 +429,11 @@ namespace Dapper.Sugar
                             else
                                 throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
                         }
-                        else
-                        {
-                            if (sql.Length > 0)
-                                sql.Append(" AND ");
-                            sql.Append(GetParamSql(FormateTypeCalculate.ParamEqual, item.Name));
-                        }
                     }
-                    else
-                    {
-                        if (sql.Length > 0)
-                            sql.Append(" AND ");
-                        sql.Append(GetParamSql(FormateTypeCalculate.ParamEqual, item.Name));
-                    }
+
+                    if (sql.Length > 0)
+                        sql.Append(" AND ");
+                    sql.Append(GetParamSql(FormateTypeCalculate.ParamEqual, item.Name));
                 }
                 //判断是否数组或List<T>,IsGenericType有bug，class<T>也返回true
                 else if (item.PropertyType.IsArray

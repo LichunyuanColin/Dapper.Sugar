@@ -72,127 +72,7 @@ namespace UnitTest_NetCore
             }
         };
 
-
         #region 操作
-
-        [TestMethod]
-        public void Test()
-        {
-            Stopwatch stopwatch1 = new Stopwatch();
-
-            DbHelp.DbProvider.Builder.GetSelectSqlFromTableDirect("employee", new
-            {
-                Status = new List<int> { 20, 10 },
-                sq_Age = "@ig_Age",
-                Name_lk = "%sa%",
-            });
-
-            stopwatch1.Start();
-
-            DbHelp.DbProvider.Builder.GetSelectSqlFromTableDirect("employee", new
-            {
-                Account1 = "sa",
-                //Status = new List<int> { 20, 10 },
-                ig_Age = 20,
-                sq_Age = "@ig_Age",
-                Age_gt = 12,
-                Name_lk = "%sa%",
-            });
-
-
-
-
-            stopwatch1.Stop();
-
-            Console.WriteLine(stopwatch1.Elapsed.Ticks);
-        }
-
-        [TestMethod]
-        public void Test1()
-        {
-            Stopwatch stopwatch1 = new Stopwatch();
-
-            DbHelp.DbProvider.Builder.GetUpdateSql("employee", new
-            {
-                Account = "sa",
-            });
-
-            stopwatch1.Start();
-
-            var s = DbHelp.DbProvider.Builder.GetUpdateSql("employee", new
-            {
-                Account1 = "sa",
-                Status = new List<int> { 20, 10 },
-                ig_Age = 20,
-                sq_Age = "@ig_Age",
-                Age_gt = 12,
-                Name_lk = "%sa%",
-            });
-
-            stopwatch1.Stop();
-
-            Console.WriteLine(stopwatch1.Elapsed.Ticks);
-        }
-
-
-        [TestMethod]
-        public void Test2()
-        {
-            string aa = "Status_gt";
-            string cc = "gt_Status";
-
-            Stopwatch stopwatch = new Stopwatch();
-
-            stopwatch.Start();
-
-            for (int i = 0; i < 100; i++)
-            {
-                var b = aa.EndsWith("_gt");
-            }
-
-            stopwatch.Stop();
-
-            Console.WriteLine(stopwatch.Elapsed.Ticks);
-
-            stopwatch.Reset();
-
-            stopwatch.Start();
-
-            for (int i = 0; i < 100; i++)
-            {
-                var b = aa[aa.Length - 3] == '_' && aa[aa.Length - 2] == 'g' && aa[aa.Length - 1] == 't';
-            }
-
-            stopwatch.Stop();
-
-            Console.WriteLine(stopwatch.Elapsed.Ticks);
-
-            stopwatch.Reset();
-
-            stopwatch.Start();
-
-            for (int i = 0; i < 100; i++)
-            {
-                var b = cc.Substring(0, 3) == "gt_";
-            }
-
-            stopwatch.Stop();
-
-            Console.WriteLine(stopwatch.Elapsed.Ticks);
-
-            stopwatch.Reset();
-
-            stopwatch.Start();
-
-            for (int i = 0; i < 100; i++)
-            {
-                var b = cc[0] == 'g' && cc[1] == 't' && cc[2] == '_';
-            }
-
-            stopwatch.Stop();
-
-            Console.WriteLine(stopwatch.Elapsed.Ticks);
-        }
 
         /// <summary>
         /// 新增-表名-单个匿名对象
@@ -256,10 +136,10 @@ namespace UnitTest_NetCore
 
                 id = DbHelp.DbProvider.QueryAutoIncrement(conn);
 
-                addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id_lt = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2").ToList();
+                addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id_le = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2").ToList();
             }
 
-            Assert.AreEqual(result, 2, "增-表名-多个匿名对象");
+            Assert.AreEqual(result, 2, "新增个数");
 
             Assert.IsTrue(addlist.Count == 2
                 && addlist[0].Account == employeeList[1].Account
@@ -271,7 +151,7 @@ namespace UnitTest_NetCore
                 && addlist[1].Name == employeeList[0].Name
                 && addlist[1].Age == employeeList[0].Age
                 && addlist[1].Status == employeeList[0].Status
-                , "增-表名-多个匿名对象");
+                , "新增数据比对");
         }
 
         /// <summary>
@@ -322,10 +202,10 @@ namespace UnitTest_NetCore
 
                 id = DbHelp.DbProvider.QueryAutoIncrement(conn);
 
-                addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id_lt = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2").ToList();
+                addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id_le = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2").ToList();
             }
 
-            Assert.AreEqual(result, 2, "增-表名-多个匿名对象");
+            Assert.AreEqual(result, 2, "新增个数");
 
             Assert.IsTrue(addlist.Count == 2
                 && addlist[0].Account == employeeList[1].Account
@@ -337,7 +217,7 @@ namespace UnitTest_NetCore
                 && addlist[1].Name == employeeList[0].Name
                 && addlist[1].Age == employeeList[0].Age
                 && addlist[1].Status == employeeList[0].Status
-                , "增-表名-多个匿名对象");
+                , "新增数据比对");
         }
 
 
@@ -374,11 +254,11 @@ namespace UnitTest_NetCore
                     Status = 20
                 }, SugarCommandType.QueryTableDirect, "Order By Id Asc").ToList();
 
-                Assert.AreEqual(info2.Count, 2, "查询多个对象");
+                Assert.AreEqual(info2.Count, 1, "查询数据个数");
 
-                Assert.AreEqual(info2[0].Age, info.Age + 2, "修改-表名-匿名对象");
+                Assert.AreEqual(info2[0].Age, info.Age + 2, "比对修改数据Age");
 
-                Assert.AreEqual(info2[0].Name, name, "修改-表名-匿名对象");
+                Assert.AreEqual(info2[0].Name, name, "比对修改数据Name");
             }
         }
 
