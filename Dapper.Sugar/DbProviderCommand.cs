@@ -25,7 +25,7 @@ namespace Dapper.Sugar
         /// 基础查询列表
         /// </summary>
         private IEnumerable<T> BaseQuery<T>(IDbConnection conn, string sql, object param, CommandType commandType, bool buffered, IDbTransaction transaction, int? timeout)
-            where T : class
+            //where T : class
         {
             try
             {
