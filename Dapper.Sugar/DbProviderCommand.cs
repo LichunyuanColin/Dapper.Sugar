@@ -56,7 +56,7 @@ namespace Dapper.Sugar
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
         private T BaseQueryScalar<T>(IDbConnection conn, string sql, object param, CommandType commandType, IDbTransaction transaction, int? timeout)
-            where T : struct
+            //where T : struct
         {
             try
             {
@@ -78,7 +78,7 @@ namespace Dapper.Sugar
         /// 基础查询列表(1)
         /// </summary>
         private IEnumerable<T> QueryData<T>(IDbConnection conn, string sql, object param, SugarCommandType commandType, string sortSql, bool buffered, IDbTransaction transaction, int? timeout)
-            where T : class
+            //where T : class
         {
             var (SqlText, CommandType) = TranslateSelectSql(sql, param, commandType, sortSql);
 
@@ -103,9 +103,9 @@ namespace Dapper.Sugar
         /// <param name="timeout"></param>
         /// <returns></returns>
         private IEnumerable<TReturn> QueryData<TFirst, TSecond, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TReturn> map, string sql, object param, SugarCommandType commandType, string sortSql, string splitOn, bool buffered, IDbTransaction transaction, int? timeout)
-            where TFirst : class
-            where TSecond : class
-            where TReturn : class
+            //where TFirst : class
+            //where TSecond : class
+            //where TReturn : class
         {
             var (SqlText, CommandType) = TranslateSelectSql(sql, param, commandType, sortSql);
 
@@ -144,10 +144,10 @@ namespace Dapper.Sugar
         /// <param name="timeout"></param>
         /// <returns></returns>
         private IEnumerable<TReturn> QueryData<TFirst, TSecond, TThird, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TReturn> map, string sql, object param, SugarCommandType commandType, string sortSql, string splitOn, bool buffered, IDbTransaction transaction, int? timeout)
-            where TFirst : class
-            where TSecond : class
-            where TThird : class
-            where TReturn : class
+            //where TFirst : class
+            //where TSecond : class
+            //where TThird : class
+            //where TReturn : class
         {
             var (SqlText, CommandType) = TranslateSelectSql(sql, param, commandType, sortSql);
 
@@ -187,11 +187,11 @@ namespace Dapper.Sugar
         /// <param name="timeout"></param>
         /// <returns></returns>
         private IEnumerable<TReturn> QueryData<TFirst, TSecond, TThird, TFourth, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TFourth, TReturn> map, string sql, object param, SugarCommandType commandType, string sortSql, string splitOn, bool buffered, IDbTransaction transaction, int? timeout)
-            where TFirst : class
-            where TSecond : class
-            where TThird : class
-            where TFourth : class
-            where TReturn : class
+            //where TFirst : class
+            //where TSecond : class
+            //where TThird : class
+            //where TFourth : class
+            //where TReturn : class
         {
             var (SqlText, CommandType) = TranslateSelectSql(sql, param, commandType, sortSql);
 
@@ -232,12 +232,12 @@ namespace Dapper.Sugar
         /// <param name="timeout"></param>
         /// <returns></returns>
         private IEnumerable<TReturn> QueryData<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TFourth, TFifth, TReturn> map, string sql, object param, SugarCommandType commandType, string sortSql, string splitOn, bool buffered, IDbTransaction transaction, int? timeout)
-            where TFirst : class
-            where TSecond : class
-            where TThird : class
-            where TFourth : class
-            where TFifth : class
-            where TReturn : class
+            //where TFirst : class
+            //where TSecond : class
+            //where TThird : class
+            //where TFourth : class
+            //where TFifth : class
+            //where TReturn : class
         {
             var (SqlText, CommandType) = TranslateSelectSql(sql, param, commandType, sortSql);
 
@@ -462,7 +462,7 @@ namespace Dapper.Sugar
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
         public T QueryScalar<T>(IDbConnection conn, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, IDbTransaction transaction = null, int? timeout = null)
-            where T : struct
+            //where T : struct
         {
             var (SqlText, CommandType) = TranslateSelectSql(sql, param, commandType, sortSql);
 
@@ -622,7 +622,7 @@ namespace Dapper.Sugar
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
         public IEnumerable<T> QueryList<T>(IDbConnection conn, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
-            where T : class
+            //where T : class
         {
             return QueryData<T>(conn, sql, param, commandType, sortSql, buffered, transaction, timeout).ToList();
         }
@@ -645,9 +645,9 @@ namespace Dapper.Sugar
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
         public IEnumerable<TReturn> QueryList<TFirst, TSecond, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
-            where TFirst : class
-            where TSecond : class
-            where TReturn : class
+            //where TFirst : class
+            //where TSecond : class
+            //where TReturn : class
         {
             return QueryData<TFirst, TSecond, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, transaction, timeout).ToList();
         }
@@ -671,10 +671,10 @@ namespace Dapper.Sugar
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
         public IEnumerable<TReturn> QueryList<TFirst, TSecond, TThird, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
-            where TFirst : class
-            where TSecond : class
-            where TThird : class
-            where TReturn : class
+            //where TFirst : class
+            //where TSecond : class
+            //where TThird : class
+            //where TReturn : class
         {
             return QueryData<TFirst, TSecond, TThird, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, transaction, timeout).ToList();
         }
@@ -699,11 +699,11 @@ namespace Dapper.Sugar
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
         public IEnumerable<TReturn> QueryList<TFirst, TSecond, TThird, TFourth, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TFourth, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
-            where TFirst : class
-            where TSecond : class
-            where TThird : class
-            where TFourth : class
-            where TReturn : class
+            //where TFirst : class
+            //where TSecond : class
+            //where TThird : class
+            //where TFourth : class
+            //where TReturn : class
         {
             return QueryData<TFirst, TSecond, TThird, TFourth, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, transaction, timeout).ToList();
         }
@@ -729,12 +729,12 @@ namespace Dapper.Sugar
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
         public IEnumerable<TReturn> QueryList<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(IDbConnection conn, Func<TFirst, TSecond, TThird, TFourth, TFifth, TReturn> map, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, string splitOn = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
-            where TFirst : class
-            where TSecond : class
-            where TThird : class
-            where TFourth : class
-            where TFifth : class
-            where TReturn : class
+            //where TFirst : class
+            //where TSecond : class
+            //where TThird : class
+            //where TFourth : class
+            //where TFifth : class
+            //where TReturn : class
         {
             return QueryData<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, transaction, timeout).ToList();
         }
