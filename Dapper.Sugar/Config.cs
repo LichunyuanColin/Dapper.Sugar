@@ -94,8 +94,11 @@ namespace Dapper.Sugar
 
             return result;
 #else
+            string environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var builder = new ConfigurationBuilder()
-               .AddJsonFile("appsettings.json");
+               .AddJsonFile("appsettings.json", false, true)
+               .AddJsonFile($"appsettings.{environmentName}.json", false, true);
+
             var configuration = builder.Build();
             //var settings = configuration.GetSection("appSettings");
             var sugar = configuration.GetSection("dapperSugar");
