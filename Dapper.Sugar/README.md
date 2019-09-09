@@ -160,6 +160,7 @@ DbProvider.ExecuteSql("update_employee", new { p_id = 1}, SugarCommandType.Store
 
 ## 3.1 .Net Core
 数据库连接配置区分.Net Core、.Net Framework，另外配置也区分简化版（单库）、完整版（多库）配置，完整版配置优先级高于简化版
+.Net Core添加多环境配置，通过参数环境参数：ASPNETCORE_ENVIRONMENT，匹配对应配置文件（如ASPNETCORE_ENVIRONMENT: Development 对应 appsettings.Development.json）
 
 单库配置
 ``` json
