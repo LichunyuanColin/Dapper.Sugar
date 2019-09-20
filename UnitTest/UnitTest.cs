@@ -74,6 +74,22 @@ namespace UnitTest_NetCore
 
         #region 操作
 
+        [TestMethod]
+        public void TestParam()
+        {
+
+            long[] delIds = new long[] { 471331679261163520 };
+
+            CommandCollection commands = new CommandCollection();
+
+            commands.Add("update rights set Status=0 where Id in @Ids", new
+            {
+                Ids = delIds
+            }, EffentNextType.None);
+        }
+
+
+
         /// <summary>
         /// 新增-表名-单个匿名对象
         /// </summary>
