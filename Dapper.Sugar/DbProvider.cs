@@ -151,33 +151,5 @@ namespace Dapper.Sugar
             }
             return conn;
         }
-
-
-        /// <summary>
-        /// 创建连接
-        /// </summary>
-        /// <param name="name">connectionString配置名称</param>
-        /// <returns></returns>
-        public DbConnection CreateOpenConnection(string name)
-        {
-            var conn = Factory.CreateConnection();
-            if (Connection.ReadList.ContainsKey(name))
-            {
-                conn.ConnectionString = Connection.ReadList[name];
-            }
-            else if (Connection.WriteList.ContainsKey(name))
-            {
-                conn.ConnectionString = Connection.WriteList[name];
-            }
-            else
-            {
-                throw new ArgumentException($"缺少对应name的connectionString配置");
-            }
-
-            conn.Open();
-
-            return conn;
-        }
-
     }
 }
