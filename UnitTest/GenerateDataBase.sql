@@ -30,7 +30,7 @@ CREATE TABLE `employee` (
   `Status` tinyint(4) NOT NULL DEFAULT '0',
   `CreateDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='员工表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='员工表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

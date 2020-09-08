@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace UnitTest_Net45
+namespace UnitTest_Net451
 {
     [TestClass]
     public class PerformanceTest

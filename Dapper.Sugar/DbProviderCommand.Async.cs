@@ -20,7 +20,7 @@ namespace Dapper.Sugar
         /// <summary>
         /// 基础查询列表
         /// </summary>
-        private Task<IEnumerable<T>> BaseQueryAsync<T>(DbConnection conn, string sql, object param, CommandType commandType, bool buffered, IDbTransaction transaction, int? timeout)
+        private async Task<IEnumerable<T>> BaseQueryAsync<T>(DbConnection conn, string sql, object param, CommandType commandType, bool buffered, IDbTransaction transaction, int? timeout)
         //where T : class
         {
             try
@@ -28,7 +28,7 @@ namespace Dapper.Sugar
                 if (Config.Instance.LogSql)//写入日志
                     Log.InfoSql(sql, param);
                 // await OpenConnectionAsync(conn);
-                return conn.QueryAsync<T>(new CommandDefinition(sql, param, transaction, timeout, commandType, buffered ? CommandFlags.Buffered : CommandFlags.None));
+                return await conn.QueryAsync<T>(new CommandDefinition(sql, param, transaction, timeout, commandType, buffered ? CommandFlags.Buffered : CommandFlags.None)).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -49,7 +49,7 @@ namespace Dapper.Sugar
         /// <param name="transaction"></param>
         /// <param name="timeout">过期时间（秒）</param>
         /// <returns></returns>
-        private Task<T> BaseQueryScalarAsync<T>(DbConnection conn, string sql, object param, CommandType commandType, IDbTransaction transaction, int? timeout)
+        private async Task<T> BaseQueryScalarAsync<T>(DbConnection conn, string sql, object param, CommandType commandType, IDbTransaction transaction, int? timeout)
         //where T : struct
         {
             try
@@ -57,7 +57,7 @@ namespace Dapper.Sugar
                 if (Config.Instance.LogSql)//写入日志
                     Log.InfoSql(sql, param);
                 // await OpenConnectionAsync(conn);
-                return conn.ExecuteScalarAsync<T>(sql, param, transaction, timeout, commandType);
+                return await conn.ExecuteScalarAsync<T>(sql, param, transaction, timeout, commandType).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -252,16 +252,16 @@ namespace Dapper.Sugar
 
             var (TotalSql, DataSql) = this.Builder.GetPagingSql(SqlText, pageNumber, pageSize);
 
-            var total = await BaseQueryScalarAsync<int>(conn, TotalSql, param, CommandType.Text, transaction, timeout);
+            var total = BaseQueryScalarAsync<int>(conn, TotalSql, param, CommandType.Text, transaction, timeout);
 
-            if (total == 0)
-            {
-                return new PagingList<T>(new List<T>(0), 0);
-            }
+            //if (total == 0)
+            //{
+            //    return new PagingList<T>(new List<T>(0), 0);
+            //}
 
-            var result = await BaseQueryAsync<T>(conn, DataSql, param, CommandType.Text, buffered, transaction, timeout);
+            var result = BaseQueryAsync<T>(conn, DataSql, param, CommandType.Text, buffered, transaction, timeout);
 
-            return new PagingList<T>(result.ToList(), total);
+            return new PagingList<T>((await result.ConfigureAwait(false)).ToList(), await total.ConfigureAwait(false));
         }
 
         #endregion
@@ -338,7 +338,8 @@ namespace Dapper.Sugar
         public async Task<T> QuerySingleAsync<T>(DbConnection conn, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
             where T : class
         {
-            return (await QueryDataAsync<T>(conn, sql, param, commandType, sortSql, buffered, transaction, timeout)).FirstOrDefault();
+            var result = await QueryDataAsync<T>(conn, sql, param, commandType, sortSql, buffered, transaction, timeout).ConfigureAwait(false);
+            return  result.FirstOrDefault();
         }
 
         /// <summary>
@@ -363,7 +364,8 @@ namespace Dapper.Sugar
             where TSecond : class
             where TReturn : class
         {
-            return (await QueryDataAsync<TFirst, TSecond, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, transaction, timeout)).FirstOrDefault<TReturn>();
+            var result = await QueryDataAsync<TFirst, TSecond, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, transaction, timeout).ConfigureAwait(false);
+            return result.FirstOrDefault<TReturn>();
         }
 
         /// <summary>
@@ -390,7 +392,8 @@ namespace Dapper.Sugar
             where TThird : class
             where TReturn : class
         {
-            return (await QueryDataAsync<TFirst, TSecond, TThird, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, transaction, timeout)).FirstOrDefault<TReturn>();
+            var result = await QueryDataAsync<TFirst, TSecond, TThird, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, transaction, timeout).ConfigureAwait(false);
+            return result.FirstOrDefault<TReturn>();
         }
 
         /// <summary>
@@ -419,7 +422,8 @@ namespace Dapper.Sugar
             where TFourth : class
             where TReturn : class
         {
-            return (await QueryDataAsync<TFirst, TSecond, TThird, TFourth, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, transaction, timeout)).FirstOrDefault<TReturn>();
+            var result = await QueryDataAsync<TFirst, TSecond, TThird, TFourth, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, transaction, timeout).ConfigureAwait(false);
+            return result.FirstOrDefault<TReturn>();
         }
 
         /// <summary>
@@ -450,7 +454,8 @@ namespace Dapper.Sugar
             where TFifth : class
             where TReturn : class
         {
-            return (await QueryDataAsync<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, transaction, timeout)).FirstOrDefault<TReturn>();
+            var result = await QueryDataAsync<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(conn, map, sql, param, commandType, sortSql, splitOn, buffered, transaction, timeout).ConfigureAwait(false);
+            return result.FirstOrDefault<TReturn>();
         }
 
         #endregion
@@ -610,7 +615,7 @@ namespace Dapper.Sugar
         public async Task<PagingList<T>> QueryPagingListAsync<T>(DbConnection conn, int pageNumber, int pageSize, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, IDbTransaction transaction = null, int? timeout = null)
             where T : class
         {
-            var list = await QueryDataAsync<T>(conn, sql, param, commandType, sortSql, buffered, transaction, timeout);
+            var list = await QueryDataAsync<T>(conn, sql, param, commandType, sortSql, buffered, transaction, timeout).ConfigureAwait(false);
             return PagingList(pageNumber, pageSize, list);
         }
 

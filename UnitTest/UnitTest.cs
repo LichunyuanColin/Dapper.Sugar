@@ -471,7 +471,7 @@ namespace UnitTest_NetCore
         {
             //存储过程，根据存储名称调用存储过程
             var p = new DynamicParameters();
-            p.Add("@startId", 6);
+            p.Add("@startId", 6, System.Data.DbType.Int32, System.Data.ParameterDirection.Input);
 
             var result = DbHelp.ExecuteSql("delete_data", p, SugarCommandType.StoredProcedure);
 

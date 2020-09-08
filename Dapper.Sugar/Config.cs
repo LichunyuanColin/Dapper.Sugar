@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-#if NET45
+#if NET451
 using System.Configuration;
 #else
 using Microsoft.Extensions.Configuration;
@@ -22,7 +22,7 @@ namespace Dapper.Sugar
 
         static Config GetConfig()
         {
-#if NET45
+#if NET451
             DapperSugarSection section = (DapperSugarSection)ConfigurationManager.GetSection("DapperSugar");
 
             Config result = new Config()
@@ -309,7 +309,8 @@ namespace Dapper.Sugar
         }
     }
 
-#if NET45
+#if NET451
+
     /// <summary>
     /// 
     /// </summary>

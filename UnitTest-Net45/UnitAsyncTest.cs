@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace UnitTest_Net451
 {
     [TestClass]
-    public class UnitTest
+    public class UnitAsyncTest
     {
         List<EmployeeModel> list = new List<EmployeeModel>()
         {
@@ -77,24 +77,26 @@ namespace UnitTest_Net451
         /// 测试命令初始化
         /// </summary>
         [TestMethod]
-        public void TestParam()
+        public void TestException()
         {
-
-            long[] delIds = new long[] { 471331679261163520 };
-
-            CommandCollection commands = new CommandCollection();
-
-            commands.Add("update rights set Status=0 where Id in @Ids", new
+            using (var conn = DbHelp.DbProvider.CreateConnection(Config.DataBaseAuthority.Write))
             {
-                Ids = delIds
-            }, EffentNextType.None);
+                try
+                {
+                    var result = DbHelp.DbProvider.QueryScalarAsync<int>(conn, "employee", null, SugarCommandType.QuerySelectSql).GetAwaiter().GetResult();
+                }
+                catch (Exception ex)
+                {
+                    Assert.IsTrue(ex is DapperSugarException);
+                }
+            }
         }
 
         /// <summary>
         /// 新增-表名-单个匿名对象
         /// </summary>
         [TestMethod]
-        public void TestAdd1()
+        public async void TestAdd1()
         {
             int result = 0;
             long id = 0;
@@ -103,7 +105,7 @@ namespace UnitTest_Net451
 
             using (var conn = DbHelp.DbProvider.CreateConnection(Config.DataBaseAuthority.Write))
             {
-                result = DbHelp.DbProvider.ExecuteSql(conn, "employee", new
+                result = await DbHelp.DbProvider.ExecuteSqlAsync(conn, "employee", new
                 {
                     /*Id = 7,*/
                     Account = employee.Account,
@@ -112,9 +114,9 @@ namespace UnitTest_Net451
                     sq_Status = "20"
                 }, SugarCommandType.AddTableDirect);
 
-                id = DbHelp.DbProvider.QueryAutoIncrement(conn);
+                id = await DbHelp.DbProvider.QueryAutoIncrementAsync(conn);
 
-                addInfo = DbHelp.DbProvider.QuerySingle<EmployeeModel>(conn, "employee", new { Id = id }, SugarCommandType.QueryTableDirect);
+                addInfo = await DbHelp.DbProvider.QuerySingleAsync<EmployeeModel>(conn, "employee", new { Id = id }, SugarCommandType.QueryTableDirect);
             }
 
             Assert.AreEqual(result, 1, "新增-表名-单个匿名对象");
@@ -132,7 +134,7 @@ namespace UnitTest_Net451
         /// 新增-表名-多个匿名对象
         /// </summary>
         [TestMethod]
-        public void TestAdd2()
+        public async void TestAdd2()
         {
             int result = 0;
             long id = 0;
@@ -141,7 +143,7 @@ namespace UnitTest_Net451
 
             using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                result = DbHelp.ExecuteSql("employee", employeeList.Select(t => new
+                result = await DbHelp.ExecuteSqlAsync("employee", employeeList.Select(t => new
                 {
                     Account = t.Account,
                     Name = t.Name,
@@ -150,9 +152,9 @@ namespace UnitTest_Net451
                     sq_Status = "@ig_Status"
                 }), SugarCommandType.AddTableDirect);
 
-                id = DbHelp.DbProvider.QueryAutoIncrement(conn);
+                id = await DbHelp.DbProvider.QueryAutoIncrementAsync(conn);
 
-                addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id_le = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2").ToList();
+                addlist = (await DbHelp.DbProvider.QueryListAsync<EmployeeModel>(conn, "employee", new { Id_le = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2")).ToList();
             }
 
             Assert.AreEqual(result, 2, "新增个数");
@@ -174,7 +176,7 @@ namespace UnitTest_Net451
         /// 新增-表名-单个实体对象
         /// </summary>
         [TestMethod]
-        public void TestAdd3()
+        public async void TestAdd3()
         {
             int result = 0;
             long id = 0;
@@ -183,11 +185,11 @@ namespace UnitTest_Net451
 
             using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                result = DbHelp.ExecuteSql("employee", employee, SugarCommandType.AddTableDirect);
+                result = await DbHelp.ExecuteSqlAsync("employee", employee, SugarCommandType.AddTableDirect);
 
-                id = DbHelp.DbProvider.QueryAutoIncrement(conn);
+                id = await DbHelp.DbProvider.QueryAutoIncrementAsync(conn);
 
-                addInfo = DbHelp.DbProvider.QuerySingle<EmployeeModel>(conn, "select * from employee", new { Id = id }, SugarCommandType.QuerySelectSql);
+                addInfo = await DbHelp.DbProvider.QuerySingleAsync<EmployeeModel>(conn, "select * from employee", new { Id = id }, SugarCommandType.QuerySelectSql);
             }
 
             Assert.AreEqual(result, 1, "新增-表名-单个实体对象");
@@ -205,7 +207,7 @@ namespace UnitTest_Net451
         /// 新增-表名-多个个实体对象
         /// </summary>
         [TestMethod]
-        public void TestAdd4()
+        public async void TestAdd4()
         {
             int result = 0;
             long id = 0;
@@ -214,11 +216,11 @@ namespace UnitTest_Net451
 
             using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                result = DbHelp.ExecuteSql("employee", employeeList, SugarCommandType.AddTableDirect);
+                result = await DbHelp.ExecuteSqlAsync("employee", employeeList, SugarCommandType.AddTableDirect);
 
-                id = DbHelp.DbProvider.QueryAutoIncrement(conn);
+                id = await DbHelp.DbProvider.QueryAutoIncrementAsync(conn);
 
-                addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id_le = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2").ToList();
+                addlist = (await DbHelp.DbProvider.QueryListAsync<EmployeeModel>(conn, "employee", new { Id_le = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2")).ToList();
             }
 
             Assert.AreEqual(result, 2, "新增个数");
@@ -241,16 +243,16 @@ namespace UnitTest_Net451
         /// 修改-表名-匿名对象
         /// </summary>
         [TestMethod]
-        public void TestUpdate1()
+        public async void TestUpdate1()
         {
             string name = "卢俊义2";
             using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                var info = DbHelp.DbProvider.QuerySingle<EmployeeModel>(conn, "employee", new { sq_Id = "Id = 2" }, SugarCommandType.QueryTableDirect);
+                var info = await DbHelp.DbProvider.QuerySingleAsync<EmployeeModel>(conn, "employee", new { sq_Id = "Id = 2" }, SugarCommandType.QueryTableDirect);
 
                 Assert.IsNotNull(info, "查询单个对象");
 
-                var result = DbHelp.DbProvider.ExecuteSql(conn, "employee", new
+                var result = await DbHelp.DbProvider.ExecuteSqlAsync(conn, "employee", new
                 {
                     Id = 2,
                     Account = "lujunyi",
@@ -261,14 +263,14 @@ namespace UnitTest_Net451
 
                 Assert.AreEqual(result, 1, "修改-表名-匿名对象");
 
-                var info2 = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new
+                var info2 = (await DbHelp.DbProvider.QueryListAsync<EmployeeModel>(conn, "employee", new
                 {
                     Id_gt = 0,
                     sq_1 = "(Id = 2",
                     sq_2 = "or Id = 3",
                     sq_3 = ")",
                     Status = 20
-                }, SugarCommandType.QueryTableDirect, "Order By Id Asc").ToList();
+                }, SugarCommandType.QueryTableDirect, "Order By Id Asc")).ToList();
 
                 Assert.AreEqual(info2.Count, 1, "查询数据个数");
 
@@ -282,7 +284,7 @@ namespace UnitTest_Net451
         /// 修改-表名-多个实体对象
         /// </summary>
         [TestMethod]
-        public void TestUpdate2()
+        public async void TestUpdate2()
         {
             var employeeList = new List<EmployeeModel>
             {
@@ -306,9 +308,9 @@ namespace UnitTest_Net451
 
             using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                var result = DbHelp.ExecuteSql("employee", employeeList, SugarCommandType.UpdateTableDirect);
+                var result = await DbHelp.ExecuteSqlAsync("employee", employeeList, SugarCommandType.UpdateTableDirect);
 
-                var addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id = new int[] { 1, 2 } }, SugarCommandType.QueryTableDirect, "Order By Id Asc").ToList();
+                var addlist = (await DbHelp.DbProvider.QueryListAsync<EmployeeModel>(conn, "employee", new { Id = new int[] { 1, 2 } }, SugarCommandType.QueryTableDirect, "Order By Id Asc")).ToList();
 
                 Assert.AreEqual(result, 2, "修改-表名-多个实体对象");
 
@@ -334,10 +336,10 @@ namespace UnitTest_Net451
         /// 查询单个对象
         /// </summary>
         [TestMethod]
-        public void TestQuery1()
+        public async void TestQuery1()
         {
             //查询单个对象
-            var result = DbHelp.QuerySingle<EmployeeModel>("employee", new
+            var result = await DbHelp.QuerySingleAsync<EmployeeModel>("employee", new
             {
                 ig_Account = "lujunyi",
                 sq_Account = "Account=@ig_Account",
@@ -356,10 +358,10 @@ namespace UnitTest_Net451
         /// 查询多个对象
         /// </summary>
         [TestMethod]
-        public void TestQuery2()
+        public async void TestQuery2()
         {
             //查询多个对象
-            var result = DbHelp.QueryList<EmployeeModel>("employee", new { Age_ge = 50, Age_le = 50 }, SugarCommandType.QueryTableDirect).ToList();
+            var result = (await DbHelp.QueryListAsync<EmployeeModel>("employee", new { Age_ge = 50, Age_le = 50 }, SugarCommandType.QueryTableDirect)).ToList();
 
             Assert.AreEqual(result.Count, 1, "查询多个对象");
 
@@ -370,7 +372,7 @@ namespace UnitTest_Net451
         /// 别名查询多个对象
         /// </summary>
         [TestMethod]
-        public void TestQuery3()
+        public async void TestQuery3()
         {
             //别名查询多个对象
             //new { ue_e_Id = 1, ge_e_Age = 48 }
@@ -379,7 +381,7 @@ namespace UnitTest_Net451
             //param.e_Age_ge = 48;
             //param.ue_e_Id = 1;
             //param.ge_e_Age = 48;
-            var result = DbHelp.QueryList<EmployeeModel>("select * from employee e where", param, SugarCommandType.QuerySelectSql).ToList();
+            var result = (await DbHelp.QueryListAsync<EmployeeModel>("select * from employee e where", param, SugarCommandType.QuerySelectSql)).ToList();
 
             Assert.AreEqual(result.Count, 1, "别名查询多个对象错误");
 
@@ -390,10 +392,10 @@ namespace UnitTest_Net451
         /// 带条件查询多个对象
         /// </summary>
         [TestMethod]
-        public void TestQuery4()
+        public async void TestQuery4()
         {
             //带条件查询多个对象
-            var result = DbHelp.QueryList<EmployeeModel>("select * from employee e where e.Status=20 and", new { e_Age_ge = 48 }, SugarCommandType.QuerySelectSql).ToList();
+            var result = (await DbHelp.QueryListAsync<EmployeeModel>("select * from employee e where e.Status=20 and", new { e_Age_ge = 48 }, SugarCommandType.QuerySelectSql)).ToList();
 
             Assert.AreEqual(result.Count, 1, "带条件查询多个对象错误");
 
@@ -404,7 +406,7 @@ namespace UnitTest_Net451
         /// 查询个数
         /// </summary>
         [TestMethod]
-        public void TestQuery5()
+        public async void TestQuery5()
         {
             //别名查询多个对象
             //new { ue_e_Id = 1, ge_e_Age = 48 }
@@ -416,9 +418,9 @@ namespace UnitTest_Net451
             List<EmployeeModel> result2 = null;
             using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                result = DbHelp.DbProvider.QueryScalar<int>(conn, "select Count(*) from employee e where", param, SugarCommandType.QuerySelectSql);
+                result = await DbHelp.DbProvider.QueryScalarAsync<int>(conn, "select Count(*) from employee e where", param, SugarCommandType.QuerySelectSql);
 
-                result2 = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "select * from employee e where e.Status=20 and", new { e_Age_ge = 48 }, SugarCommandType.QuerySelectSql).ToList();
+                result2 = (await DbHelp.DbProvider.QueryListAsync<EmployeeModel>(conn, "select * from employee e where e.Status=20 and", new { e_Age_ge = 48 }, SugarCommandType.QuerySelectSql)).ToList();
             }
 
             Assert.AreEqual(result, 1, "查询个数错误");
@@ -433,10 +435,10 @@ namespace UnitTest_Net451
         /// 分页查询多个对象 - 内存分页
         /// </summary>
         [TestMethod]
-        public void TestQueryPaging1()
+        public async void TestQueryPaging1()
         {
             //带条件查询多个对象
-            var result = DbHelp.QueryPagingList<EmployeeModel>(1, 2, "select * from employee e where e.Status>0 and", new { e_Id_ue = 1 }, SugarCommandType.QuerySelectSql);
+            var result = await DbHelp.QueryPagingListAsync<EmployeeModel>(1, 2, "select * from employee e where e.Status>0 and", new { e_Id_ue = 1 }, SugarCommandType.QuerySelectSql);
 
             Assert.AreEqual(result.List.Count(), 2, "带条件查询多个对象错误");
 
@@ -448,10 +450,10 @@ namespace UnitTest_Net451
         /// 分页查询多个对象 - limit分页
         /// </summary>
         [TestMethod]
-        public void TestQueryPaging2()
+        public async void TestQueryPaging2()
         {
             //带条件查询多个对象
-            var result = DbHelp.QueryPagingList2<EmployeeModel>(1, 2, "select * from employee e where e.Status>0 and", new { e_Id_ue = 1 }, SugarCommandType.QuerySelectSql);
+            var result = await DbHelp.QueryPagingListAsync2<EmployeeModel>(1, 2, "select * from employee e where e.Status>0 and", new { e_Id_ue = 1 }, SugarCommandType.QuerySelectSql);
 
             Assert.AreEqual(result.List.Count(), 2, "带条件查询多个对象错误");
 
@@ -467,13 +469,13 @@ namespace UnitTest_Net451
         /// 调用存储过程
         /// </summary>
         [TestMethod]
-        public void TestStoredProcedure1()
+        public async void TestStoredProcedure1()
         {
             //存储过程，根据存储名称调用存储过程
             var p = new DynamicParameters();
             p.Add("@startId", 6);
 
-            var result = DbHelp.ExecuteSql("delete_data", p, SugarCommandType.StoredProcedure);
+            var result = await DbHelp.ExecuteSqlAsync("delete_data", p, SugarCommandType.StoredProcedure);
 
             Assert.AreEqual(result, 6, "调用存储过程错误");
         }
@@ -482,43 +484,14 @@ namespace UnitTest_Net451
         /// 调用存储过程
         /// </summary>
         [TestMethod]
-        public void TestStoredProcedure2()
+        public async void TestStoredProcedure2()
         {
             //存储过程，根据存储名称调用存储过程
-            var result = DbHelp.ExecuteSql("delete_data", new { startId = 6 }, SugarCommandType.StoredProcedure);
+            var result = await DbHelp.ExecuteSqlAsync("delete_data", new { startId = 6 }, SugarCommandType.StoredProcedure);
 
             Assert.AreEqual(result, 0, "调用存储过程错误");
         }
 
         #endregion
-    }
-
-    public class EmployeeModel
-    {
-        public int Id { get; set; }
-        public string Account { get; set; }
-        public string Name { get; set; }
-        public int Age { get; set; }
-        public EnumStatus Status { get; set; }
-        [IgnoreAdd, IgnoreUpdate]
-        public DateTime CreateDate { get; set; }
-
-        public enum EnumStatus
-        {
-            /// <summary>
-            /// 删除
-            /// </summary>
-            Delete = 0,
-
-            /// <summary>
-            /// 禁用
-            /// </summary>
-            Disable = 10,
-
-            /// <summary>
-            /// 成功
-            /// </summary>
-            Complate = 20
-        }
     }
 }

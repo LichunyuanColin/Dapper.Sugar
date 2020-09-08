@@ -2,106 +2,106 @@
 
 [TOC]
 
-# 1. ½éÉÜ
-Dapper.Sugar»ùÓÚ[Dapper](https://github.com/StackExchange/Dapper "Î¢ĞÍORMDapper")½øĞĞ·â×°£¬°üº¬ÊµÌåÓ³ÉäsqlÓï¾ä¡¢»ù±¾²éÑ¯Ìõ¼şÓ³Éä¡¢»ù±¾CRUD²Ù×÷
+# 1. ä»‹ç»
+Dapper.SugaråŸºäº[Dapper](https://github.com/StackExchange/Dapper "å¾®å‹ORMDapper")è¿›è¡Œå°è£…ï¼ŒåŒ…å«å®ä½“æ˜ å°„sqlè¯­å¥ã€åŸºæœ¬æŸ¥è¯¢æ¡ä»¶æ˜ å°„ã€åŸºæœ¬CRUDæ“ä½œ
 
-»ù±¾²éÑ¯
+åŸºæœ¬æŸ¥è¯¢
 ``` c#
-// ´´½¨Á¬½Ó
+// åˆ›å»ºè¿æ¥
 using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
 {
-	// Ö´ĞĞÓï¾ä
+	// æ‰§è¡Œè¯­å¥
 	return DbProvider.QueryScalar<T>(conn, sql, param, commandType, sortSql, null, timeout);
 }
 ```
 
-# 2. ²ÎÊıËµÃ÷
-## 2.1 ¶¯Ì¬Éú³ÉÓï¾äÀàĞÍ
+# 2. å‚æ•°è¯´æ˜
+## 2.1 åŠ¨æ€ç”Ÿæˆè¯­å¥ç±»å‹
 1. `SugarCommandType.Text`
 
-   SqlÎÄ±¾ÃüÁî£¬½ödapper¶ÔÊı×é×ö´¦Àí£¬[¼ûÀı1](#Àı1£ºText SqlÎÄ±¾ÃüÁî)
+   Sqlæ–‡æœ¬å‘½ä»¤ï¼Œä»…dapperå¯¹æ•°ç»„åšå¤„ç†ï¼Œ[è§ä¾‹1](#ä¾‹1ï¼šText Sqlæ–‡æœ¬å‘½ä»¤)
 
 2. `SugarCommandType.QueryTableDirect`
 
-   ²éÑ¯²Ù×÷£¬sqlÎÄ±¾Îª²éÑ¯µÄ±íÃû£¬¸ù¾İ²ÎÊı£¨param£©¶¯Ì¬Éú³ÉselectÃüÁî£¬[¼ûÀı2](#Àı2£ºQueryTableDirect ²éÑ¯²Ù×÷)
+   æŸ¥è¯¢æ“ä½œï¼Œsqlæ–‡æœ¬ä¸ºæŸ¥è¯¢çš„è¡¨åï¼Œæ ¹æ®å‚æ•°ï¼ˆparamï¼‰åŠ¨æ€ç”Ÿæˆselectå‘½ä»¤ï¼Œ[è§ä¾‹2](#ä¾‹2ï¼šQueryTableDirect æŸ¥è¯¢æ“ä½œ)
 
 
 3. `SugarCommandType.QuerySelectSql`
 
-   ²éÑ¯²Ù×÷£¬sqlÎÄ±¾Îª²éÑ¯²¿·Ö£¬Ìõ¼şÓÉ²ÎÊı£¨param£©¶¯Ì¬Éú³É£¬[¼ûÀı3](#Àı3£ºQuerySelectSql ²éÑ¯²Ù×÷)
+   æŸ¥è¯¢æ“ä½œï¼Œsqlæ–‡æœ¬ä¸ºæŸ¥è¯¢éƒ¨åˆ†ï¼Œæ¡ä»¶ç”±å‚æ•°ï¼ˆparamï¼‰åŠ¨æ€ç”Ÿæˆï¼Œ[è§ä¾‹3](#ä¾‹3ï¼šQuerySelectSql æŸ¥è¯¢æ“ä½œ)
 
 4. `SugarCommandType.AddTableDirect`
 
-   ĞÂÔö²Ù×÷£¬sqlÎÄ±¾Îª±íÃû£¬¸ù¾İ²ÎÊı£¨param£©¶¯Ì¬Éú³ÉinsertÃüÁî£¬[¼ûÀı4](#Àı4£ºAddTableDirect ĞÂÔö²Ù×÷)
+   æ–°å¢æ“ä½œï¼Œsqlæ–‡æœ¬ä¸ºè¡¨åï¼Œæ ¹æ®å‚æ•°ï¼ˆparamï¼‰åŠ¨æ€ç”Ÿæˆinsertå‘½ä»¤ï¼Œ[è§ä¾‹4](#ä¾‹4ï¼šAddTableDirect æ–°å¢æ“ä½œ)
 
 5. `SugarCommandType.UpdateTableDirect`
 
-   ĞŞ¸Ä²Ù×÷£¬sqlÎÄ±¾Îª±íÃû£¬¸ù¾İ²ÎÊı£¨param£©¶¯Ì¬Éú³ÉupdateÃüÁî£¬[¼ûÀı5](#Àı5£ºUpdateTableDirect ĞŞ¸Ä²Ù×÷)
+   ä¿®æ”¹æ“ä½œï¼Œsqlæ–‡æœ¬ä¸ºè¡¨åï¼Œæ ¹æ®å‚æ•°ï¼ˆparamï¼‰åŠ¨æ€ç”Ÿæˆupdateå‘½ä»¤ï¼Œ[è§ä¾‹5](#ä¾‹5ï¼šUpdateTableDirect ä¿®æ”¹æ“ä½œ)
 
 6. `SugarCommandType.StoredProcedure`
 
-   ´æ´¢¹ı³Ì£¬sqlÎÄ±¾Îª´æ´¢¹ı³ÌÃû³Æ£¬[¼ûÀı6](#Àı6£ºStoredProcedure ´æ´¢¹ı³Ì)
+   å­˜å‚¨è¿‡ç¨‹ï¼Œsqlæ–‡æœ¬ä¸ºå­˜å‚¨è¿‡ç¨‹åç§°ï¼Œ[è§ä¾‹6](#ä¾‹6ï¼šStoredProcedure å­˜å‚¨è¿‡ç¨‹)
 
 
-##2.2 Ìõ¼şÓ³ÉäËµÃ÷
+##2.2 æ¡ä»¶æ˜ å°„è¯´æ˜
 
-1. ²ÎÊı¿ÉÎªÄäÃû¶ÔÏó»òÊµÌå£¨class£©¶ÔÏó
+1. å‚æ•°å¯ä¸ºåŒ¿åå¯¹è±¡æˆ–å®ä½“ï¼ˆclassï¼‰å¯¹è±¡
 
-2. ÈÎÒâÀàĞÍÊôĞÔÎªnullÊ±£¬¶¯Ì¬Éú³ÉÓï¾äÊ±»áºöÂÔ¸ÃÊôĞÔ£¬²¢²»»áÌí¼Ó½øÌõ¼ş
+2. ä»»æ„ç±»å‹å±æ€§ä¸ºnullæ—¶ï¼ŒåŠ¨æ€ç”Ÿæˆè¯­å¥æ—¶ä¼šå¿½ç•¥è¯¥å±æ€§ï¼Œå¹¶ä¸ä¼šæ·»åŠ è¿›æ¡ä»¶
 
-3. ²ÎÊı¶ÔÏóÊôĞÔÃû£º[AliasName_FieldName_OperateName]
-  3.1 OperateNameÎª±È½Ï²Ù×÷·û£¬½öÏŞÒÔÏÂÑ¡Ïî£º
+3. å‚æ•°å¯¹è±¡å±æ€§åï¼š[AliasName_FieldName_OperateName]
+  3.1 OperateNameä¸ºæ¯”è¾ƒæ“ä½œç¬¦ï¼Œä»…é™ä»¥ä¸‹é€‰é¡¹ï¼š
 
-   * `_gt`£º>(´óÓÚ£ºgreater than)
-   * `_ge`£º>=(´óÓÚµÈÓÚ£ºgreater equal)
-   * `_lt`£º<(Ğ¡ÓÚ£ºless than)
-   * `_le`£º<=(Ğ¡ÓÚµÈÓÚ£ºless equal)
-   * `_lk`£ºlike(Ä£ºı²éÑ¯£ºlike)
-   * `_ue`£º!=(²»µÈÓÚ£ºunequal)
+   * `_gt`ï¼š>(å¤§äºï¼šgreater than)
+   * `_ge`ï¼š>=(å¤§äºç­‰äºï¼šgreater equal)
+   * `_lt`ï¼š<(å°äºï¼šless than)
+   * `_le`ï¼š<=(å°äºç­‰äºï¼šless equal)
+   * `_lk`ï¼šlike(æ¨¡ç³ŠæŸ¥è¯¢ï¼šlike)
+   * `_ue`ï¼š!=(ä¸ç­‰äºï¼šunequal)
 
-  3.2 AliasNameÎª±íµÄ±ğÃû£¬Ä¿Ç°½öÏŞµ¥¸ö×Ö·û£¨a-z£¬A-Z£©
+  3.2 AliasNameä¸ºè¡¨çš„åˆ«åï¼Œç›®å‰ä»…é™å•ä¸ªå­—ç¬¦ï¼ˆa-zï¼ŒA-Zï¼‰
 
-  3.3 FieldNameÎªÊôĞÔÃû³Æ£¬ĞèÒª¶ÔÓ¦Êı¾İ¿â×Ö¶ÎÃû³Æ
+  3.3 FieldNameä¸ºå±æ€§åç§°ï¼Œéœ€è¦å¯¹åº”æ•°æ®åº“å­—æ®µåç§°
 
-  3.4 OperateNameºÍAliasName¿É·Ö¿ª»òºÏ²¢Ê¹ÓÃ
-
-
+  3.4 OperateNameå’ŒAliasNameå¯åˆ†å¼€æˆ–åˆå¹¶ä½¿ç”¨
 
 
-#3. ÊµÀı
-## Àı1£ºText SqlÎÄ±¾ÃüÁî
 
-²éÑ¯²Ù×÷£¬¶ÔÓÚÌõ¼şinÓï·¨¿ÉÒÔÖ±½ÓĞ´³ÉÊı×é
-Í¬ÑùsqlÃüÁîÒ²¿ÉÒÔÊÇinsert¡¢update¡¢delete¡¢stored procedure
+
+#3. å®ä¾‹
+## ä¾‹1ï¼šText Sqlæ–‡æœ¬å‘½ä»¤
+
+æŸ¥è¯¢æ“ä½œï¼Œå¯¹äºæ¡ä»¶inè¯­æ³•å¯ä»¥ç›´æ¥å†™æˆæ•°ç»„
+åŒæ ·sqlå‘½ä»¤ä¹Ÿå¯ä»¥æ˜¯insertã€updateã€deleteã€stored procedure
 
 ``` c#
 DbProvider.QuerySingle<EmployeeModel>("select * from employee where Account=@Account and Status in @Status;", new { Account = "songjiang", Status = new int[] { 10, 5 } }, SugarCommandType.Text);
 
 DbProvider.QuerySingle<EmployeeModel>("select * from employee where Account=@Account and Status in @Status;", new { Account = "songjiang", Status = new List<int> { 10, 5 } }, SugarCommandType.Text);
 ```
-sqlÓï¾ä £º
+sqlè¯­å¥ ï¼š
 ``` sql
 select * from employee where Account=@Account and Status in (@Status1,@Status2);
 ```
 
 
 ``` c#
-//ĞÂÔö
-DbProvider.ExecuteSql("insert into employee (Account,Name,Age) values (@Account,@Name,@Age);", new { Account = "test",Name="²âÊÔ", Age = 50 }, SugarCommandType.Text);
-//µ÷ÓÃ´æ´¢
+//æ–°å¢
+DbProvider.ExecuteSql("insert into employee (Account,Name,Age) values (@Account,@Name,@Age);", new { Account = "test",Name="æµ‹è¯•", Age = 50 }, SugarCommandType.Text);
+//è°ƒç”¨å­˜å‚¨
 DbProvider.ExecuteSql("call update_employee(@p_id);", new { p_id = 1 }, SugarCommandType.Text);
 ```
 
 
 
-## Àı2£ºQueryTableDirect ²éÑ¯²Ù×÷
+## ä¾‹2ï¼šQueryTableDirect æŸ¥è¯¢æ“ä½œ
 
-¸ù¾İparamÉú³ÉwhereÌõ¼ş£¬sortSql¿É×·¼ÓsqlÓï¾ä
+æ ¹æ®paramç”Ÿæˆwhereæ¡ä»¶ï¼ŒsortSqlå¯è¿½åŠ sqlè¯­å¥
 
 ``` c#
 DbProvider.QueryList<EmployeeModel>("employee", new { Status_ge = 5, Age_gt = 48 }, SugarCommandType.QueryTableDirect, "order by id");
 ```
-sqlÓï¾ä
+sqlè¯­å¥
 ``` sql
 select * from employee where Status>=@Status_ge and Age>@Age_gt order by id;
 ```
@@ -109,15 +109,15 @@ select * from employee where Status>=@Status_ge and Age>@Age_gt order by id;
 
 
 
-## Àı3£ºQuerySelectSql ²éÑ¯²Ù×÷
+## ä¾‹3ï¼šQuerySelectSql æŸ¥è¯¢æ“ä½œ
 
-²éÑ¯Óï¾ä£¬²»º¬Ìõ¼ş£¬¸ù¾İparamÉú³ÉwhereÌõ¼ş
+æŸ¥è¯¢è¯­å¥ï¼Œä¸å«æ¡ä»¶ï¼Œæ ¹æ®paramç”Ÿæˆwhereæ¡ä»¶
 
 ``` c#
 DbProvider.QueryPagingList<EmployeeModel>(0, 10, "select a.*,b.Alias from employee a left join employee_alias b on a.ID=b.EmployeeID", new { a_Account = "songjiang", a_Age_gt = 45, Status = new int[] { 10, 5 } }, SugarCommandType.QuerySelectSql);
 ```
 
-sqlÓï¾ä
+sqlè¯­å¥
 
 ``` sql
 select a.*,b.Alias from employee a left join employee_alias b on a.ID=b.EmployeeID where a.Account=@a_Account and a.Age>@a_Age_gt and Status in (@Status1,@Status2);
@@ -125,68 +125,68 @@ select a.*,b.Alias from employee a left join employee_alias b on a.ID=b.Employee
 
 
 
-## Àı4£ºAddTableDirect ĞÂÔö²Ù×÷
+## ä¾‹4ï¼šAddTableDirect æ–°å¢æ“ä½œ
 
 ``` c#
-DbProvider.ExecuteSql("employee", new { Account="ceshi", Name = "²âÊÔ", Age = 20 }, SugarCommandType.AddTableDirect);
+DbProvider.ExecuteSql("employee", new { Account="ceshi", Name = "æµ‹è¯•", Age = 20 }, SugarCommandType.AddTableDirect);
 ```
-sqlÓï¾ä
+sqlè¯­å¥
 ``` sql
 insert into employee(Account,Name,Age) values(@Account,@Name,@Age);
 ```
 
 
 
-## Àı5£ºUpdateTableDirect ĞŞ¸Ä²Ù×÷
+## ä¾‹5ï¼šUpdateTableDirect ä¿®æ”¹æ“ä½œ
 
 ``` c#
-DbProvider.ExecuteSql("employee", new { ID = 1, Name = "ËÎ½­", Age = 50 }, SugarCommandType.UpdateTableDirect);
+DbProvider.ExecuteSql("employee", new { ID = 1, Name = "å®‹æ±Ÿ", Age = 50 }, SugarCommandType.UpdateTableDirect);
 ```
-sqlÓï¾ä
+sqlè¯­å¥
 ``` sql
 update employee set Name=@Name,Age=@Age where ID=@ID;
 ```
 
 
 
-## Àı6£ºStoredProcedure ´æ´¢¹ı³Ì
+## ä¾‹6ï¼šStoredProcedure å­˜å‚¨è¿‡ç¨‹
 
-´æ´¢¹ı³Ì£¬¸ù¾İ´æ´¢Ãû³Æµ÷ÓÃ´æ´¢¹ı³Ì
+å­˜å‚¨è¿‡ç¨‹ï¼Œæ ¹æ®å­˜å‚¨åç§°è°ƒç”¨å­˜å‚¨è¿‡ç¨‹
 ``` c#
 DbProvider.ExecuteSql("update_employee", new { p_id = 1}, SugarCommandType.StoredProcedure);
 ```
 
-# 3.ÅäÖÃËµÃ÷
+# 3.é…ç½®è¯´æ˜
 
 ## 3.1 .Net Core
-Êı¾İ¿âÁ¬½ÓÅäÖÃÇø·Ö.Net Core¡¢.Net Framework£¬ÁíÍâÅäÖÃÒ²Çø·Ö¼ò»¯°æ£¨µ¥¿â£©¡¢ÍêÕû°æ£¨¶à¿â£©ÅäÖÃ£¬ÍêÕû°æÅäÖÃÓÅÏÈ¼¶¸ßÓÚ¼ò»¯°æ
+æ•°æ®åº“è¿æ¥é…ç½®åŒºåˆ†.Net Coreã€.Net Frameworkï¼Œå¦å¤–é…ç½®ä¹ŸåŒºåˆ†ç®€åŒ–ç‰ˆï¼ˆå•åº“ï¼‰ã€å®Œæ•´ç‰ˆï¼ˆå¤šåº“ï¼‰é…ç½®ï¼Œå®Œæ•´ç‰ˆé…ç½®ä¼˜å…ˆçº§é«˜äºç®€åŒ–ç‰ˆ
 
-µ¥¿âÅäÖÃ
+å•åº“é…ç½®
 ``` json
 {
   "DapperSugar": {
-    "debug": true, // µ÷ÊÔÄ£Ê½£¬sqlÖ´ĞĞÒì³£Ö»ÓĞµ÷ÊÔÄ£Ê½»áÅ×³ö£¬·Çµ÷ÊÔÄ£Ê½»á½ØÈ¡Òì³£
-    "logsql": true,	// ¼ÇÂ¼sqlÓï¾ä£¬Ö´ĞĞÒì³£Ê¼ÖÕ»á¼ÇÂ¼ÈÕÖ¾
-    "name": "mysql", // Êı¾İ¿âÃû³Æ
+    "debug": true, // è°ƒè¯•æ¨¡å¼ï¼Œsqlæ‰§è¡Œå¼‚å¸¸åªæœ‰è°ƒè¯•æ¨¡å¼ä¼šæŠ›å‡ºï¼Œéè°ƒè¯•æ¨¡å¼ä¼šæˆªå–å¼‚å¸¸
+    "logsql": true,	// è®°å½•sqlè¯­å¥ï¼Œæ‰§è¡Œå¼‚å¸¸å§‹ç»ˆä¼šè®°å½•æ—¥å¿—
+    "name": "mysql", // æ•°æ®åº“åç§°
     "type": "MySql", // MySql, SqlServer, PostgreSql, Oracle, SQLite
     "connectionString": "Server=localhost;Database=test;Uid=root;Pwd=aikCaBRQ#hL;CharSet=utf8mb4",
   }
 }
 ```
-¶à¿âÅäÖÃ
+å¤šåº“é…ç½®
 ``` json
 {
   "DapperSugar": {
-    "debug": true, // µ÷ÊÔÄ£Ê½£¬sqlÖ´ĞĞÒì³£Ö»ÓĞµ÷ÊÔÄ£Ê½»áÅ×³ö£¬·Çµ÷ÊÔÄ£Ê½»á½ØÈ¡Òì³£
-    "logsql": true, // ¼ÇÂ¼sqlÓï¾ä£¬Ö´ĞĞÒì³£Ê¼ÖÕ»á¼ÇÂ¼ÈÕÖ¾
+    "debug": true, // è°ƒè¯•æ¨¡å¼ï¼Œsqlæ‰§è¡Œå¼‚å¸¸åªæœ‰è°ƒè¯•æ¨¡å¼ä¼šæŠ›å‡ºï¼Œéè°ƒè¯•æ¨¡å¼ä¼šæˆªå–å¼‚å¸¸
+    "logsql": true, // è®°å½•sqlè¯­å¥ï¼Œæ‰§è¡Œå¼‚å¸¸å§‹ç»ˆä¼šè®°å½•æ—¥å¿—
     "connectionStrings": [
       {
-        "name": "mysql", // Êı¾İ¿âÃû³Æ
+        "name": "mysql", // æ•°æ®åº“åç§°
         "type": "MySql", // MySql, SqlServer, PostgreSql, Oracle, SQLite
         "list": [
           {
-            "name": "default", // ·Ö¿âÃû³Æ
-            "authority": "RW", //R£º¶Á W£ºĞ´ RW£º¶ÁĞ´
+            "name": "default", // åˆ†åº“åç§°
+            "authority": "RW", //Rï¼šè¯» Wï¼šå†™ RWï¼šè¯»å†™
             "connectionString": "Server=localhost;Database=test;Uid=root;Pwd=aikCaBRQ#hL;CharSet=utf8mb4"
           }
         ]
@@ -197,7 +197,7 @@ DbProvider.ExecuteSql("update_employee", new { p_id = 1}, SugarCommandType.Store
 ```
 
 ## 3.2 .Net Framework
-µ¥¿âÅäÖÃ
+å•åº“é…ç½®
 ``` xml
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
@@ -208,7 +208,7 @@ DbProvider.ExecuteSql("update_employee", new { p_id = 1}, SugarCommandType.Store
   </DapperSugar>
 </configuration>
 ```
-¶à¿âÅäÖÃ
+å¤šåº“é…ç½®
 ``` xml
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
@@ -227,20 +227,20 @@ DbProvider.ExecuteSql("update_employee", new { p_id = 1}, SugarCommandType.Store
 </configuration>
 ```
 
-# 4.ÊµÀı
+# 4.å®ä¾‹
 ``` c#
 public class DbHelp
 {
     public static DbProvider DbProvider = DbProvider.CreateDbProvide("mysql");
 
-    #region ²éÑ¯
+    #region æŸ¥è¯¢
 
     /// <summary>
-    /// ²éÑ¯£¨ÒÔDataset·µ»Ø½á¹ûµÄ£©
+    /// æŸ¥è¯¢ï¼ˆä»¥Datasetè¿”å›ç»“æœçš„ï¼‰
     /// </summary>
-    /// <param name="sql">sqlÓï¾ä</param>
-    /// <param name="parms">²ÎÊı</param>
-    /// <returns>Ê§°Ü·µ»Ønull</returns>
+    /// <param name="sql">sqlè¯­å¥</param>
+    /// <param name="parms">å‚æ•°</param>
+    /// <returns>å¤±è´¥è¿”å›null</returns>
     public static DataSet Query(string sql, params DbParameter[] parms)
     {
         using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
@@ -250,13 +250,13 @@ public class DbHelp
     }
 
     /// <summary>
-    /// ²éÑ¯µ¥¸öÊıÖµ£¨Èç´æÔÚ¶à¸öÈ¡Ê×ĞĞÊ×ÁĞ£©
+    /// æŸ¥è¯¢å•ä¸ªæ•°å€¼ï¼ˆå¦‚å­˜åœ¨å¤šä¸ªå–é¦–è¡Œé¦–åˆ—ï¼‰
     /// </summary>
-    /// <typeparam name="T">Êı¾İÊµÌå</typeparam>
-    /// <param name="sql">sqlÓï¾ä</param>
-    /// <param name="param">²ÎÊı lt_: &lt;(Ğ¡ÓÚ)  le_: &lt;=(Ğ¡ÓÚµÈÓÚ)  gt_: &gt;(´óÓÚ)  ge_: &gt;=(´óÓÚµÈÓÚ)  lk_: like(Ä£ºı²éÑ¯)  ue_£º!=(²»µÈÓÚ)</param>
-    /// <param name="commandType">ÃüÁîÀàĞÍ</param>
-    /// <param name="sortSql">ÅÅĞòÓï¾ä</param>
+    /// <typeparam name="T">æ•°æ®å®ä½“</typeparam>
+    /// <param name="sql">sqlè¯­å¥</param>
+    /// <param name="param">å‚æ•° lt_: &lt;(å°äº)  le_: &lt;=(å°äºç­‰äº)  gt_: &gt;(å¤§äº)  ge_: &gt;=(å¤§äºç­‰äº)  lk_: like(æ¨¡ç³ŠæŸ¥è¯¢)  ue_ï¼š!=(ä¸ç­‰äº)</param>
+    /// <param name="commandType">å‘½ä»¤ç±»å‹</param>
+    /// <param name="sortSql">æ’åºè¯­å¥</param>
     /// <param name="timeout"></param>
     /// <returns></returns>
     public static T QueryScalar<T>(string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, int? timeout = null)
@@ -269,15 +269,15 @@ public class DbHelp
     }
 
     /// <summary>
-    /// ²éÑ¯µ¥¸öÊµÌå
+    /// æŸ¥è¯¢å•ä¸ªå®ä½“
     /// </summary>
-    /// <typeparam name="T">Êı¾İÊµÌå</typeparam>
-    /// <param name="sql">sqlÓï¾ä</param>
-    /// <param name="param">²ÎÊı lt_: &lt;(Ğ¡ÓÚ)  le_: &lt;=(Ğ¡ÓÚµÈÓÚ)  gt_: &gt;(´óÓÚ)  ge_: &gt;=(´óÓÚµÈÓÚ)  lk_: like(Ä£ºı²éÑ¯)  ue_£º!=(²»µÈÓÚ)</param>
-    /// <param name="commandType">ÃüÁîÀàĞÍ</param>
-    /// <param name="sortSql">ÅÅĞòÓï¾ä</param>
-    /// <param name="buffered">ÊÇ·ñ»º´æ</param>
-    /// <param name="timeout">¹ıÆÚÊ±¼ä£¨Ãë£©</param>
+    /// <typeparam name="T">æ•°æ®å®ä½“</typeparam>
+    /// <param name="sql">sqlè¯­å¥</param>
+    /// <param name="param">å‚æ•° lt_: &lt;(å°äº)  le_: &lt;=(å°äºç­‰äº)  gt_: &gt;(å¤§äº)  ge_: &gt;=(å¤§äºç­‰äº)  lk_: like(æ¨¡ç³ŠæŸ¥è¯¢)  ue_ï¼š!=(ä¸ç­‰äº)</param>
+    /// <param name="commandType">å‘½ä»¤ç±»å‹</param>
+    /// <param name="sortSql">æ’åºè¯­å¥</param>
+    /// <param name="buffered">æ˜¯å¦ç¼“å­˜</param>
+    /// <param name="timeout">è¿‡æœŸæ—¶é—´ï¼ˆç§’ï¼‰</param>
     /// <returns></returns>
     public static T QuerySingle<T>(string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, int? timeout = null)
         where T : class
@@ -289,15 +289,15 @@ public class DbHelp
     }
 
     /// <summary>
-    /// ²éÑ¯ÁĞ±í(¶à¸ömodel)
+    /// æŸ¥è¯¢åˆ—è¡¨(å¤šä¸ªmodel)
     /// </summary>
-    /// <typeparam name="T">Êı¾İÊµÌå</typeparam>
-    /// <param name="sql">sqlÓï¾ä</param>
-    /// <param name="param">²ÎÊı lt_: &lt;(Ğ¡ÓÚ)  le_: &lt;=(Ğ¡ÓÚµÈÓÚ)  gt_: &gt;(´óÓÚ)  ge_: &gt;=(´óÓÚµÈÓÚ)  lk_: like(Ä£ºı²éÑ¯)  ue_£º!=(²»µÈÓÚ)</param>
-    /// <param name="commandType">ÃüÁîÀàĞÍ</param>
-    /// <param name="sortSql">ÅÅĞòÓï¾ä</param>
-    /// <param name="buffered">ÊÇ·ñ»º´æ</param>
-    /// <param name="timeout">¹ıÆÚÊ±¼ä£¨Ãë£©</param>
+    /// <typeparam name="T">æ•°æ®å®ä½“</typeparam>
+    /// <param name="sql">sqlè¯­å¥</param>
+    /// <param name="param">å‚æ•° lt_: &lt;(å°äº)  le_: &lt;=(å°äºç­‰äº)  gt_: &gt;(å¤§äº)  ge_: &gt;=(å¤§äºç­‰äº)  lk_: like(æ¨¡ç³ŠæŸ¥è¯¢)  ue_ï¼š!=(ä¸ç­‰äº)</param>
+    /// <param name="commandType">å‘½ä»¤ç±»å‹</param>
+    /// <param name="sortSql">æ’åºè¯­å¥</param>
+    /// <param name="buffered">æ˜¯å¦ç¼“å­˜</param>
+    /// <param name="timeout">è¿‡æœŸæ—¶é—´ï¼ˆç§’ï¼‰</param>
     /// <returns></returns>
     public static List<T> QueryList<T>(string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, int? timeout = null)
         where T : class
@@ -309,17 +309,17 @@ public class DbHelp
     }
 
     /// <summary>
-    /// ·ÖÒ³²éÑ¯ÁĞ±í(1) - ÄÚ´æ·ÖÒ³
+    /// åˆ†é¡µæŸ¥è¯¢åˆ—è¡¨(1) - å†…å­˜åˆ†é¡µ
     /// </summary>
-    /// <typeparam name="T">Êı¾İÊµÌå</typeparam>
-    /// <param name="pageNumber">µ±Ç°Ò³</param>
-    /// <param name="pageSize">Ã¿Ò³¼ÇÂ¼Êı</param>
-    /// <param name="sql">sqlÓï¾ä</param>
-    /// <param name="param">²ÎÊı lt_: &lt;(Ğ¡ÓÚ)  le_: &lt;=(Ğ¡ÓÚµÈÓÚ)  gt_: &gt;(´óÓÚ)  ge_: &gt;=(´óÓÚµÈÓÚ)  lk_: like(Ä£ºı²éÑ¯)  ue_£º!=(²»µÈÓÚ)</param>
-    /// <param name="commandType">ÃüÁîÀàĞÍ</param>
-    /// <param name="sortSql">ÅÅĞòÓï¾ä</param>
-    /// <param name="buffered">ÊÇ·ñ»º´æ</param>
-    /// <param name="timeout">¹ıÆÚÊ±¼ä£¨Ãë£©</param>
+    /// <typeparam name="T">æ•°æ®å®ä½“</typeparam>
+    /// <param name="pageNumber">å½“å‰é¡µ</param>
+    /// <param name="pageSize">æ¯é¡µè®°å½•æ•°</param>
+    /// <param name="sql">sqlè¯­å¥</param>
+    /// <param name="param">å‚æ•° lt_: &lt;(å°äº)  le_: &lt;=(å°äºç­‰äº)  gt_: &gt;(å¤§äº)  ge_: &gt;=(å¤§äºç­‰äº)  lk_: like(æ¨¡ç³ŠæŸ¥è¯¢)  ue_ï¼š!=(ä¸ç­‰äº)</param>
+    /// <param name="commandType">å‘½ä»¤ç±»å‹</param>
+    /// <param name="sortSql">æ’åºè¯­å¥</param>
+    /// <param name="buffered">æ˜¯å¦ç¼“å­˜</param>
+    /// <param name="timeout">è¿‡æœŸæ—¶é—´ï¼ˆç§’ï¼‰</param>
     /// <returns></returns>
     public static IPagingList<T> QueryPagingList<T>(int pageNumber, int pageSize, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, int? timeout = null)
         where T : class
@@ -331,17 +331,17 @@ public class DbHelp
     }
 
     /// <summary>
-    /// ·ÖÒ³²éÑ¯ÁĞ±í(1) - limi·ÖÒ³
+    /// åˆ†é¡µæŸ¥è¯¢åˆ—è¡¨(1) - limiåˆ†é¡µ
     /// </summary>
-    /// <typeparam name="T">Êı¾İÊµÌå</typeparam>
-    /// <param name="pageNumber">µ±Ç°Ò³</param>
-    /// <param name="pageSize">Ã¿Ò³¼ÇÂ¼Êı</param>
-    /// <param name="sql">sqlÓï¾ä</param>
-    /// <param name="param">²ÎÊı lt_: &lt;(Ğ¡ÓÚ)  le_: &lt;=(Ğ¡ÓÚµÈÓÚ)  gt_: &gt;(´óÓÚ)  ge_: &gt;=(´óÓÚµÈÓÚ)  lk_: like(Ä£ºı²éÑ¯)  ue_£º!=(²»µÈÓÚ)</param>
-    /// <param name="commandType">ÃüÁîÀàĞÍ</param>
-    /// <param name="sortSql">ÅÅĞòÓï¾ä</param>
-    /// <param name="buffered">ÊÇ·ñ»º´æ</param>
-    /// <param name="timeout">¹ıÆÚÊ±¼ä£¨Ãë£©</param>
+    /// <typeparam name="T">æ•°æ®å®ä½“</typeparam>
+    /// <param name="pageNumber">å½“å‰é¡µ</param>
+    /// <param name="pageSize">æ¯é¡µè®°å½•æ•°</param>
+    /// <param name="sql">sqlè¯­å¥</param>
+    /// <param name="param">å‚æ•° lt_: &lt;(å°äº)  le_: &lt;=(å°äºç­‰äº)  gt_: &gt;(å¤§äº)  ge_: &gt;=(å¤§äºç­‰äº)  lk_: like(æ¨¡ç³ŠæŸ¥è¯¢)  ue_ï¼š!=(ä¸ç­‰äº)</param>
+    /// <param name="commandType">å‘½ä»¤ç±»å‹</param>
+    /// <param name="sortSql">æ’åºè¯­å¥</param>
+    /// <param name="buffered">æ˜¯å¦ç¼“å­˜</param>
+    /// <param name="timeout">è¿‡æœŸæ—¶é—´ï¼ˆç§’ï¼‰</param>
     /// <returns></returns>
     public static IPagingList<T> QueryPagingList2<T>(int pageNumber, int pageSize, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, string sortSql = null, bool buffered = true, int? timeout = null)
         where T : class
@@ -354,15 +354,15 @@ public class DbHelp
 
     #endregion
 
-    #region ²Ù×÷
+    #region æ“ä½œ
 
     /// <summary>
-    /// Ö´ĞĞÃüÁî(·µ»ØÓ°ÏìĞĞÊı£¬-1ÎªÖ´ĞĞÊ§°Ü)
+    /// æ‰§è¡Œå‘½ä»¤(è¿”å›å½±å“è¡Œæ•°ï¼Œ-1ä¸ºæ‰§è¡Œå¤±è´¥)
     /// </summary>
-    /// <param name="sql">sqlÓï¾ä</param>
-    /// <param name="param">²ÎÊı lt_: &lt;(Ğ¡ÓÚ)  le_: &lt;=(Ğ¡ÓÚµÈÓÚ)  gt_: &gt;(´óÓÚ)  ge_: &gt;=(´óÓÚµÈÓÚ)  lk_: like(Ä£ºı²éÑ¯)  ue_£º!=(²»µÈÓÚ)</param>
-    /// <param name="commandType">ÃüÁîÀàĞÍ</param>
-    /// <param name="timeout">¹ıÆÚÊ±¼ä£¨Ãë£©</param>
+    /// <param name="sql">sqlè¯­å¥</param>
+    /// <param name="param">å‚æ•° lt_: &lt;(å°äº)  le_: &lt;=(å°äºç­‰äº)  gt_: &gt;(å¤§äº)  ge_: &gt;=(å¤§äºç­‰äº)  lk_: like(æ¨¡ç³ŠæŸ¥è¯¢)  ue_ï¼š!=(ä¸ç­‰äº)</param>
+    /// <param name="commandType">å‘½ä»¤ç±»å‹</param>
+    /// <param name="timeout">è¿‡æœŸæ—¶é—´ï¼ˆç§’ï¼‰</param>
     /// <returns></returns>
     public static int ExecuteSql(string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, int? timeout = null)
     {
@@ -373,9 +373,9 @@ public class DbHelp
     }
 
     /// <summary>
-    /// Ö´ĞĞÃüÁî(·µ»ØÓ°ÏìĞĞÊı£¬-1ÎªÖ´ĞĞÊ§°Ü)
+    /// æ‰§è¡Œå‘½ä»¤(è¿”å›å½±å“è¡Œæ•°ï¼Œ-1ä¸ºæ‰§è¡Œå¤±è´¥)
     /// </summary>
-    /// <param name="command">ÃüÁî</param>
+    /// <param name="command">å‘½ä»¤</param>
     /// <returns></returns>
     public static int ExecuteSql(CommandInfo command)
     {
@@ -386,9 +386,9 @@ public class DbHelp
     }
 
     /// <summary>
-    /// Ö´ĞĞÊÂÎñ
+    /// æ‰§è¡Œäº‹åŠ¡
     /// </summary>
-    /// <param name="commands">ÃüÁî¼¯ºÏ</param>
+    /// <param name="commands">å‘½ä»¤é›†åˆ</param>
     /// <returns></returns>
     public static bool ExecuteSqlTran(CommandCollection commands)
     {
@@ -399,4 +399,7 @@ public class DbHelp
 }
 ```
 
-
+# 5.æ—§ç‰ˆè½¬æ¢
+æ­£åˆ™ 
+åŒ¹é…ï¼š(gt|ge|lt|le|lk|ue)_([a_zA-Z]_)?([a-zA-Z0-9]+) =
+æ›¿æ¢ï¼š$2$3_$1 = 

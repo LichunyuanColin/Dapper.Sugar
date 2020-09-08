@@ -281,7 +281,7 @@ namespace Dapper.Sugar
         /// <param name="timeout">过期时间（秒）</param>
         public void Add(string sqlText, object param = null, int? timeout = null)
         {
-            Add(sqlText, param, 0, SugarCommandType.Text, timeout);
+            Add(sqlText, param, EffentNextType.None, SugarCommandType.Text, timeout);
         }
         /// <summary>
         /// 添加
