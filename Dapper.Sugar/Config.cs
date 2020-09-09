@@ -258,7 +258,11 @@ namespace Dapper.Sugar
             /// <summary>
             /// 
             /// </summary>
-            Oracle = 4
+            Oracle = 4,
+            /// <summary>
+            /// 
+            /// </summary>
+            SQLite = 5,
         }
 
         /// <summary>

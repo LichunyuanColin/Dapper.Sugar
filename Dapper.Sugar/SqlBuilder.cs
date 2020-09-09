@@ -137,6 +137,9 @@ namespace Dapper.Sugar
                     case DataBaseType.Oracle:
                         builder = new OracleBuilder();
                         break;
+                    case DataBaseType.SQLite:
+                        builder = new SQLiteBuilder();
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(type));
                 }
@@ -736,5 +739,33 @@ namespace Dapper.Sugar
         }
 
 
+    }
+
+    class SQLiteBuilder : SqlBuilder
+    {
+        public override string ParamSign { get; set; } = "@";//参数标识
+
+
+        /// <summary>
+        /// 生成分页查询语句
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="pageNumber"></param>
+        /// <returns>totalSql:查询语句 dataSql:分页语句（limit）</returns>
+        public virtual (string totalSql, string dataSql) GetPagingSql(string sql, int pageNumber, int pageSize)
+        {
+            return ($"SELECT COUNT(*) {sql.Substring(sql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
+                $"{sql} LIMIT { pageSize } OFFSET { pageNumber * pageSize}");
+        }
+
+        /// <summary>
+        /// 获取自增主键查询语句
+        /// </summary>
+        /// <returns></returns>
+        public override string GetAutoIncrement(string fieldName = TABLE_KEY)
+        {
+            return ";Select LAST_INSERT_ROWID()";
+        }
     }
 }

@@ -143,7 +143,7 @@ namespace UnitTest_Net451
 
             using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                result = await DbHelp.ExecuteSqlAsync("employee", employeeList.Select(t => new
+                result = await DbHelp.DbProvider.ExecuteSqlAsync(conn, "employee", employeeList.Select(t => new
                 {
                     Account = t.Account,
                     Name = t.Name,
@@ -185,7 +185,7 @@ namespace UnitTest_Net451
 
             using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                result = await DbHelp.ExecuteSqlAsync("employee", employee, SugarCommandType.AddTableDirect);
+                result = await DbHelp.DbProvider.ExecuteSqlAsync(conn, "employee", employee, SugarCommandType.AddTableDirect);
 
                 id = await DbHelp.DbProvider.QueryAutoIncrementAsync(conn);
 
@@ -216,7 +216,7 @@ namespace UnitTest_Net451
 
             using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                result = await DbHelp.ExecuteSqlAsync("employee", employeeList, SugarCommandType.AddTableDirect);
+                result = await DbHelp.DbProvider.ExecuteSqlAsync(conn, "employee", employeeList, SugarCommandType.AddTableDirect);
 
                 id = await DbHelp.DbProvider.QueryAutoIncrementAsync(conn);
 

@@ -141,7 +141,7 @@ namespace UnitTest_NetCore
 
             using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                result = DbHelp.ExecuteSql("employee", employeeList.Select(t => new
+                result = DbHelp.DbProvider.ExecuteSql(conn, "employee", employeeList.Select(t => new
                 {
                     Account = t.Account,
                     Name = t.Name,
@@ -183,7 +183,7 @@ namespace UnitTest_NetCore
 
             using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                result = DbHelp.ExecuteSql("employee", employee, SugarCommandType.AddTableDirect);
+                result = DbHelp.DbProvider.ExecuteSql(conn, "employee", employee, SugarCommandType.AddTableDirect);
 
                 id = DbHelp.DbProvider.QueryAutoIncrement(conn);
 
@@ -214,7 +214,7 @@ namespace UnitTest_NetCore
 
             using (var conn = DbHelp.DbProvider.CreateConnection())
             {
-                result = DbHelp.ExecuteSql("employee", employeeList, SugarCommandType.AddTableDirect);
+                result = DbHelp.DbProvider.ExecuteSql(conn, "employee", employeeList, SugarCommandType.AddTableDirect);
 
                 id = DbHelp.DbProvider.QueryAutoIncrement(conn);
 

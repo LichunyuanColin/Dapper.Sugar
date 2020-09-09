@@ -45,6 +45,9 @@ namespace Dapper.Sugar
                     case DataBaseType.Oracle:
                         typeName = "Oracle.ManagedDataAccess.Client.OracleClientFactory,Oracle.ManagedDataAccess";
                         break;
+                    case DataBaseType.SQLite:
+                        typeName = "System.Data.SQLite.SQLiteFactory,System.Data.SQLite";
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(type));
                 }

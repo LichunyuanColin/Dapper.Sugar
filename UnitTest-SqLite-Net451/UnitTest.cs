@@ -1,12 +1,11 @@
-﻿using Dapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dapper.Sugar;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
+using Dapper;
 
-namespace UnitTest_Net451
+namespace UnitTest_SqLite_Net451
 {
     [TestClass]
     public class UnitTest
@@ -73,9 +72,6 @@ namespace UnitTest_Net451
 
         #region 操作
 
-        /// <summary>
-        /// 测试命令初始化
-        /// </summary>
         [TestMethod]
         public void TestParam()
         {
@@ -90,6 +86,8 @@ namespace UnitTest_Net451
             }, EffentNextType.None);
         }
 
+
+
         /// <summary>
         /// 新增-表名-单个匿名对象
         /// </summary>
@@ -101,11 +99,11 @@ namespace UnitTest_Net451
             var employee = list[0];
             EmployeeModel addInfo = null;
 
-            using (var conn = DbHelp.DbProvider.CreateConnection(Config.DataBaseAuthority.Write))
+            using (var conn = DbHelp.DbProvider.CreateOpenConnection(Config.DataBaseAuthority.Write))
             {
                 result = DbHelp.DbProvider.ExecuteSql(conn, "employee", new
                 {
-                    /*Id = 7,*/
+                    //Id = 7,
                     Account = employee.Account,
                     Name = employee.Name,
                     sq_Age = employee.Age.ToString(),
@@ -139,7 +137,7 @@ namespace UnitTest_Net451
             var employeeList = list.Skip(1).Take(2).ToList();
             List<EmployeeModel> addlist;
 
-            using (var conn = DbHelp.DbProvider.CreateConnection())
+            using (var conn = DbHelp.DbProvider.CreateOpenConnection())
             {
                 result = DbHelp.DbProvider.ExecuteSql(conn, "employee", employeeList.Select(t => new
                 {
@@ -152,7 +150,7 @@ namespace UnitTest_Net451
 
                 id = DbHelp.DbProvider.QueryAutoIncrement(conn);
 
-                addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id_le = id }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2").ToList();
+                addlist = DbHelp.DbProvider.QueryList<EmployeeModel>(conn, "employee", new { Id_le = 9 }, SugarCommandType.QueryTableDirect, "Order By Id desc limit 2").ToList();
             }
 
             Assert.AreEqual(result, 2, "新增个数");
@@ -181,7 +179,7 @@ namespace UnitTest_Net451
             var employee = list.Skip(3).Take(1).First();
             EmployeeModel addInfo = null;
 
-            using (var conn = DbHelp.DbProvider.CreateConnection())
+            using (var conn = DbHelp.DbProvider.CreateOpenConnection())
             {
                 result = DbHelp.DbProvider.ExecuteSql(conn, "employee", employee, SugarCommandType.AddTableDirect);
 
@@ -212,7 +210,7 @@ namespace UnitTest_Net451
             var employeeList = list.Skip(4).Take(2).ToList();
             List<EmployeeModel> addlist;
 
-            using (var conn = DbHelp.DbProvider.CreateConnection())
+            using (var conn = DbHelp.DbProvider.CreateOpenConnection())
             {
                 result = DbHelp.DbProvider.ExecuteSql(conn, "employee", employeeList, SugarCommandType.AddTableDirect);
 
@@ -342,7 +340,7 @@ namespace UnitTest_Net451
                 ig_Account = "lujunyi",
                 sq_Account = "Account=@ig_Account",
                 Name_lk = "卢%",
-                Status = new int[] { 10 },
+                //Status = new int[] { 10 },
                 Age_gt = 47,
                 Age_lt = 49,
             }, SugarCommandType.QueryTableDirect);
@@ -461,33 +459,33 @@ namespace UnitTest_Net451
 
         #endregion
 
-        #region 存储过程
+        #region 删除
 
         /// <summary>
-        /// 调用存储过程
+        /// 调用删除
         /// </summary>
         [TestMethod]
-        public void TestStoredProcedure1()
+        public void TestDelete1()
         {
             //存储过程，根据存储名称调用存储过程
             var p = new DynamicParameters();
-            p.Add("@startId", 6);
+            p.Add("@startId", 6, System.Data.DbType.Int32, System.Data.ParameterDirection.Input);
 
-            var result = DbHelp.ExecuteSql("delete_data", p, SugarCommandType.StoredProcedure);
+            var result = DbHelp.ExecuteSql("delete from employee where Id > @startId", p, SugarCommandType.Text);
 
-            Assert.AreEqual(result, 6, "调用存储过程错误");
+            Assert.AreEqual(result, 6, "调用删除错误");
         }
 
         /// <summary>
-        /// 调用存储过程
+        /// 调用删除
         /// </summary>
         [TestMethod]
-        public void TestStoredProcedure2()
+        public void TestDelete2()
         {
             //存储过程，根据存储名称调用存储过程
-            var result = DbHelp.ExecuteSql("delete_data", new { startId = 6 }, SugarCommandType.StoredProcedure);
+            var result = DbHelp.ExecuteSql("delete from employee where Id > @startId", new { startId = 6 }, SugarCommandType.Text);
 
-            Assert.AreEqual(result, 0, "调用存储过程错误");
+            Assert.AreEqual(result, 0, "调用删除错误");
         }
 
         #endregion
@@ -495,6 +493,7 @@ namespace UnitTest_Net451
 
     public class EmployeeModel
     {
+        [IgnoreAdd]
         public int Id { get; set; }
         public string Account { get; set; }
         public string Name { get; set; }
@@ -519,6 +518,13 @@ namespace UnitTest_Net451
             /// 成功
             /// </summary>
             Complate = 20
+        }
+        public class AA
+        {
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Name { get; set; }
         }
     }
 }
