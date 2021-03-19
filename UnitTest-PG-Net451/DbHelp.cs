@@ -5,16 +5,11 @@ using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
 
-namespace UnitTest_Net451
+namespace UnitTest_PG_Net451
 {
     public class DbHelp
     {
-        public static DbProvider DbProvider = DbProvider.CreateDbProvide("mysql");
-
-        static DbHelp()
-        {
-            DbProvider.Builder.DefaultTableKey = "Id";
-        }
+        public static DbProvider DbProvider = DbProvider.CreateDbProvide("postgresql");
 
         #region 查询
 
@@ -67,7 +62,7 @@ namespace UnitTest_Net451
         {
             using (DbConnection conn = DbProvider.CreateConnection(Config.DataBaseAuthority.Read))
             {
-                 return DbProvider.QuerySingle<T>(conn, sql, param, commandType, sortSql, buffered, null, timeout);
+                return DbProvider.QuerySingle<T>(conn, sql, param, commandType, sortSql, buffered, null, timeout);
             }
         }
 

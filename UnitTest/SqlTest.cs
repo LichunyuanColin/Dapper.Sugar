@@ -14,11 +14,13 @@ namespace UnitTest_NetCore
         [TestMethod]
         public void TestQuerySQL()
         {
+            string strNull = null;
             var sql1 = DbHelp.DbProvider.Builder.GetSelectSqlFromSelectSql("SELECT * FROM `employee`", new
             {
                 Id = 2,
                 ig_1 = "aaa",
                 sq_Account = "Account = 'lujunyi'",
+                sq_ignore = strNull,
                 Id_ue = 3,
                 Id_ne = 4,
                 Name_lk = "卢俊%",
@@ -126,6 +128,18 @@ namespace UnitTest_NetCore
 
             Assert.AreEqual(sql1.Trim(), "UPDATE `employee` SET `Account` = @Account,`Name` = @Name,`Age` = @Age,`Status` = @Status WHERE `Id` = @Id;");
             Assert.AreEqual(sql2.Trim(), "UPDATE `employee` SET `Account` = @Account,`Name` = @Name,`Age`=50,`Status` = @Status WHERE `Id` = @Id;");
+        }
+
+        [TestMethod]
+        public void TestConditionSql()
+        {
+            string text = "6050";
+            var sql = DbHelp.DbProvider.Builder.GetConditionSqlByParam(new
+            {
+                sq_no = text != null ? "(callno like @ig_no or recno like @ig_no)" : null,
+                ig_no = new long[] { 1, 2 },
+            });
+            Assert.AreEqual(sql.Trim(), "(callno like @ig_no or recno like @ig_no)");
         }
     }
 }

@@ -475,7 +475,7 @@ namespace UnitTest_SqLite_Net451
             var p = new DynamicParameters();
             p.Add("@startId", 6);
 
-            var result = DbHelp.ExecuteSqlAsync("delete from employee where Id > @startId", p, SugarCommandType.Text);
+            var result = await DbHelp.ExecuteSqlAsync("delete from employee where Id > @startId", p, SugarCommandType.Text);
 
             Assert.AreEqual(result, 6, "调用删除错误");
         }
@@ -487,7 +487,7 @@ namespace UnitTest_SqLite_Net451
         public async void TestDelete2()
         {
             //存储过程，根据存储名称调用存储过程
-            var result = DbHelp.ExecuteSqlAsync("delete from employee where Id > @startId", new { startId = 6 }, SugarCommandType.Text);
+            var result = await DbHelp.ExecuteSqlAsync("delete from employee where Id > @startId", new { startId = 6 }, SugarCommandType.Text);
 
             Assert.AreEqual(result, 0, "调用删除错误");
         }

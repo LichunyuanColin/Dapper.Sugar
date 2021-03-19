@@ -40,7 +40,7 @@ namespace Dapper.Sugar
                         typeName = "System.Data.SqlClient.SqlClientFactory,System.Data.SqlClient";
                         break;
                     case DataBaseType.PostgreSql:
-                        typeName = "MySql.Data.MySqlClient.MySqlClientFactory,MySql.Data";
+                        typeName = "Npgsql.NpgsqlFactory,Npgsql";
                         break;
                     case DataBaseType.Oracle:
                         typeName = "Oracle.ManagedDataAccess.Client.OracleClientFactory,Oracle.ManagedDataAccess";

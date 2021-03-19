@@ -326,6 +326,47 @@ namespace UnitTest_NetCore
             }
         }
 
+        /// <summary>
+        /// 修改-表名-多个匿名实体对象
+        /// </summary>
+        [TestMethod]
+        public void TestUpdate3()
+        {
+            var employeeList = new List<EmployeeModel>
+            {
+                new EmployeeModel
+                {
+                    Id = 1,
+                    Account = "songjiang",
+                    Name = "宋江",
+                    Age = 50,
+                    Status = EmployeeModel.EnumStatus.Complate
+                },
+                new EmployeeModel
+                {
+                    Id = 2,
+                    Account = "lujunyi",
+                    Name = "卢俊义",
+                    Age = 48,
+                    Status = EmployeeModel.EnumStatus.Disable
+                }
+            };
+
+            List<object> paramList = new List<object>();
+            foreach (var item in employeeList)
+            {
+                paramList.Add(new { Id = item.Id, Account = item.Account });
+            }
+
+            CommandCollection commands = new CommandCollection();
+            commands.Add("employee", paramList, SugarCommandType.UpdateTableDirect);
+            commands.Add("employee", list.Skip(2).Take(2).Select(t => new { Id = t.Id, Account = t.Account }).ToArray(), SugarCommandType.UpdateTableDirect);
+
+            bool result = DbHelp.ExecuteSqlTran(commands);
+
+            Assert.IsTrue(result, "修改-表名-多个匿名实体对象");
+        }
+
         #endregion
 
         #region 查询

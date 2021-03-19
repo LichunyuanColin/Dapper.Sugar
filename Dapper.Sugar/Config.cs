@@ -226,17 +226,17 @@ namespace Dapper.Sugar
         /// <summary>
         /// 是否调试模式（true：如果出现错误会抛出异常）
         /// </summary>
-        public bool Debug { get; set; }
+        public bool Debug { get; internal set; }
 
         /// <summary>
         /// 记录sql语句
         /// </summary>
-        public bool LogSql { get; set; }
+        public bool LogSql { get; internal set; }
 
         /// <summary>
         /// 数据库连接配置
         /// </summary>
-        public List<ConnectionConfig> ConnectionList { get; set; }
+        public List<ConnectionConfig> ConnectionList { get; internal set; }
 
         /// <summary>
         /// 数据库类型
@@ -289,12 +289,12 @@ namespace Dapper.Sugar
             /// <summary>
             /// 名称
             /// </summary>
-            public string Name { get; set; }
+            public string Name { get; internal set; }
 
             /// <summary>
             /// 数据库类型
             /// </summary>
-            public DataBaseType Type { get; set; }
+            public DataBaseType Type { get; internal set; }
 
             ///// <summary>
             ///// 数据库连接字符串
@@ -304,12 +304,12 @@ namespace Dapper.Sugar
             /// <summary>
             /// 数据库连接字符串
             /// </summary>
-            public Dictionary<string, string> ReadList { get; set; }
+            public Dictionary<string, string> ReadList { get; internal set; }
 
             /// <summary>
             /// 数据库连接字符串
             /// </summary>
-            public Dictionary<string, string> WriteList { get; set; }
+            public Dictionary<string, string> WriteList { get; internal set; }
         }
     }
 
@@ -487,6 +487,9 @@ namespace Dapper.Sugar
             /// </summary>
             public class ListCollection : ConfigurationElementCollection
             {
+                /// <summary>
+                /// 
+                /// </summary>
                 public override ConfigurationElementCollectionType CollectionType
                 {
                     get
@@ -494,12 +497,19 @@ namespace Dapper.Sugar
                         return ConfigurationElementCollectionType.AddRemoveClearMap;
                     }
                 }
-
+                /// <summary>
+                /// 
+                /// </summary>
+                /// <returns></returns>
                 protected override ConfigurationElement CreateNewElement()
                 {
                     return new ListElement();
                 }
-
+                /// <summary>
+                /// 
+                /// </summary>
+                /// <param name="element"></param>
+                /// <returns></returns>
                 protected override object GetElementKey(ConfigurationElement element)
                 {
                     return (element as ListElement).Name;
@@ -522,6 +532,9 @@ namespace Dapper.Sugar
         /// </summary>
         public class ConnectionStringsCollection : ConfigurationElementCollection
         {
+            /// <summary>
+            /// 
+            /// </summary>
             public override ConfigurationElementCollectionType CollectionType
             {
                 get
@@ -529,12 +542,19 @@ namespace Dapper.Sugar
                     return ConfigurationElementCollectionType.AddRemoveClearMap;
                 }
             }
-
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
             protected override ConfigurationElement CreateNewElement()
             {
                 return new ConnectionStringsElement();
             }
-
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="element"></param>
+            /// <returns></returns>
             protected override object GetElementKey(ConfigurationElement element)
             {
                 return (element as ConnectionStringsElement).Name;

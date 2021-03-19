@@ -70,9 +70,16 @@ namespace Dapper.Sugar
         ParamUnEqual
     }
 
-
+    /// <summary>
+    /// sql生成
+    /// </summary>
     public interface ISqlBuilder
     {
+        /// <summary>
+        /// 表默认主键
+        /// </summary>
+        string DefaultTableKey { get; set; }
+
         /// <summary>
         /// 参数标识
         /// </summary>
@@ -85,18 +92,91 @@ namespace Dapper.Sugar
         /// 后缀
         /// </summary>
         string SqlSuffix { get; set; }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="param"></param>
+        /// <param name="additionalSql"></param>
+        /// <returns></returns>
         string GetSelectSqlFromTableDirect(string sql, object param, string additionalSql = null);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="param"></param>
+        /// <param name="additionalSql"></param>
+        /// <returns></returns>
         string GetSelectSqlFromSelectSql(string sql, object param, string additionalSql = null);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="defaultSql"></param>
+        /// <returns></returns>
         string GetConditionSqlByParam(object param, string defaultSql = "1=1");
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
         string GetFieldName(string fieldName);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
         string GetInsertSql(string tableName, object param);
-        (string totalSql, string dataSql) GetPagingSql(string sql, int pageNumber, int pageSize);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="sortSql"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        (string totalSql, string dataSql) GetPagingSql(string sql, string sortSql, int pageNumber, int pageSize);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="paramName"></param>
+        /// <returns></returns>
         string GetParamName(string paramName);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
         string GetParamSql(FormateTypeCalculate type, string fieldName);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="fieldName"></param>
+        /// <param name="paramName"></param>
+        /// <returns></returns>
         string GetParamSql(FormateTypeCalculate type, string fieldName, string paramName);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
         string GetTableName(string tableName);
-        string GetUpdateSql(string tableName, object param, string tableKey = "Id");
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="param"></param>
+        /// <param name="tableKey"></param>
+        /// <returns></returns>
+        string GetUpdateSql(string tableName, object param, string tableKey = null);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
         string GetAutoIncrement(string fieldName);
     }
 
@@ -107,7 +187,11 @@ namespace Dapper.Sugar
     {
         protected const string DEFAULT_CONDITION_SQL = "1=1";
         //private const string TABLE_PREFIX = "jth";//TablePrefix
-        protected const string TABLE_KEY = "Id";//
+
+        /// <summary>
+        /// 表默认主键
+        /// </summary>
+        public string DefaultTableKey { get; set; } = "Id";
 
         public virtual string ParamSign { get; set; } = "@";//参数标识
         public string SqlPrefix { get; set; }//前缀
@@ -118,7 +202,6 @@ namespace Dapper.Sugar
 
         public static SqlBuilder GetSqlBuilder(DataBaseType type, DbProviderFactory factory)
         {
-
             if (!_sqlBuilder.ContainsKey(type))
             {
                 SqlBuilder builder = null;
@@ -344,112 +427,110 @@ namespace Dapper.Sugar
                 if (value == null)
                     continue;
 
-                bool isString = false;
-                if (item.PropertyType.IsValueType || (isString = item.PropertyType == typeof(string)))//字符串或数字
+
+                if (item.Name.Length > 3)
                 {
-                    if (item.Name.Length > 3)
+                    if (item.Name[2] == '_')//前缀
                     {
-                        if (item.Name[2] == '_')
+
+                        char start1 = item.Name[0];
+                        char start2 = item.Name[1];
+
+                        if (start1 == 'i' && start2 == 'g')
+                            continue;
+
+                        if (start1 == 's' && start2 == 'q')
                         {
-                            char start1 = item.Name[0];
-                            char start2 = item.Name[1];
+                            //if (item.PropertyType != typeof(string))
+                            //    throw new ArgumentException($"{item.Name}只能为string类型");
 
-                            if (start1 == 'i' && start2 == 'g')
-                                continue;
-
-                            if (start1 == 's' && start2 == 'q')
-                            {
-                                if (!isString)
-                                    throw new ArgumentException($"{item.Name}只能为string类型");
-
-                                string ss = (value as string).Trim();
-                                if (sql.Length > 0 && ss.Length > 2
-                                    && ss.IndexOf("AND", 0, 3, StringComparison.OrdinalIgnoreCase) < 0
-                                    && ss.IndexOf("OR", 0, 2, StringComparison.OrdinalIgnoreCase) < 0)
-                                    sql.Append(" AND ");
-                                else
-                                    sql.Append(' ');
-                                sql.Append(ss);
-
-                                if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
-                                    item.SetValue(param, null);
-
-                                continue;
-                            }
-                        }
-
-                        if (item.Name[item.Name.Length - 3] == '_')
-                        {
-                            string filterName = item.Name.Substring(0, item.Name.Length - 3);
-                            char end1 = item.Name[item.Name.Length - 2];
-                            char end2 = item.Name[item.Name.Length - 1];
-
-                            if (end1 == 'l')
-                            {
-                                if (sql.Length > 0)
-                                    sql.Append(" AND ");
-
-                                switch (end2)
-                                {
-                                    case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamLess, filterName, item.Name)); break;
-                                    case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamLessEqual, filterName, item.Name)); break;
-                                    case 'k': sql.Append(GetParamSql(FormateTypeCalculate.ParamLike, filterName, item.Name)); break;
-                                    default:
-                                        throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
-                                }
-                                continue;
-                            }
-                            else if (end1 == 'g')
-                            {
-                                if (sql.Length > 0)
-                                    sql.Append(" AND ");
-
-                                switch (end2)
-                                {
-                                    case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamMore, filterName, item.Name)); break;
-                                    case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamMoreEqual, filterName, item.Name)); break;
-                                    default:
-                                        throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
-                                }
-                                continue;
-                            }
-                            else if ((end1 == 'u' || end1 == 'n') && end2 == 'e')
-                            {
-                                if (sql.Length > 0)
-                                    sql.Append(" AND ");
-
-                                sql.Append(GetParamSql(FormateTypeCalculate.ParamUnEqual, filterName, item.Name));
-                                continue;
-                            }
-                            //else if (item.Name.EndsWith("_nn", StringComparison.Ordinal))
-                            //{
-                            //    if (sql.Length > 0)
-                            //        sql.Append(" AND ");
-                            //    sql.Append(GetParamSql(FormateTypeCalculate.ParamNotIn, filterName, item.Name));
-                            //}
-                            else if (end1 == 'i' && end2 == 'g')
-                                continue;
+                            string ss = (value as string).Trim();
+                            if (sql.Length > 0 && ss.Length > 2
+                                && ss.IndexOf("AND", 0, 3, StringComparison.OrdinalIgnoreCase) < 0
+                                && ss.IndexOf("OR", 0, 2, StringComparison.OrdinalIgnoreCase) < 0)
+                                sql.Append(" AND ");
                             else
-                                throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                                sql.Append(' ');
+                            sql.Append(ss);
+
+                            //if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
+                            //    item.SetValue(param, null);
+
+                            continue;
                         }
                     }
 
-                    if (sql.Length > 0)
-                        sql.Append(" AND ");
-                    sql.Append(GetParamSql(FormateTypeCalculate.ParamEqual, item.Name));
+
+                    if (item.Name[item.Name.Length - 3] == '_')//后缀
+                    {
+                        string filterName = item.Name.Substring(0, item.Name.Length - 3);
+                        char end1 = item.Name[item.Name.Length - 2];
+                        char end2 = item.Name[item.Name.Length - 1];
+
+                        if (end1 == 'l')
+                        {
+                            if (sql.Length > 0)
+                                sql.Append(" AND ");
+
+                            switch (end2)
+                            {
+                                case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamLess, filterName, item.Name)); break;
+                                case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamLessEqual, filterName, item.Name)); break;
+                                case 'k': sql.Append(GetParamSql(FormateTypeCalculate.ParamLike, filterName, item.Name)); break;
+                                default:
+                                    throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                            }
+                            continue;
+                        }
+                        else if (end1 == 'g')
+                        {
+                            if (sql.Length > 0)
+                                sql.Append(" AND ");
+
+                            switch (end2)
+                            {
+                                case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamMore, filterName, item.Name)); break;
+                                case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamMoreEqual, filterName, item.Name)); break;
+                                default:
+                                    throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                            }
+                            continue;
+                        }
+                        else if ((end1 == 'u' || end1 == 'n') && end2 == 'e')
+                        {
+                            if (sql.Length > 0)
+                                sql.Append(" AND ");
+
+                            sql.Append(GetParamSql(FormateTypeCalculate.ParamUnEqual, filterName, item.Name));
+                            continue;
+                        }
+                        //else if (item.Name.EndsWith("_nn", StringComparison.Ordinal))
+                        //{
+                        //    if (sql.Length > 0)
+                        //        sql.Append(" AND ");
+                        //    sql.Append(GetParamSql(FormateTypeCalculate.ParamNotIn, filterName, item.Name));
+                        //}
+                        else if (end1 == 'i' && end2 == 'g')
+                            continue;
+                        else
+                            throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                    }
                 }
+
                 //判断是否数组或List<T>,IsGenericType有bug，class<T>也返回true
-                else if (item.PropertyType.IsArray
+                if (item.PropertyType.IsArray
                     || (item.PropertyType.IsGenericType
                     && (item.PropertyType.Name.StartsWith("List`") || item.PropertyType.Name.StartsWith("IEnumerable`"))))
                 {
                     if (sql.Length > 0)
                         sql.Append(" AND ");
-
                     sql.Append(GetParamSql(FormateTypeCalculate.ParamIn, item.Name));
+                    continue;
                 }
-                else
-                    throw new ArgumentException("参数类型不能识别！");
+
+                if (sql.Length > 0)
+                    sql.Append(" AND ");
+                sql.Append(GetParamSql(FormateTypeCalculate.ParamEqual, item.Name));
             }
 
             //如果参数为0，返回默认sql
@@ -477,9 +558,10 @@ namespace Dapper.Sugar
             else if (IsArrayOrList(type))
             {
                 //判断是否泛型
-                var temp = type.GetGenericArguments();
-                type = temp[temp.Length - 1];
+                //var temp = type.GetGenericArguments();
+                //type = temp[temp.Length - 1];
                 param = (param as IEnumerable<object>).AsList()[0];
+                type = param.GetType();
             }
 
             PropertyInfo[] propertys = type.GetProperties();
@@ -510,8 +592,8 @@ namespace Dapper.Sugar
                             sqlValue.Append(v);
                             sqlValue.Append(",");
 
-                            if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
-                                item.SetValue(param, null);
+                            //if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
+                            //    item.SetValue(param, null);
                         }
                         continue;
                     }
@@ -538,8 +620,11 @@ namespace Dapper.Sugar
         /// <param name="tableName"></param>
         /// <param name="tableKey"></param>
         /// <returns></returns>
-        public virtual string GetUpdateSql(string tableName, object param, string tableKey = TABLE_KEY)
+        public virtual string GetUpdateSql(string tableName, object param, string tableKey = null)
         {
+            if (string.IsNullOrEmpty(tableKey))
+                tableKey = DefaultTableKey;
+
             Type type = param.GetType();
             if (type.IsArray)
             {
@@ -550,9 +635,10 @@ namespace Dapper.Sugar
             else if (IsArrayOrList(type))
             {
                 //判断是否泛型
-                var temp = type.GetGenericArguments();
-                type = temp[temp.Length - 1];
+                //var temp = type.GetGenericArguments();
+                //type = temp[temp.Length - 1];
                 param = (param as IEnumerable<object>).AsList()[0];
+                type = param.GetType();
             }
 
             PropertyInfo[] propertys = type.GetProperties();
@@ -581,8 +667,9 @@ namespace Dapper.Sugar
                             sqlField.Append("=");
                             sqlField.Append(v);
                             sqlField.Append(",");
-                            if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
-                                item.SetValue(param, null);
+
+                            //if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
+                            //    item.SetValue(param, null);
                         }
                         continue;
                     }
@@ -657,21 +744,22 @@ namespace Dapper.Sugar
         /// <summary>
         /// 生成分页查询语句
         /// </summary>
-        /// <param name="sql"></param>
+        /// <param name="selectSql"></param>
+        /// <param name="sortSql"></param>
         /// <param name="pageSize"></param>
         /// <param name="pageNumber"></param>
         /// <returns>totalSql:查询语句 dataSql:分页语句（limit）</returns>
-        public virtual (string totalSql, string dataSql) GetPagingSql(string sql, int pageNumber, int pageSize)
+        public virtual (string totalSql, string dataSql) GetPagingSql(string selectSql, string sortSql, int pageNumber, int pageSize)
         {
-            return ($"SELECT COUNT(*) {sql.Substring(sql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
-                $"{sql} LIMIT { pageNumber * pageSize},{pageSize}");
+            return ($"SELECT COUNT(*) {selectSql.Substring(selectSql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
+                $"{selectSql} {sortSql} LIMIT { pageNumber * pageSize},{pageSize}");
         }
 
         /// <summary>
         /// 获取自增主键查询语句
         /// </summary>
         /// <returns></returns>
-        public virtual string GetAutoIncrement(string fieldName = TABLE_KEY)
+        public virtual string GetAutoIncrement(string fieldName = null)
         {
             throw new NotImplementedException();
         }
@@ -684,7 +772,7 @@ namespace Dapper.Sugar
         /// 获取自增主键查询语句
         /// </summary>
         /// <returns></returns>
-        public override string GetAutoIncrement(string fieldName = TABLE_KEY)
+        public override string GetAutoIncrement(string fieldName = null)
         {
             return ";Select Last_Insert_ID()";
         }
@@ -692,17 +780,17 @@ namespace Dapper.Sugar
 
     class SqlServerBuilder : SqlBuilder
     {
-        public override (string totalSql, string dataSql) GetPagingSql(string sql, int pageNumber, int pageSize)
+        public override (string totalSql, string dataSql) GetPagingSql(string selectSql, string sortSql, int pageNumber, int pageSize)
         {
-            return ($"SELECT COUNT(*) {sql.Substring(sql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
-                $"{sql} offset {pageNumber * pageSize} rows fetch next { pageSize} rows only");
+            return ($"SELECT COUNT(*) {selectSql.Substring(selectSql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
+                $"{selectSql} {sortSql} offset {pageNumber * pageSize} rows fetch next { pageSize} rows only");
         }
 
         /// <summary>
         /// 获取自增主键查询语句
         /// </summary>
         /// <returns></returns>
-        public override string GetAutoIncrement(string fieldName = TABLE_KEY)
+        public override string GetAutoIncrement(string fieldName = null)
         {
             return ";Select Scope_Identity()";
         }
@@ -710,19 +798,218 @@ namespace Dapper.Sugar
 
     class PostgreSqlBuilder : SqlBuilder
     {
-        public override (string totalSql, string dataSql) GetPagingSql(string sql, int pageNumber, int pageSize)
+        public override string GetParamSql(FormateTypeCalculate type, string fieldName, string paramName)
         {
-            return ($"SELECT COUNT(*) {sql.Substring(sql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
-                $"{sql} LIMIT { pageSize} OFFSET {pageNumber * pageSize}");
+            if (string.IsNullOrEmpty(fieldName))
+                throw new ArgumentNullException(nameof(fieldName));
+
+            if (string.IsNullOrEmpty(paramName))
+                throw new ArgumentNullException(nameof(paramName));
+
+            string tableName = string.Empty;
+            //bool containParamSign = true;
+            if (fieldName.Length > 2 && fieldName[1] == '_')
+            {
+                //有别名
+                string aliasName = fieldName.Substring(0, 1);
+                fieldName = fieldName.Substring(2);
+                switch (type)
+                {
+                    case FormateTypeCalculate.ParamEqual://等于
+                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} = {ParamSign}{paramName}";
+                    case FormateTypeCalculate.ParamLess://小于
+                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} < {ParamSign}{paramName}";
+                    case FormateTypeCalculate.ParamLessEqual://小于等于
+                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} <= {ParamSign}{paramName}";
+                    case FormateTypeCalculate.ParamMore://大于
+                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} > {ParamSign}{paramName}";
+                    case FormateTypeCalculate.ParamMoreEqual://大于等于
+                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} >= {ParamSign}{paramName}";
+                    case FormateTypeCalculate.ParamLike://模糊查询
+                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} like {ParamSign}{paramName}";
+                    case FormateTypeCalculate.ParamIn://In
+                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} = any({ParamSign}{paramName})";
+                    case FormateTypeCalculate.ParamUnEqual://不等于
+                        return $"{aliasName}.{SqlPrefix}{fieldName}{SqlSuffix} <> {ParamSign}{paramName}";
+                    default: throw new ArgumentOutOfRangeException(nameof(type));
+                }
+            }
+            else
+            {
+                //无别名
+                switch (type)
+                {
+                    case FormateTypeCalculate.ParamEqual://等于
+                        return $"{SqlPrefix}{fieldName}{SqlSuffix} = {ParamSign}{paramName}";
+                    case FormateTypeCalculate.ParamLess://小于
+                        return $"{SqlPrefix}{fieldName}{SqlSuffix} < {ParamSign}{paramName}";
+                    case FormateTypeCalculate.ParamLessEqual://小于等于
+                        return $"{SqlPrefix}{fieldName}{SqlSuffix} <= {ParamSign}{paramName}";
+                    case FormateTypeCalculate.ParamMore://大于
+                        return $"{SqlPrefix}{fieldName}{SqlSuffix} > {ParamSign}{paramName}";
+                    case FormateTypeCalculate.ParamMoreEqual://大于等于
+                        return $"{SqlPrefix}{fieldName}{SqlSuffix} >= {ParamSign}{paramName}";
+                    case FormateTypeCalculate.ParamLike://模糊查询
+                        return $"{SqlPrefix}{fieldName}{SqlSuffix} like {ParamSign}{paramName}";
+                    case FormateTypeCalculate.ParamIn://In
+                        return $"{SqlPrefix}{fieldName}{SqlSuffix} = any({ParamSign}{paramName})";
+                    case FormateTypeCalculate.ParamUnEqual://不等于
+                        return $"{SqlPrefix}{fieldName}{SqlSuffix} <> {ParamSign}{paramName}";
+                    default: throw new ArgumentOutOfRangeException(nameof(type));
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// 参数转成条件sql（默认返回1=1）
+        /// </summary>
+        /// <param name="param">参数（lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+        /// <param name="defaultSql">默认无参数时sql语句</param>
+        /// <returns></returns>
+        public override string GetConditionSqlByParam(object param, string defaultSql = "1=1")
+        {
+            if (param == null)
+                return defaultSql;
+
+            PropertyInfo[] props = param.GetType().GetProperties();
+            if (props.Length == 0)
+                return defaultSql;
+
+            StringBuilder sql = new StringBuilder();
+            foreach (PropertyInfo item in props)
+            {
+                var value = item.GetValue(param, null);
+                if (value == null)
+                    continue;
+
+
+                if (item.Name.Length > 3)
+                {
+                    if (item.Name[2] == '_')//前缀
+                    {
+
+                        char start1 = item.Name[0];
+                        char start2 = item.Name[1];
+
+                        if (start1 == 'i' && start2 == 'g')
+                            continue;
+
+                        if (start1 == 's' && start2 == 'q')
+                        {
+                            //if (item.PropertyType != typeof(string))
+                            //    throw new ArgumentException($"{item.Name}只能为string类型");
+
+                            string ss = (value as string).Trim();
+                            if (sql.Length > 0 && ss.Length > 2
+                                && ss.IndexOf("AND", 0, 3, StringComparison.OrdinalIgnoreCase) < 0
+                                && ss.IndexOf("OR", 0, 2, StringComparison.OrdinalIgnoreCase) < 0)
+                                sql.Append(" AND ");
+                            else
+                                sql.Append(' ');
+                            sql.Append(ss);
+
+                            //if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
+                            //    item.SetValue(param, null);
+
+                            continue;
+                        }
+                    }
+
+
+                    if (item.Name[item.Name.Length - 3] == '_')//后缀
+                    {
+                        string filterName = item.Name.Substring(0, item.Name.Length - 3);
+                        char end1 = item.Name[item.Name.Length - 2];
+                        char end2 = item.Name[item.Name.Length - 1];
+
+                        if (end1 == 'l')
+                        {
+                            if (sql.Length > 0)
+                                sql.Append(" AND ");
+
+                            switch (end2)
+                            {
+                                case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamLess, filterName, item.Name)); break;
+                                case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamLessEqual, filterName, item.Name)); break;
+                                case 'k': sql.Append(GetParamSql(FormateTypeCalculate.ParamLike, filterName, item.Name)); break;
+                                default:
+                                    throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                            }
+                            continue;
+                        }
+                        else if (end1 == 'g')
+                        {
+                            if (sql.Length > 0)
+                                sql.Append(" AND ");
+
+                            switch (end2)
+                            {
+                                case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamMore, filterName, item.Name)); break;
+                                case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamMoreEqual, filterName, item.Name)); break;
+                                default:
+                                    throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                            }
+                            continue;
+                        }
+                        else if ((end1 == 'u' || end1 == 'n') && end2 == 'e')
+                        {
+                            if (sql.Length > 0)
+                                sql.Append(" AND ");
+
+                            sql.Append(GetParamSql(FormateTypeCalculate.ParamUnEqual, filterName, item.Name));
+                            continue;
+                        }
+                        //else if (item.Name.EndsWith("_nn", StringComparison.Ordinal))
+                        //{
+                        //    if (sql.Length > 0)
+                        //        sql.Append(" AND ");
+                        //    sql.Append(GetParamSql(FormateTypeCalculate.ParamNotIn, filterName, item.Name));
+                        //}
+                        else if (end1 == 'i' && end2 == 'g')
+                            continue;
+                        else
+                            throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                    }
+                }
+
+                //判断是否数组或List<T>,IsGenericType有bug，class<T>也返回true
+                if (item.PropertyType.IsArray
+                    || (item.PropertyType.IsGenericType
+                    && (item.PropertyType.Name.StartsWith("List`") || item.PropertyType.Name.StartsWith("IEnumerable`"))))
+                {
+                    if (sql.Length > 0)
+                        sql.Append(" = ");
+                    sql.Append(GetParamSql(FormateTypeCalculate.ParamIn, item.Name));
+                    continue;
+                }
+
+                if (sql.Length > 0)
+                    sql.Append(" AND ");
+                sql.Append(GetParamSql(FormateTypeCalculate.ParamEqual, item.Name));
+            }
+
+            //如果参数为0，返回默认sql
+            if (sql.Length == 0)
+                return defaultSql;
+
+            return sql.ToString();
+        }
+
+
+        public override (string totalSql, string dataSql) GetPagingSql(string selectSql, string sortSql, int pageNumber, int pageSize)
+        {
+            return ($"SELECT COUNT(*) {selectSql.Substring(selectSql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
+                $"{selectSql} {sortSql} LIMIT { pageSize} OFFSET {pageNumber * pageSize}");
         }
 
         /// <summary>
         /// 获取自增主键查询语句
         /// </summary>
         /// <returns></returns>
-        public override string GetAutoIncrement(string fieldName = TABLE_KEY)
+        public override string GetAutoIncrement(string fieldName = null)
         {
-            return $";Returning {fieldName ?? TABLE_KEY}";
+            return $";Returning {fieldName ?? DefaultTableKey}";
         }
     }
 
@@ -730,11 +1017,11 @@ namespace Dapper.Sugar
     {
         public override string ParamSign { get; set; } = ":";//参数标识
 
-        public override (string totalSql, string dataSql) GetPagingSql(string sql, int pageNumber, int pageSize)
+        public override (string totalSql, string dataSql) GetPagingSql(string selectSql, string sortSql, int pageNumber, int pageSize)
         {
-            return ($"SELECT COUNT(*) {sql.Substring(sql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
+            return ($"SELECT COUNT(*) {selectSql.Substring(selectSql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
                 $@"SELECT * FROM (SELECT A.*, ROWNUM RN FROM(
-{ sql }
+{selectSql} {sortSql}
 ) AWHERE ROWNUM <= {pageNumber * pageSize + pageSize})WHERE RN >= {pageNumber * pageSize + 1}");
         }
 
@@ -749,21 +1036,22 @@ namespace Dapper.Sugar
         /// <summary>
         /// 生成分页查询语句
         /// </summary>
-        /// <param name="sql"></param>
+        /// <param name="selectSql"></param>
+        /// <param name="sortSql"></param>
         /// <param name="pageSize"></param>
         /// <param name="pageNumber"></param>
         /// <returns>totalSql:查询语句 dataSql:分页语句（limit）</returns>
-        public virtual (string totalSql, string dataSql) GetPagingSql(string sql, int pageNumber, int pageSize)
+        public override (string totalSql, string dataSql) GetPagingSql(string selectSql, string sortSql, int pageNumber, int pageSize)
         {
-            return ($"SELECT COUNT(*) {sql.Substring(sql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
-                $"{sql} LIMIT { pageSize } OFFSET { pageNumber * pageSize}");
+            return ($"SELECT COUNT(*) {selectSql.Substring(selectSql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
+                $"{selectSql} {sortSql} LIMIT { pageSize } OFFSET { pageNumber * pageSize}");
         }
 
         /// <summary>
         /// 获取自增主键查询语句
         /// </summary>
         /// <returns></returns>
-        public override string GetAutoIncrement(string fieldName = TABLE_KEY)
+        public override string GetAutoIncrement(string fieldName = null)
         {
             return ";Select LAST_INSERT_ROWID()";
         }

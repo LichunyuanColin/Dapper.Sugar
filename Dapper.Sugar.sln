@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCore", "TestCore\TestCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest-SqLite-Net451", "UnitTest-SqLite-Net451\UnitTest-SqLite-Net451.csproj", "{A1EA8870-B081-4DF0-90FD-2C5CA661487D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest-PG-Net451", "UnitTest-PG-Net451\UnitTest-PG-Net451.csproj", "{07B2BDB2-7C94-49C4-BAE8-64600D5B8865}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{A1EA8870-B081-4DF0-90FD-2C5CA661487D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1EA8870-B081-4DF0-90FD-2C5CA661487D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1EA8870-B081-4DF0-90FD-2C5CA661487D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07B2BDB2-7C94-49C4-BAE8-64600D5B8865}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07B2BDB2-7C94-49C4-BAE8-64600D5B8865}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07B2BDB2-7C94-49C4-BAE8-64600D5B8865}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07B2BDB2-7C94-49C4-BAE8-64600D5B8865}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
