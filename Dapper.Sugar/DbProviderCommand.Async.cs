@@ -305,22 +305,24 @@ namespace Dapper.Sugar
         #region 工具
 
         /// <summary>
-        /// 查询自增
+        /// 查询自增（已作废，推荐使用AddReturnKey）
         /// </summary>
         /// <param name="conn">连接</param>
         /// <param name="fieldName">字段名称（仅限PostgreSql需要）</param>
         /// <returns></returns>
+        [Obsolete]
         public Task<int> QueryAutoIncrementAsync(DbConnection conn, string fieldName = null)
         {
             return BaseQueryScalarAsync<int>(conn, this.Builder.GetAutoIncrement(fieldName), null, CommandType.Text, null, null);
         }
 
         /// <summary>
-        /// 查询自增
+        /// 查询自增（已作废，推荐使用AddReturnKey）
         /// </summary>
         /// <param name="conn">连接</param>
         /// <param name="fieldName">字段名称（仅限PostgreSql需要）</param>
         /// <returns></returns>
+        [Obsolete]
         public Task<long> QueryLongAutoIncrementAsync(DbConnection conn, string fieldName = null)
         {
             return BaseQueryScalarAsync<long>(conn, this.Builder.GetAutoIncrement(fieldName), null, CommandType.Text, null, null);
@@ -1002,6 +1004,118 @@ namespace Dapper.Sugar
         }
 
         /// <summary>
+        /// 执行命令(返回查询数据)
+        /// </summary>
+        /// <param name="conn">连接</param>
+        /// <param name="sql">sql语句</param>
+        /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+        /// <param name="commandType">命令类型</param>
+        /// <param name="transaction">事务</param>
+        /// <param name="timeout">过期时间（秒）</param>
+        /// <returns></returns>
+        public Task<object> ExecuteSqlScalarAsync(IDbConnection conn, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, IDbTransaction transaction = null, int? timeout = null)
+        {
+            return ExecuteSqlScalarAsync(conn, new CommandInfo(sql, param, commandType, timeout), transaction);
+        }
+
+        /// <summary>
+        /// 执行命令(返回查询数据)
+        /// </summary>
+        /// <param name="conn">连接</param>
+        /// <param name="command">命令</param>
+        /// <param name="transaction">事务</param>
+        /// <returns></returns>
+        public Task<object> ExecuteSqlScalarAsync(IDbConnection conn, CommandInfo command, IDbTransaction transaction = null)
+        {
+            /*(string SqlText, CommandType CommandType) cmd =*/
+            this.TranslateCommand(command);
+
+            try
+            {
+                if (Config.Instance.LogSql)//写入日志
+                    if (command.CommandType == SugarCommandType.StoredProcedure)
+                        Log.InfoProcedure(command.SqlText, command.Param);
+                    else
+                        Log.InfoSql(command.SqlText, command.Param);
+                // OpenConnection(conn);
+                return conn.ExecuteScalarAsync(command.SqlText, command.Param, transaction, command.Timeout,
+                    command.CommandType == SugarCommandType.StoredProcedure ? CommandType.StoredProcedure : CommandType.Text);
+            }
+            catch (Exception ex)
+            {
+                //if (Config.Instance.LogSql)//写入日志
+                if (command.CommandType == SugarCommandType.StoredProcedure)
+                    Log.ErrorProcedure(command.SqlText, command.Param, ex);
+                else
+                    Log.ErrorSql(command.SqlText, command.Param, ex);
+
+                if (transaction != null || Config.Instance.Debug)
+                    throw new DapperSugarException($"{(command.CommandType == SugarCommandType.StoredProcedure ? "Stored Procedure：" : "Sql：")}[ {command.SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
+                else
+                {
+                    ExceptionCallBack?.Invoke(ex);
+                    return Task.FromResult<object>(null);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 执行命令(返回查询数据)
+        /// </summary>
+        /// <param name="conn">连接</param>
+        /// <param name="sql">sql语句</param>
+        /// <param name="param">参数 lt_: &lt;(小于)  le_: &lt;=(小于等于)  gt_: &gt;(大于)  ge_: &gt;=(大于等于)  lk_: like(模糊查询)  ue_：!=(不等于)</param>
+        /// <param name="commandType">命令类型</param>
+        /// <param name="transaction">事务</param>
+        /// <param name="timeout">过期时间（秒）</param>
+        /// <returns></returns>
+        public Task<T> ExecuteSqlScalarAsync<T>(IDbConnection conn, string sql, object param = null, SugarCommandType commandType = SugarCommandType.Text, IDbTransaction transaction = null, int? timeout = null)
+        {
+            return ExecuteSqlScalarAsync<T>(conn, new CommandInfo(sql, param, commandType, timeout), transaction);
+        }
+
+        /// <summary>
+        /// 执行命令(返回查询数据)
+        /// </summary>
+        /// <param name="conn">连接</param>
+        /// <param name="command">命令</param>
+        /// <param name="transaction">事务</param>
+        /// <returns></returns>
+        public Task<T> ExecuteSqlScalarAsync<T>(IDbConnection conn, CommandInfo command, IDbTransaction transaction = null)
+        {
+            /*(string SqlText, CommandType CommandType) cmd =*/
+            this.TranslateCommand(command);
+
+            try
+            {
+                if (Config.Instance.LogSql)//写入日志
+                    if (command.CommandType == SugarCommandType.StoredProcedure)
+                        Log.InfoProcedure(command.SqlText, command.Param);
+                    else
+                        Log.InfoSql(command.SqlText, command.Param);
+                // OpenConnection(conn);
+                return conn.ExecuteScalarAsync<T>(command.SqlText, command.Param, transaction, command.Timeout,
+                    command.CommandType == SugarCommandType.StoredProcedure ? CommandType.StoredProcedure : CommandType.Text);
+            }
+            catch (Exception ex)
+            {
+                //if (Config.Instance.LogSql)//写入日志
+                if (command.CommandType == SugarCommandType.StoredProcedure)
+                    Log.ErrorProcedure(command.SqlText, command.Param, ex);
+                else
+                    Log.ErrorSql(command.SqlText, command.Param, ex);
+
+                if (transaction != null || Config.Instance.Debug)
+                    throw new DapperSugarException($"{(command.CommandType == SugarCommandType.StoredProcedure ? "Stored Procedure：" : "Sql：")}[ {command.SqlText} ]执行出错，错误信息：{ex.Message}！", ex);
+                else
+                {
+                    ExceptionCallBack?.Invoke(ex);
+                    return Task.FromResult<T>(default(T));
+                }
+            }
+        }
+
+        /// <summary>
         /// 执行事务
         /// </summary>
         /// <param name="commands">命令集合</param>
@@ -1141,6 +1255,46 @@ namespace Dapper.Sugar
                 }
             }
         }
+
+
+        #region 新增
+
+        /// <summary>
+        /// 新增记录并返回自增主键
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="conn">连接</param>
+        /// <param name="tableName">表名称</param>
+        /// <param name="param">参数</param>
+        /// <param name="fieldName">自增名称目前仅PostgreSql需要</param>
+        /// <param name="transaction">事务</param>
+        /// <param name="timeout">过期时间（秒）</param>
+        /// <returns></returns>
+        public Task<T> AddReturnKeyAsync<T>(IDbConnection conn, string tableName, object param, string fieldName = null, IDbTransaction transaction = null, int? timeout = null)
+        {
+            string sqlText = this.Builder.GetInsertSql(tableName, param) + this.Builder.GetAutoIncrement(fieldName);
+            try
+            {
+                if (Config.Instance.LogSql)//写入日志
+                    Log.InfoSql(sqlText, param);
+                // OpenConnection(conn);
+                return conn.ExecuteScalarAsync<T>(sqlText, param, transaction, timeout, CommandType.Text);
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorSql(sqlText, param, ex);
+
+                if (transaction != null || Config.Instance.Debug)
+                    throw new DapperSugarException($"Sql：[ {sqlText} ]执行出错，错误信息：{ex.Message}！", ex);
+                else
+                {
+                    ExceptionCallBack?.Invoke(ex);
+                    return Task.FromResult<T>(default(T));
+                }
+            }
+        }
+
+        #endregion
 
         #endregion
     }

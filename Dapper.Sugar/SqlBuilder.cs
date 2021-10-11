@@ -751,7 +751,7 @@ namespace Dapper.Sugar
         /// <returns>totalSql:查询语句 dataSql:分页语句（limit）</returns>
         public virtual (string totalSql, string dataSql) GetPagingSql(string selectSql, string sortSql, int pageNumber, int pageSize)
         {
-            return ($"SELECT COUNT(*) {selectSql.Substring(selectSql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
+            return ($"SELECT COUNT(*) from ({selectSql}) alias",
                 $"{selectSql} {sortSql} LIMIT { pageNumber * pageSize},{pageSize}");
         }
 
@@ -774,7 +774,7 @@ namespace Dapper.Sugar
         /// <returns></returns>
         public override string GetAutoIncrement(string fieldName = null)
         {
-            return ";Select Last_Insert_ID()";
+            return "Select Last_Insert_ID()";
         }
     }
 
@@ -782,7 +782,7 @@ namespace Dapper.Sugar
     {
         public override (string totalSql, string dataSql) GetPagingSql(string selectSql, string sortSql, int pageNumber, int pageSize)
         {
-            return ($"SELECT COUNT(*) {selectSql.Substring(selectSql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
+            return ($"SELECT COUNT(*) from ({selectSql}) alias",
                 $"{selectSql} {sortSql} offset {pageNumber * pageSize} rows fetch next { pageSize} rows only");
         }
 
@@ -792,7 +792,7 @@ namespace Dapper.Sugar
         /// <returns></returns>
         public override string GetAutoIncrement(string fieldName = null)
         {
-            return ";Select Scope_Identity()";
+            return "Select Scope_Identity()";
         }
     }
 
@@ -999,7 +999,7 @@ namespace Dapper.Sugar
 
         public override (string totalSql, string dataSql) GetPagingSql(string selectSql, string sortSql, int pageNumber, int pageSize)
         {
-            return ($"SELECT COUNT(*) {selectSql.Substring(selectSql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
+            return ($"SELECT COUNT(*) from ({selectSql}) alias",
                 $"{selectSql} {sortSql} LIMIT { pageSize} OFFSET {pageNumber * pageSize}");
         }
 
@@ -1009,7 +1009,7 @@ namespace Dapper.Sugar
         /// <returns></returns>
         public override string GetAutoIncrement(string fieldName = null)
         {
-            return $";Returning {fieldName ?? DefaultTableKey}";
+            return $"Returning {fieldName ?? DefaultTableKey}";
         }
     }
 
@@ -1019,7 +1019,7 @@ namespace Dapper.Sugar
 
         public override (string totalSql, string dataSql) GetPagingSql(string selectSql, string sortSql, int pageNumber, int pageSize)
         {
-            return ($"SELECT COUNT(*) {selectSql.Substring(selectSql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
+            return ($"SELECT COUNT(*) from ({selectSql}) alias",
                 $@"SELECT * FROM (SELECT A.*, ROWNUM RN FROM(
 {selectSql} {sortSql}
 ) AWHERE ROWNUM <= {pageNumber * pageSize + pageSize})WHERE RN >= {pageNumber * pageSize + 1}");
@@ -1043,7 +1043,7 @@ namespace Dapper.Sugar
         /// <returns>totalSql:查询语句 dataSql:分页语句（limit）</returns>
         public override (string totalSql, string dataSql) GetPagingSql(string selectSql, string sortSql, int pageNumber, int pageSize)
         {
-            return ($"SELECT COUNT(*) {selectSql.Substring(selectSql.IndexOf("FROM", StringComparison.OrdinalIgnoreCase))}",
+            return ($"SELECT COUNT(*) from ({selectSql}) alias",
                 $"{selectSql} {sortSql} LIMIT { pageSize } OFFSET { pageNumber * pageSize}");
         }
 
@@ -1053,7 +1053,7 @@ namespace Dapper.Sugar
         /// <returns></returns>
         public override string GetAutoIncrement(string fieldName = null)
         {
-            return ";Select LAST_INSERT_ROWID()";
+            return "Select LAST_INSERT_ROWID()";
         }
     }
 }
