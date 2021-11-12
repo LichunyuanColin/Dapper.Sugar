@@ -123,7 +123,7 @@ namespace Dapper.Sugar
             try
             {
                 if (Config.Instance.LogSql)//写入日志
-                    Log.InfoSql(sql, param);
+                    Log.InfoSql(SqlText, param);
                 // OpenConnection(conn);
                 return conn.Query<TFirst, TSecond, TReturn>(SqlText, map, param, transaction, buffered, splitOn ?? Builder.DefaultTableKey, timeout, CommandType);
             }
@@ -169,7 +169,7 @@ namespace Dapper.Sugar
             try
             {
                 if (Config.Instance.LogSql)//写入日志
-                    Log.InfoSql(sql, param);
+                    Log.InfoSql(SqlText, param);
                 // OpenConnection(conn);
                 return conn.Query<TFirst, TSecond, TThird, TReturn>(SqlText, map, param, transaction, buffered, splitOn ?? Builder.DefaultTableKey, timeout, CommandType);
             }
@@ -217,7 +217,7 @@ namespace Dapper.Sugar
             try
             {
                 if (Config.Instance.LogSql)//写入日志
-                    Log.InfoSql(sql, param);
+                    Log.InfoSql(SqlText, param);
                 // OpenConnection(conn);
                 return conn.Query<TFirst, TSecond, TThird, TFourth, TReturn>(SqlText, map, param, transaction, buffered, splitOn ?? Builder.DefaultTableKey, timeout, CommandType);
             }
@@ -267,7 +267,7 @@ namespace Dapper.Sugar
             try
             {
                 if (Config.Instance.LogSql)//写入日志
-                    Log.InfoSql(sql, param);
+                    Log.InfoSql(SqlText, param);
                 // OpenConnection(conn);
                 return conn.Query<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(SqlText, map, param, transaction, buffered, splitOn ?? Builder.DefaultTableKey, timeout, CommandType);
             }
