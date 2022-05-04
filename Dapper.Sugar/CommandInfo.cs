@@ -102,10 +102,17 @@ namespace Dapper.Sugar
         /// 参数
         /// </summary>
         public object Param { get; set; }
+
         ///// <summary>
-        ///// 更新参数
+        ///// 更新条件参数（仅限更新操作）
         ///// </summary>
-        //public object ConditionParam { get; protected set; }
+        //public object ConditionParam { get; set; }
+
+        /// <summary>
+        /// 更新条件主键（仅限更新操作）
+        /// </summary>
+        public string TableKey { get; set; }
+
         /// <summary>
         /// 命令类型
         /// </summary>
@@ -184,51 +191,47 @@ namespace Dapper.Sugar
             //Transaction = transaction;
         }
 
+        /// <summary>
+        /// 构造函数（仅限更新操作）
+        /// </summary>
+        /// <param name="tableName">表名</param>
+        /// <param name="updateParam">更新数据参数</param>
+        /// <param name="tableKey">更新条件主键</param>
+        /// <param name="type">影响结果类型</param>
+        /// <param name="timeout">过期时间（秒）</param>
+        public CommandInfo(string tableName, object updateParam, string tableKey, EffentNextType type, int? timeout = null)
+        {
+            SqlText = tableName;
+            CommandType = SugarCommandType.UpdateTableDirect;
+            Param = updateParam;
+            TableKey = tableKey;
+            EffectRows = (int)type;
+            Timeout = timeout;
+        }
+
+        /// <summary>
+        /// 构造函数（仅限更新操作）
+        /// </summary>
+        /// <param name="tableName">表名</param>
+        /// <param name="updateParam">更新数据参数</param>
+        /// <param name="tableKey">更新条件主键</param>
+        /// <param name="effectRows">限制影响结果</param>
+        /// <param name="timeout">过期时间（秒）</param>
+        public CommandInfo(string tableName, object updateParam, string tableKey, int effectRows, int? timeout = null)
+        {
+            if (effectRows <= 0)
+                throw new ArgumentException(nameof(effectRows) + "不能为小于1的数");
+
+            SqlText = tableName;
+            CommandType = SugarCommandType.UpdateTableDirect;
+            Param = updateParam;
+            TableKey = tableKey;
+            EffectRows = effectRows;
+            Timeout = timeout;
+        }
+
         #endregion
     }
-
-    //public class UpdateCommandInfo : CommandInfo
-    //{
-    //    /// <summary>
-    //    /// 构造函数
-    //    /// </summary>
-    //    /// <param name="sqlText">sql语句</param>
-    //    /// <param name="param">参数</param>
-    //    /// <param name="transaction">事务</param>
-    //    /// <param name="timeout">过期时间（秒）</param>
-    //    public UpdateCommandInfo(string sqlText, object param, object conditionParam, IDbTransaction transaction = null, int? timeout = null)
-    //        : this(sqlText, param, conditionParam, EffentNextType.None, transaction, timeout) { }
-
-    //    /// <summary>
-    //    /// 构造函数
-    //    /// </summary>
-    //    /// <param name="sqlText">sql语句</param>
-    //    /// <param name="param">参数</param>
-    //    /// <param name="type">影响结果类型</param>
-    //    /// <param name="transaction">事务</param>
-    //    /// <param name="timeout">过期时间（秒）</param>
-    //    public UpdateCommandInfo(string sqlText, object param, object conditionParam, EffentNextType type, IDbTransaction transaction = null, int? timeout = null)
-    //   : this(sqlText, param, conditionParam, (int)type) { }
-
-    //    /// <summary>
-    //    /// 构造函数
-    //    /// </summary>
-    //    /// <param name="sqlText">sql语句</param>
-    //    /// <param name="setParam">参数</param>
-    //    /// <param name="effectRows">限制影响结果</param>
-    //    /// <param name="transaction">事务</param>
-    //    /// <param name="timeout">过期时间（秒）</param>
-    //    public UpdateCommandInfo(string sqlText, object setParam, object conditionParam, int effectRows, IDbTransaction transaction = null, int? timeout = null)
-    //    {
-    //        this.SqlText = sqlText;
-    //        this.CommandType = SugarCommandType.UpdateTableDirect;
-    //        this.Param = setParam;
-    //        this.ConditionParam = conditionParam;
-    //        this.EffectRows = effectRows;
-    //        this.Timeout = timeout;
-    //        this.Transaction = transaction;
-    //    }
-    //}
 
     /// <summary>
     /// 执行命令集合

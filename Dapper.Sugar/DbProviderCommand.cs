@@ -368,7 +368,7 @@ namespace Dapper.Sugar
                     //info.CommandType = SugarCommandType.Text;
                     break;
                 case SugarCommandType.UpdateTableDirect:
-                    info.SqlText = this.Builder.GetUpdateSql(info.SqlText, info.Param);
+                    info.SqlText = this.Builder.GetUpdateSql(info.SqlText, info.Param, info.TableKey);
                     //info.CommandType = SugarCommandType.Text;
                     break;
                 case SugarCommandType.QuerySelectSql:
@@ -1432,6 +1432,44 @@ namespace Dapper.Sugar
                 {
                     ExceptionCallBack?.Invoke(ex);
                     return default(T);
+                }
+            }
+        }
+
+        #endregion
+
+        #region 修改
+
+        /// <summary>
+        /// 修改纪录
+        /// </summary>
+        /// <param name="conn">连接</param>
+        /// <param name="tableName">表名称</param>
+        /// <param name="param">参数</param>
+        /// <param name="tableKey">表主键</param>
+        /// <param name="transaction">事务</param>
+        /// <param name="timeout">过期时间（秒）</param>
+        /// <returns></returns>
+        public int Update(IDbConnection conn, string tableName, object param, string tableKey = null, IDbTransaction transaction = null, int? timeout = null)
+        {
+            string sqlText = this.Builder.GetUpdateSql(tableName, param, tableKey);
+            try
+            {
+                if (Config.Instance.LogSql)//写入日志
+                    Log.InfoSql(sqlText, param);
+                // OpenConnection(conn);
+                return conn.Execute(sqlText, param, transaction, timeout, CommandType.Text);
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorSql(sqlText, param, ex);
+
+                if (transaction != null || Config.Instance.Debug)
+                    throw new DapperSugarException($"Sql：[ {sqlText} ]执行出错，错误信息：{ex.Message}！", ex);
+                else
+                {
+                    ExceptionCallBack?.Invoke(ex);
+                    return 0;
                 }
             }
         }

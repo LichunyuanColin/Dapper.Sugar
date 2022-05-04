@@ -138,8 +138,11 @@ namespace UnitTest_NetCore
             {
                 sq_no = text != null ? "(callno like @ig_no or recno like @ig_no)" : null,
                 ig_no = new long[] { 1, 2 },
+                order_id = 1,
+                order_gd = 2,
+                order_ld = 3,
             });
-            Assert.AreEqual("(callno like @ig_no or recno like @ig_no)", sql.Trim());
+            Assert.AreEqual("(callno like @ig_no or recno like @ig_no) AND `order_id` = @order_id AND `order_gd` = @order_gd AND `order_ld` = @order_ld", sql.Trim());
         }
     }
 }

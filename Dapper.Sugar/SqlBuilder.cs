@@ -172,6 +172,15 @@ namespace Dapper.Sugar
         /// <param name="tableKey"></param>
         /// <returns></returns>
         string GetUpdateSql(string tableName, object param, string tableKey = null);
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="tableName"></param>
+        ///// <param name="updateParam"></param>
+        ///// <param name="conditionParam"></param>
+        ///// <param name="tableKey"></param>
+        ///// <returns></returns>
+        //string GetUpdateSql(string tableName, object updateParam, object conditionParam);
         /// <summary>
         /// 
         /// </summary>
@@ -405,6 +414,111 @@ namespace Dapper.Sugar
                 return $"{sql} WHERE {GetConditionSqlByParam(param)} {additionalSql}";
         }
 
+        //public virtual void AddConditionSqlByField(StringBuilder sql, string name, object value)
+        //{
+        //    if (value == null)
+        //        return;
+
+        //    if (name.Length > 3)
+        //    {
+        //        if (name[2] == '_')//前缀
+        //        {
+        //            char start1 = name[0];
+        //            char start2 = name[1];
+
+        //            if (start1 == 'i' && start2 == 'g')
+        //                return;
+
+        //            if (start1 == 's' && start2 == 'q')
+        //            {
+        //                if (Config.Instance.Debug && !(value is string))
+        //                {
+        //                    throw new ArgumentException($"{name}只能为string类型");
+        //                }
+
+        //                string ss = (value as string).Trim();
+
+        //                if (sql.Length > 0 && ss.Length > 2
+        //                    && ss.IndexOf("AND", 0, 3, StringComparison.OrdinalIgnoreCase) < 0
+        //                    && ss.IndexOf("OR", 0, 2, StringComparison.OrdinalIgnoreCase) < 0)
+        //                    sql.Append(" AND ");
+        //                else
+        //                    sql.Append(" ");
+        //                sql.Append(ss);
+
+        //                //if (!Config.Instance.Debug)//如果不是调试模式则重置参数为null
+        //                //    item.SetValue(param, null);
+
+        //                return;
+        //            }
+        //        }
+
+
+        //        if (name[name.Length - 3] == '_')//后缀
+        //        {
+        //            string filterName = name.Substring(0, name.Length - 3);
+        //            char end1 = name[name.Length - 2];
+        //            char end2 = name[name.Length - 1];
+
+        //            if (end1 == 'l')
+        //            {
+        //                if (sql.Length > 0)
+        //                    sql.Append(" AND ");
+
+        //                switch (end2)
+        //                {
+        //                    case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamLess, filterName, name)); return;
+        //                    case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamLessEqual, filterName, name)); return;
+        //                    case 'k': sql.Append(GetParamSql(FormateTypeCalculate.ParamLike, filterName, name)); return;
+        //                    //default:
+        //                    //    throw new ArgumentException("暂不支持此后缀 " + name.Substring(name.Length - 2, 2));
+        //                }
+        //            }
+        //            else if (end1 == 'g')
+        //            {
+        //                if (sql.Length > 0)
+        //                    sql.Append(" AND ");
+
+        //                switch (end2)
+        //                {
+        //                    case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamMore, filterName, name)); return;
+        //                    case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamMoreEqual, filterName, name)); return;
+        //                    //default:
+        //                    //    throw new ArgumentException("暂不支持此后缀 " + name.Substring(name.Length - 2, 2));
+        //                }
+        //            }
+        //            else if ((end1 == 'u' || end1 == 'n') && end2 == 'e')
+        //            {
+        //                if (sql.Length > 0)
+        //                    sql.Append(" AND ");
+
+        //                sql.Append(GetParamSql(FormateTypeCalculate.ParamUnEqual, filterName, name));
+        //                return;
+        //            }
+        //            else if (end1 == 'i' && end2 == 'g')
+        //                return;
+        //            //else
+        //            //    throw new ArgumentException("暂不支持此后缀 " + name.Substring(name.Length - 2, 2));
+        //        }
+        //    }
+
+        //    var type = value.GetType();
+        //    //判断是否数组或List<T>,IsGenericType有bug，class<T>也返回true
+        //    if (type.IsArray
+        //        || (type.IsGenericType
+        //        && (type.Name.StartsWith("List`") || type.Name.StartsWith("IEnumerable`"))))
+        //    {
+        //        if (sql.Length > 0)
+        //            sql.Append(" AND ");
+        //        sql.Append(GetParamSql(FormateTypeCalculate.ParamIn, name));
+        //        return;
+        //    }
+
+        //    if (sql.Length > 0)
+        //        sql.Append(" AND ");
+        //    sql.Append(GetParamSql(FormateTypeCalculate.ParamEqual, name));
+        //}
+
         /// <summary>
         /// 参数转成条件sql（默认返回1=1）
         /// </summary>
@@ -469,32 +583,44 @@ namespace Dapper.Sugar
 
                         if (end1 == 'l')
                         {
-                            if (sql.Length > 0)
-                                sql.Append(" AND ");
-
                             switch (end2)
                             {
-                                case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamLess, filterName, item.Name)); break;
-                                case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamLessEqual, filterName, item.Name)); break;
-                                case 'k': sql.Append(GetParamSql(FormateTypeCalculate.ParamLike, filterName, item.Name)); break;
-                                default:
-                                    throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                                case 't':
+                                    if (sql.Length > 0)
+                                        sql.Append(" AND ");
+                                    sql.Append(GetParamSql(FormateTypeCalculate.ParamLess, filterName, item.Name));
+                                    continue;
+                                case 'e':
+                                    if (sql.Length > 0)
+                                        sql.Append(" AND ");
+                                    sql.Append(GetParamSql(FormateTypeCalculate.ParamLessEqual, filterName, item.Name));
+                                    continue;
+                                case 'k':
+                                    if (sql.Length > 0)
+                                        sql.Append(" AND ");
+                                    sql.Append(GetParamSql(FormateTypeCalculate.ParamLike, filterName, item.Name));
+                                    continue;
+                                    //default:
+                                    //    throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
                             }
-                            continue;
                         }
                         else if (end1 == 'g')
                         {
-                            if (sql.Length > 0)
-                                sql.Append(" AND ");
-
                             switch (end2)
                             {
-                                case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamMore, filterName, item.Name)); break;
-                                case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamMoreEqual, filterName, item.Name)); break;
-                                default:
-                                    throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                                case 't':
+                                    if (sql.Length > 0)
+                                        sql.Append(" AND ");
+                                    sql.Append(GetParamSql(FormateTypeCalculate.ParamMore, filterName, item.Name));
+                                    continue;
+                                case 'e':
+                                    if (sql.Length > 0)
+                                        sql.Append(" AND ");
+                                    sql.Append(GetParamSql(FormateTypeCalculate.ParamMoreEqual, filterName, item.Name));
+                                    continue;
+                                    //default:
+                                    //    throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
                             }
-                            continue;
                         }
                         else if ((end1 == 'u' || end1 == 'n') && end2 == 'e')
                         {
@@ -504,16 +630,10 @@ namespace Dapper.Sugar
                             sql.Append(GetParamSql(FormateTypeCalculate.ParamUnEqual, filterName, item.Name));
                             continue;
                         }
-                        //else if (item.Name.EndsWith("_nn", StringComparison.Ordinal))
-                        //{
-                        //    if (sql.Length > 0)
-                        //        sql.Append(" AND ");
-                        //    sql.Append(GetParamSql(FormateTypeCalculate.ParamNotIn, filterName, item.Name));
-                        //}
                         else if (end1 == 'i' && end2 == 'g')
                             continue;
-                        else
-                            throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                        //else
+                        //    throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
                     }
                 }
 
@@ -925,32 +1045,44 @@ namespace Dapper.Sugar
 
                         if (end1 == 'l')
                         {
-                            if (sql.Length > 0)
-                                sql.Append(" AND ");
-
                             switch (end2)
                             {
-                                case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamLess, filterName, item.Name)); break;
-                                case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamLessEqual, filterName, item.Name)); break;
-                                case 'k': sql.Append(GetParamSql(FormateTypeCalculate.ParamLike, filterName, item.Name)); break;
-                                default:
-                                    throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                                case 't':
+                                    if (sql.Length > 0)
+                                        sql.Append(" AND ");
+                                    sql.Append(GetParamSql(FormateTypeCalculate.ParamLess, filterName, item.Name));
+                                    continue;
+                                case 'e':
+                                    if (sql.Length > 0)
+                                        sql.Append(" AND ");
+                                    sql.Append(GetParamSql(FormateTypeCalculate.ParamLessEqual, filterName, item.Name));
+                                    continue;
+                                case 'k':
+                                    if (sql.Length > 0)
+                                        sql.Append(" AND ");
+                                    sql.Append(GetParamSql(FormateTypeCalculate.ParamLike, filterName, item.Name));
+                                    continue;
+                                    //default:
+                                    //    throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
                             }
-                            continue;
                         }
                         else if (end1 == 'g')
                         {
-                            if (sql.Length > 0)
-                                sql.Append(" AND ");
-
                             switch (end2)
                             {
-                                case 't': sql.Append(GetParamSql(FormateTypeCalculate.ParamMore, filterName, item.Name)); break;
-                                case 'e': sql.Append(GetParamSql(FormateTypeCalculate.ParamMoreEqual, filterName, item.Name)); break;
-                                default:
-                                    throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                                case 't':
+                                    if (sql.Length > 0)
+                                        sql.Append(" AND ");
+                                    sql.Append(GetParamSql(FormateTypeCalculate.ParamMore, filterName, item.Name));
+                                    continue;
+                                case 'e':
+                                    if (sql.Length > 0)
+                                        sql.Append(" AND ");
+                                    sql.Append(GetParamSql(FormateTypeCalculate.ParamMoreEqual, filterName, item.Name));
+                                    continue;
+                                    //default:
+                                    //    throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
                             }
-                            continue;
                         }
                         else if ((end1 == 'u' || end1 == 'n') && end2 == 'e')
                         {
@@ -960,16 +1092,10 @@ namespace Dapper.Sugar
                             sql.Append(GetParamSql(FormateTypeCalculate.ParamUnEqual, filterName, item.Name));
                             continue;
                         }
-                        //else if (item.Name.EndsWith("_nn", StringComparison.Ordinal))
-                        //{
-                        //    if (sql.Length > 0)
-                        //        sql.Append(" AND ");
-                        //    sql.Append(GetParamSql(FormateTypeCalculate.ParamNotIn, filterName, item.Name));
-                        //}
                         else if (end1 == 'i' && end2 == 'g')
                             continue;
-                        else
-                            throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
+                        //else
+                        //    throw new ArgumentException("暂不支持此后缀 " + item.Name.Substring(item.Name.Length - 2, 2));
                     }
                 }
 
