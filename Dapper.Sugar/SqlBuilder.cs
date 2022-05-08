@@ -1146,9 +1146,9 @@ namespace Dapper.Sugar
         public override (string totalSql, string dataSql) GetPagingSql(string selectSql, string sortSql, int pageNumber, int pageSize)
         {
             return ($"SELECT COUNT(*) from ({selectSql}) alias",
-                $@"SELECT * FROM (SELECT A.*, ROWNUM RN FROM(
+                $@"SELECT * FROM (SELECT alias.*, ROWNUM RN FROM(
 {selectSql} {sortSql}
-) AWHERE ROWNUM <= {pageNumber * pageSize + pageSize})WHERE RN >= {pageNumber * pageSize + 1}");
+) alias WHERE ROWNUM < {pageNumber * pageSize + pageSize + 1}) WHERE RN > {pageNumber * pageSize}");
         }
 
 
