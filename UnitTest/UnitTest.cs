@@ -484,7 +484,7 @@ namespace UnitTest_NetCore
 
             var result = DbHelp.ExecuteSql("delete_data", p, SugarCommandType.StoredProcedure);
 
-            Assert.AreEqual(7, result, "调用存储过程错误");
+            Assert.AreEqual(7, result, "调用存储过程错误" + result);
         }
 
         /// <summary>

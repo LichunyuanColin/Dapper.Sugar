@@ -97,8 +97,8 @@ namespace UnitTest_Net451
                 ig_A = 1,
             });
 
-            Assert.AreEqual("INSERT INTO `employee`(`Id`,`Account`,`Name`,`Age`,`Status`) VALUES(@Id,@Account,@Name,@Age,@Status);", sql1.Trim());
-            Assert.AreEqual("INSERT INTO `employee`(`Id`,`Account`,`Name`,`Age`,`Status`) VALUES(@Id,@Account,@Name,50,@Status);", sql2.Trim());
+            Assert.AreEqual("INSERT INTO `employee`(`Id`,`Account`,`Name`,`Age`,`Status`) VALUES(@Id,@Account,@Name,@Age,@Status)", sql1.Trim());
+            Assert.AreEqual("INSERT INTO `employee`(`Id`,`Account`,`Name`,`Age`,`Status`) VALUES(@Id,@Account,@Name,50,@Status)", sql2.Trim());
         }
 
         /// <summary>
@@ -126,8 +126,8 @@ namespace UnitTest_Net451
                 ig_A = 1,
             });
 
-            Assert.AreEqual("UPDATE `employee` SET `Account` = @Account,`Name` = @Name,`Age` = @Age,`Status` = @Status WHERE `Id` = @Id;", sql1.Trim());
-            Assert.AreEqual("UPDATE `employee` SET `Account` = @Account,`Name` = @Name,`Age`=50,`Status` = @Status WHERE `Id` = @Id;", sql2.Trim());
+            Assert.AreEqual("UPDATE `employee` SET `Account` = @Account,`Name` = @Name,`Age` = @Age,`Status` = @Status WHERE `Id` = @Id", sql1.Trim());
+            Assert.AreEqual("UPDATE `employee` SET `Account` = @Account,`Name` = @Name,`Age`=50,`Status` = @Status WHERE `Id` = @Id", sql2.Trim());
         }
 
         [TestMethod]

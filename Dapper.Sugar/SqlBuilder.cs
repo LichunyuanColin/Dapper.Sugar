@@ -730,7 +730,7 @@ namespace Dapper.Sugar
             }
             sqlField.Remove(sqlField.Length - 1, 1);
             sqlValue.Remove(sqlValue.Length - 1, 1);
-            return string.Format("INSERT INTO {0}({1}) VALUES({2});", GetTableName(tableName), sqlField.ToString(), sqlValue.ToString());
+            return string.Format("INSERT INTO {0}({1}) VALUES({2})", GetTableName(tableName), sqlField.ToString(), sqlValue.ToString());
         }
 
         /// <summary>
@@ -806,7 +806,7 @@ namespace Dapper.Sugar
                 throw new ArgumentException();
 
             sqlField.Remove(sqlField.Length - 1, 1);
-            return string.Format("UPDATE {0} SET {1} WHERE {2};", GetFieldName(tableName), sqlField.ToString(), GetParamSql(FormateTypeCalculate.ParamEqual, tableKey));
+            return string.Format("UPDATE {0} SET {1} WHERE {2}", GetFieldName(tableName), sqlField.ToString(), GetParamSql(FormateTypeCalculate.ParamEqual, tableKey));
         }
 
         //public virtual string GetUpdateSql(string tableName, object param, object conditionParam, string tableKey = TABLE_KEY)
@@ -858,7 +858,7 @@ namespace Dapper.Sugar
         //    }
         //    sqlField.Remove(sqlField.Length - 1, 1);
 
-        //    return string.Format("UPDATE {0} SET {1} WHERE {2};", GetFieldName(tableName), sqlField.ToString(), GetParamSql(FormateTypeCalculate.ParamEqual, tableKey));
+        //    return string.Format("UPDATE {0} SET {1} WHERE {2}", GetFieldName(tableName), sqlField.ToString(), GetParamSql(FormateTypeCalculate.ParamEqual, tableKey));
         //}
 
         /// <summary>
@@ -894,7 +894,7 @@ namespace Dapper.Sugar
         /// <returns></returns>
         public override string GetAutoIncrement(string fieldName = null)
         {
-            return "Select Last_Insert_ID()";
+            return " ;Select Last_Insert_ID()";
         }
     }
 
@@ -912,7 +912,7 @@ namespace Dapper.Sugar
         /// <returns></returns>
         public override string GetAutoIncrement(string fieldName = null)
         {
-            return "Select Scope_Identity()";
+            return " ;Select Scope_Identity()";
         }
     }
 
@@ -1135,7 +1135,7 @@ namespace Dapper.Sugar
         /// <returns></returns>
         public override string GetAutoIncrement(string fieldName = null)
         {
-            return $"Returning {fieldName ?? DefaultTableKey}";
+            return $" ;Returning {fieldName ?? DefaultTableKey}";
         }
     }
 
@@ -1179,7 +1179,7 @@ namespace Dapper.Sugar
         /// <returns></returns>
         public override string GetAutoIncrement(string fieldName = null)
         {
-            return "Select LAST_INSERT_ROWID()";
+            return " ;Select LAST_INSERT_ROWID()";
         }
     }
 }
